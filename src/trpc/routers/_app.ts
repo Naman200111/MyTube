@@ -9,6 +9,8 @@ export const appRouter = createTRPCRouter({
       })
     )
     .query((opts) => {
+      const { clerkUserId } = opts.ctx;
+      console.log(clerkUserId, "clerkUserId");
       return { greeting: `Hello, ${opts.input.text}!` };
     }),
 });
