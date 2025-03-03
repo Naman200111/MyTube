@@ -13,7 +13,7 @@ export const HomeLayout = ({ children }: HomeLayoutProps) => {
         <HomeNavbar />
         <div className="flex">
           <HomeSidebar />
-          <div>{children}</div>
+          {children}
         </div>
       </div>
     </SidebarProvider>
