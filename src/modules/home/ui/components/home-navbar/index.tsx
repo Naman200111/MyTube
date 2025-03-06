@@ -1,7 +1,8 @@
 // import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AuthButton from "@/modules/auth/ui/components/AuthButton";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, VideoIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,7 +31,13 @@ const HomeNavbar = () => {
           <SearchIcon className="mx-1 text-gray-500 ml-2  cursor-pointer" />
         </button>
       </div>
-      <div>
+      <div className="flex gap-2">
+        <Link href={"/studio"}>
+          <Button variant="default">
+            <VideoIcon />
+            Studio
+          </Button>
+        </Link>
         <AuthButton />
       </div>
     </div>
