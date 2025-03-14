@@ -1,0 +1,5 @@
+1. add videos schema and push it - done
+2. add +create button animation - done
+3. make it working, to add content in it -> create video and studio procedures - done
+4. add infinite loading using intersection observer
+5. add skeleton on categories

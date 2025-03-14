@@ -24,7 +24,7 @@ const StudioSidebar = () => {
   }
 
   return (
-    <Sidebar className="top-[74px] absolute border-none" collapsible="icon">
+    <Sidebar className="top-[84px] absolute border-none" collapsible="icon">
       <SidebarContent className="bg-white gap-1">
         <SidebarGroup className="py-0">
           <SidebarGroupContent>
@@ -64,7 +64,9 @@ const StudioSidebar = () => {
                   <Skeleton className="w-[80px] h-[20px] mt-[0.5em]"></Skeleton>
                 </SidebarMenuItem>
               )}
-              <SidebarMenuItem>
+              <SidebarMenuItem
+                className={`${state === "collapsed" ? "mt-2" : "mt-4"}`}
+              >
                 <SidebarMenuButton asChild tooltip="Content">
                   <a href={"/content"}>
                     <VideoIcon />

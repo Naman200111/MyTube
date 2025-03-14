@@ -15,8 +15,8 @@ export const createTRPCContext = cache(async () => {
   };
 });
 
-export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
-// export type Context = typeof createTRPCContext;
+// export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
+export type Context = typeof createTRPCContext;
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
 });

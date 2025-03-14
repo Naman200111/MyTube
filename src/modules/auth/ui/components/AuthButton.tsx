@@ -1,27 +1,14 @@
-// "use client";
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { UserCircleIcon } from "lucide-react";
-import {
-  SignedIn,
-  SignedOut,
-  UserButton,
-  SignInButton,
-  useUser,
-} from "@clerk/nextjs";
-// import { Skeleton } from "@/components/ui/skeleton";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 
 const AuthButton = () => {
-  // const { user } = useUser();
-  // console.log(user);
   return (
     <>
       <SignedIn>
-        {/* {!user ? ( */}
-        {/* <Skeleton className="h-[34px] w-[34px] rounded-full" />
-        ) : ( */}
         <UserButton />
-        {/* )} */}
       </SignedIn>
       <SignedOut>
         <SignInButton mode="modal">

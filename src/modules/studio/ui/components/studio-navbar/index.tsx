@@ -1,10 +1,8 @@
-// import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AuthButton from "@/modules/auth/ui/components/AuthButton";
-import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import VideoUploadModal from "../video-upload-btn";
 
 const StudioNavbar = () => {
   return (
@@ -21,10 +19,7 @@ const StudioNavbar = () => {
         </div>
       </div>
       <div className="flex gap-2">
-        <Button variant="secondary">
-          <Plus />
-          Create
-        </Button>
+        <VideoUploadModal />
         <AuthButton />
       </div>
     </div>
