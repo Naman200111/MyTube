@@ -2,7 +2,7 @@ import { VideosSection } from "../sections/videos-section";
 
 const StudioView = () => {
   return (
-    <div>
+    <div className="w-full">
       <VideosSection />
     </div>
   );

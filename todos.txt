@@ -1,5 +1,11 @@
-1. add videos schema and push it - done
-2. add +create button animation - done
-3. make it working, to add content in it -> create video and studio procedures - done
-4. add infinite loading using intersection observer
-5. add skeleton on categories
+1. integrate mux webhook and listen to video upload event
+2. on video create, add upload id then on successfull uploading add asset id and status
+3. add video thumbnail generating support along with gif (listening to an mux event)
+4. add duration 
+5. add video status column
+6. add upload error event, delete event
+7. add video visibility column (default to private)
+8. add event for track ready event and add track id in db
+
+
+adding skeletons
