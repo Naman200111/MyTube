@@ -52,7 +52,6 @@ export const StudioProcedure = createTRPCRouter({
             updatedAt: items[items.length - 1]?.updatedAt,
           }
         : null;
-      console.log(items, "video items");
       return {
         data: items,
         nextCursor,

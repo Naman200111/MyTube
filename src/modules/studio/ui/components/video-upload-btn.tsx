@@ -24,7 +24,6 @@ const VideoUploadModal = () => {
     },
   });
 
-  console.log(create, "create");
   return (
     <Dialog>
       <DialogTrigger asChild>

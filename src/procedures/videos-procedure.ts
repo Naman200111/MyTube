@@ -22,6 +22,7 @@ export const VideosProcedure = createTRPCRouter({
         userId: id,
         title: "Untitled",
         description: "This is a test upload video",
+        muxUploadId: upload.id,
       })
       .returning();
 

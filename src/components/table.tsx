@@ -15,8 +15,9 @@ interface row {
   value?: string;
   childValue?: string;
   hasChild?: boolean;
-  src: string;
-  alt: string;
+  // src: string;
+  // thumbnailURL?: string;
+  placeholderThumbnail: string;
 }
 
 interface tableProps {
@@ -56,10 +57,10 @@ const Table = ({ headers, rows, className }: tableProps) => {
                   return (
                     <td className="px-4 py-4" key={colIdx}>
                       <div className="flex flex-col">
-                        {col.src ? (
+                        {col.placeholderThumbnail ? (
                           <Image
-                            src={col.src}
-                            alt={col.alt}
+                            src={col.value ?? col.placeholderThumbnail}
+                            alt="Fallback image"
                             width={160}
                             height={160}
                             className="rounded-md"

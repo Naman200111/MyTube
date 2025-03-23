@@ -6,7 +6,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import InfiniteScroll from "../../../../components/infinite-scroll";
 import Table from "@/components/table";
 import { Separator } from "@radix-ui/react-separator";
-import { getFormattedDate } from "@/utils/utils";
+import { getFormattedDate } from "@/lib/utils";
+import { Loader2Icon } from "lucide-react";
 
 interface rowData {
   id: string;
@@ -17,30 +18,19 @@ interface rowData {
   updatedAt: Date;
   createdAt: Date;
   // when these will add up, ts errors will fix (TODOS)
-  // video: string;
+  thumbnailURL: string;
   // likes: string;
   // comments: string;
   // views: string;
   // [key: string]: any;
 }
 
-export const VideosSection = () => {
-  return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <ErrorBoundary fallback={<p>Failed Fetching Studio Videos...</p>}>
-        <VideosSectionSuspense />
-      </ErrorBoundary>
-    </Suspense>
-  );
-};
-
 const videoHeaders = [
   {
     prettyName: "Video",
-    key: "video",
+    key: "thumbnailURL",
     className: "w-[10%]",
-    src: "/placeholder.svg",
-    alt: "Thumbnail",
+    placeholderThumbnail: "/placeholder.svg",
     type: "image",
   },
   {
@@ -80,12 +70,31 @@ const videoHeaders = [
   },
 ];
 
+export const VideosSection = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-full w-full flex justify-center">
+          <Loader2Icon className="animate-spin mt-10" />
+        </div>
+      }
+    >
+      <ErrorBoundary
+        fallback={<p className="p-6">Failed Fetching Studio Videos...</p>}
+      >
+        <VideosSectionSuspense />
+      </ErrorBoundary>
+    </Suspense>
+  );
+};
+
 const VideosSectionSuspense = () => {
   const [data, query] = trpc.studio.getMany.useSuspenseInfiniteQuery(
     { limit: 5 },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 
+  console.log(data, "data");
   const pages = data.pages;
   const rows = pages.map((page) => {
     const { data: pageData = [] } = page;
@@ -94,8 +103,7 @@ const VideosSectionSuspense = () => {
         return {
           prettyName: header.prettyName,
           key: header.key,
-          src: header.src || "",
-          alt: header.alt || "",
+          placeholderThumbnail: header.placeholderThumbnail || "",
           value:
             header.type === "date"
               ? getFormattedDate(new Date(rowData[header.key]))
@@ -109,10 +117,9 @@ const VideosSectionSuspense = () => {
     return ans;
   });
 
+  console.log(rows, "rows");
   return (
     <div>
-      <div className="text-3xl p-6">Channel Content</div>
-      <div className="h-[1px] w-full bg-slate-200"></div>
       <Table className="w-full" headers={videoHeaders} rows={rows.flat()} />
       <InfiniteScroll
         hasNextPage={query.hasNextPage}

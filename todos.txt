@@ -1,11 +1,8 @@
-1. integrate mux webhook and listen to video upload event
-2. on video create, add upload id then on successfull uploading add asset id and status
-3. add video thumbnail generating support along with gif (listening to an mux event)
-4. add duration 
-5. add video status column
-6. add upload error event, delete event
-7. add video visibility column (default to private)
-8. add event for track ready event and add track id in db
+1. support of with gif (listening to an mux event)
+2. add duration 
+3. add video visibility column (default to private)
+4. add event for track ready event and add track id in db (optional)
+5. add page which will open on asset ready / video click on studio
 
 
 adding skeletons
