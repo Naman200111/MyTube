@@ -42,10 +42,7 @@ const VideoUploadModal = () => {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Upload Video</DialogTitle>
-        <MuxUploader
-          endpoint={create.data?.url}
-          // onUploadStart={() => create.mutate()}
-        />
+        <MuxUploader endpoint={create.data?.url} />
       </DialogContent>
     </Dialog>
   );

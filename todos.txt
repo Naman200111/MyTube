@@ -1,8 +1,8 @@
-1. support of with gif (listening to an mux event)
+1. support of with gif (listening to an mux event) - not doing
 2. add duration 
-3. add video visibility column (default to private)
+3. add video visibility column (default to private) - done
 4. add event for track ready event and add track id in db (optional)
-5. add page which will open on asset ready / video click on studio
+5. add video view and video section which will open on asset ready / video click on studio
 
 
 adding skeletons

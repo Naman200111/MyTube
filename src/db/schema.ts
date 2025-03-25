@@ -4,6 +4,7 @@ import {
   text,
   timestamp,
   uniqueIndex,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
@@ -46,6 +47,9 @@ export const videos = pgTable("videos", {
   muxUploadId: text("mux_upload_id"),
   muxStatus: text("mux_status"),
   muxAssetId: text("mux_asset_id"),
+  playbackId: text("playback_id"),
+  duration: integer("duration").default(0).notNull(),
+  visibility: text("visibility").default("Private").notNull(),
   description: text("description"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

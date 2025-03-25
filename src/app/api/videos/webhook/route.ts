@@ -54,14 +54,20 @@ export const POST = async (request: Request) => {
       return new Response("No upload id for asset found", { status: 400 });
     }
 
-    const { playback_ids } = assetData;
+    console.log(assetData, "assetData");
+    const { playback_ids, duration = 0 } = assetData;
     const PLAYBACK_ID = playback_ids?.[0]?.id;
 
     const thumbnailURL = `https://image.mux.com/${PLAYBACK_ID}/thumbnail.jpg`;
 
     await db
       .update(videos)
-      .set({ muxStatus: assetData.status, thumbnailURL: thumbnailURL })
+      .set({
+        muxStatus: assetData.status,
+        thumbnailURL: thumbnailURL,
+        playbackId: PLAYBACK_ID,
+        duration: Math.floor(duration),
+      })
       .where(eq(videos.muxUploadId, assetData.upload_id));
   } else if (webhookEventType === "video.asset.errored") {
     const assetData = payload.data as VideoAssetErroredWebhookEvent["data"];

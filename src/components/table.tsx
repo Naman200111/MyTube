@@ -1,23 +1,25 @@
 import Image from "next/image";
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface header {
-  prettyName?: string;
+  prettyName: string;
   key: string;
   type: string;
   className?: string;
-  child?: header;
+  placeholder: string | Date;
+  icon?: ReactNode | null;
+  childValue?: string;
 }
 
 interface row {
   prettyName: string;
   key: string;
-  value?: string;
-  childValue?: string;
-  hasChild?: boolean;
-  // src: string;
-  // thumbnailURL?: string;
-  placeholderThumbnail: string;
+  value: string | number | Date;
+  childValue: string | number | Date;
+  hasChild: boolean;
+  icon: ReactNode;
+  placeholder: string | Date;
+  type: string;
 }
 
 interface tableProps {
@@ -34,7 +36,7 @@ const Table = ({ headers, rows, className }: tableProps) => {
           {headers.map((header, index) => {
             return (
               <th
-                className={`py-4 px-6 text-start ${header.className}`}
+                className={`py-4 px-4 text-start ${header.className}`}
                 key={index}
               >
                 {header.prettyName}
@@ -57,20 +59,26 @@ const Table = ({ headers, rows, className }: tableProps) => {
                   return (
                     <td className="px-4 py-4" key={colIdx}>
                       <div className="flex flex-col">
-                        {col.placeholderThumbnail ? (
+                        {typeof col.value === "string" &&
+                        col.type === "image" ? (
                           <Image
-                            src={col.value ?? col.placeholderThumbnail}
+                            src={col.value ?? col.placeholder}
                             alt="Fallback image"
                             width={160}
                             height={160}
                             className="rounded-md"
                           />
                         ) : (
-                          <div>{col.value || col.key}</div>
+                          <div className="flex gap-1 items-center">
+                            {col.icon}
+                            {(typeof col.value === "string" && col.value) ||
+                              col.key}
+                          </div>
                         )}
                         {col.hasChild ? (
                           <div className="text-slate-600 line-clamp-2">
-                            {col.childValue}
+                            {typeof col.childValue === "string" &&
+                              col.childValue}
                           </div>
                         ) : null}
                       </div>
