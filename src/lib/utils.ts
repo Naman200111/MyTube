@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const mergeClasses = (
+  class1: string | undefined,
+  class2: string | undefined
+) => {
+  return `${class1 ? class1 : ""} ${class2 ? class2 : ""}`;
+};
+
 export const getFormattedDate = (date: Date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

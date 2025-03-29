@@ -1,102 +1,61 @@
-import Image from "next/image";
-import React, { ReactNode } from "react";
+import { mergeClasses } from "@/lib/utils";
+import React from "react";
 
-interface header {
-  prettyName: string;
-  key: string;
-  type: string;
-  className?: string;
-  placeholder: string | Date;
-  icon?: ReactNode | null;
-  childValue?: string;
-}
+export const TableHeader = ({
+  className,
+  ...props
+}: React.ComponentProps<"thead">) => {
+  return <thead className={className} {...props} />;
+};
 
-interface row {
-  prettyName: string;
-  key: string;
-  value: string | number | Date;
-  childValue: string | number | Date;
-  hasChild: boolean;
-  icon: ReactNode;
-  placeholder: string | Date;
-  type: string;
-}
-
-interface tableProps {
-  headers: header[];
-  rows: row[][];
-  className?: string;
-}
-
-const Table = ({ headers, rows, className }: tableProps) => {
+export const TableRow = ({
+  className,
+  ...props
+}: React.ComponentProps<"tr">) => {
   return (
-    <table className={className}>
-      <thead className="text-gray-600 text-sm w-full">
-        <tr>
-          {headers.map((header, index) => {
-            return (
-              <th
-                className={`py-4 px-4 text-start ${header.className}`}
-                key={index}
-              >
-                {header.prettyName}
-              </th>
-            );
-          })}
-        </tr>
-        <tr>
-          <td colSpan={headers.length}>
-            <hr className="border-t border-slate-200" />
-          </td>
-        </tr>
-      </thead>
-      <tbody className="text-base">
-        {rows.map((column, index) => {
-          return (
-            <React.Fragment key={index}>
-              <tr key={`tr-${index}`}>
-                {column.map((col, colIdx) => {
-                  return (
-                    <td className="px-4 py-4" key={colIdx}>
-                      <div className="flex flex-col">
-                        {typeof col.value === "string" &&
-                        col.type === "image" ? (
-                          <Image
-                            src={col.value ?? col.placeholder}
-                            alt="Fallback image"
-                            width={160}
-                            height={160}
-                            className="rounded-md"
-                          />
-                        ) : (
-                          <div className="flex gap-1 items-center">
-                            {col.icon}
-                            {(typeof col.value === "string" && col.value) ||
-                              col.key}
-                          </div>
-                        )}
-                        {col.hasChild ? (
-                          <div className="text-slate-600 line-clamp-2">
-                            {typeof col.childValue === "string" &&
-                              col.childValue}
-                          </div>
-                        ) : null}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-              <tr key={`sep-${index}`}>
-                <td colSpan={headers.length}>
-                  <hr className="border-t border-slate-200" />
-                </td>
-              </tr>
-            </React.Fragment>
-          );
-        })}
-      </tbody>
-    </table>
+    <tr
+      className={mergeClasses(className, "border-t-[1px] border-b-[1px]")}
+      {...props}
+    />
   );
 };
 
-export default Table;
+export const TableDescription = ({
+  className,
+  ...props
+}: React.ComponentProps<"td">) => {
+  return <td className={mergeClasses(className, "px-6 py-4")} {...props} />;
+};
+
+export const TableHead = ({
+  className,
+  ...props
+}: React.ComponentProps<"th">) => {
+  return (
+    <th
+      className={mergeClasses(className, "py-4 px-6  text-start")}
+      {...props}
+    />
+  );
+};
+
+export const TableBody = ({
+  className,
+  ...props
+}: React.ComponentProps<"tbody">) => {
+  return <tbody className={className} {...props} />;
+};
+
+export const TableBreak = ({
+  className,
+  ...props
+}: React.ComponentProps<"hr">) => {
+  return <hr className={className} {...props} />;
+};
+
+export const Table = ({
+  className,
+  ...props
+}: React.ComponentProps<"table">) => {
+  return <table className={className} {...props} />;
+};

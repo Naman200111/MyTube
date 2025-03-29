@@ -5,6 +5,14 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { and, desc, eq, lt, or } from "drizzle-orm";
 
 export const StudioProcedure = createTRPCRouter({
+  getOne: protectedProcedure
+    .input(z.object({ videoId: z.string() }))
+    .query(async (opts) => {
+      const { input } = opts;
+      const { videoId } = input;
+      const data = await db.select().from(videos).where(eq(videos.id, videoId));
+      return data;
+    }),
   getMany: protectedProcedure
     .input(
       z.object({

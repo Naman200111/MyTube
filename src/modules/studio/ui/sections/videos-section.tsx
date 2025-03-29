@@ -4,66 +4,18 @@ import { trpc } from "@/trpc/client";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import InfiniteScroll from "../../../../components/infinite-scroll";
-import Table from "@/components/table";
+import {
+  Table,
+  TableBody,
+  TableDescription,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/table";
 import { getFormattedDate } from "@/lib/utils";
 import { Loader2Icon, Lock } from "lucide-react";
-
-const videoHeaders = [
-  {
-    prettyName: "Video",
-    key: "thumbnailURL",
-    className: "w-[10%]",
-    type: "image",
-    icon: null,
-    placeholder: "/placeholder.svg",
-    childKey: "",
-  },
-  {
-    prettyName: "Title",
-    key: "title",
-    className: "w-[40%]",
-    type: "string",
-    placeholder: "Video Title",
-    icon: null,
-    childKey: "description",
-  },
-  {
-    prettyName: "Visibility",
-    key: "visibility",
-    className: "w-[10%]",
-    type: "string",
-    icon: <Lock className="h-4 w-4" />,
-    placeholder: "Private / Public",
-    childKey: "",
-  },
-  {
-    prettyName: "Date",
-    key: "createdAt",
-    className: "w-[15%]",
-    type: "date",
-    icon: null,
-    placeholder: new Date(),
-    childKey: "",
-  },
-  // {
-  //   prettyName: "Likes",
-  //   key: "likes",
-  //   className: "w-[10%]",
-  //   type: "string",
-  // },
-  // {
-  //   prettyName: "Views",
-  //   key: "views",
-  //   className: "w-[10%]",
-  //   type: "string",
-  // },
-  // {
-  //   prettyName: "Comments",
-  //   key: "comments",
-  //   className: "w-[10%]",
-  //   type: "string",
-  // },
-];
+import Image from "next/image";
+import Link from "next/link";
 
 export const VideosSection = () => {
   return (
@@ -90,41 +42,60 @@ const VideosSectionSuspense = () => {
   );
 
   const pages = data.pages;
-  const rows = pages.map((page) => {
-    const { data: pageData = [] } = page;
-    const updatedRows = pageData.map((rowData) => {
-      const row = videoHeaders.map((header) => {
-        return {
-          prettyName: header.prettyName,
-          key: header.key,
-          type: header.type,
-          placeholder: header.placeholder || "placeholder",
-          icon: header.icon,
-          value:
-            header.type === "date"
-              ? getFormattedDate(
-                  new Date(
-                    rowData[header.key as keyof typeof rowData] ||
-                      header.placeholder
-                  )
-                )
-              : rowData[header.key as keyof typeof rowData] ||
-                header.placeholder,
-          // childValue: rowData[header.child.key] || header.child.placeholder || "No Child Content",
-          childValue:
-            rowData[header.childKey as keyof typeof rowData] ||
-            "No Child Content",
-          hasChild: header.childKey ? true : false,
-        };
-      });
-      return row;
-    });
-    return updatedRows;
-  });
+  const videos = pages?.[0]?.data || [];
+  console.log(pages, "pages");
 
   return (
     <div>
-      <Table className="w-full" headers={videoHeaders} rows={rows.flat()} />
+      <Table>
+        <TableHeader className="text-gray-600 text-sm w-full h-10">
+          <TableRow>
+            <TableHead className="w-[10%]">Video</TableHead>
+            <TableHead className="w-[40%]">Title</TableHead>
+            <TableHead className="w-[10%]">Visibility</TableHead>
+            <TableHead className="w-[15%]">Date</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {videos.map((video) => (
+            <Link
+              href={`/studio/videos/${video.id}`}
+              key={video.id}
+              legacyBehavior
+            >
+              <TableRow
+                key={video.id}
+                className="hover:bg-primary-foreground cursor-pointer"
+              >
+                <TableDescription>
+                  <div className="flex flex-col">
+                    <Image
+                      src={video.thumbnailURL || "/placeholder.svg"}
+                      alt="Fallback image"
+                      width={160}
+                      height={160}
+                      className="rounded-md"
+                    />
+                  </div>
+                </TableDescription>
+                <TableDescription>
+                  <div>{video.title}</div>
+                  <div>{video.description}</div>
+                </TableDescription>
+                <TableDescription className="px-6 py-4">
+                  <div className="flex items-center gap-1">
+                    <Lock className="h-4 w-4" />
+                    <div>{video.visibility}</div>
+                  </div>
+                </TableDescription>
+                <TableDescription>
+                  <div>{getFormattedDate(new Date(video.createdAt))}</div>
+                </TableDescription>
+              </TableRow>
+            </Link>
+          ))}
+        </TableBody>
+      </Table>
       <InfiniteScroll
         hasNextPage={query.hasNextPage}
         fetchNextPage={query.fetchNextPage}
