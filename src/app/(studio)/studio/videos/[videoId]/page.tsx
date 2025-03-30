@@ -8,6 +8,8 @@ const VideoPage = async ({
 }) => {
   const { videoId } = await params;
   void trpc.studio.getOne.prefetch({ videoId });
+  void trpc.categories.getMany.prefetch();
+
   return (
     <HydrateClient>
       <VideoView videoId={videoId} />

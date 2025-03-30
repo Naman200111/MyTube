@@ -1,34 +1,51 @@
 import { EllipsisVertical } from "lucide-react";
 import { Button } from "./ui/button";
 import { mergeClasses } from "@/lib/utils";
+import { ReactNode, useState } from "react";
+
+interface DropDownItemProps extends React.ComponentProps<"button"> {
+  icon: ReactNode;
+}
 
 export const DropDownTrigger = ({
   className,
+  children,
   ...props
-}: React.ComponentProps<"button">) => {
+}: React.ComponentProps<"div">) => {
+  const [showDropDownOptions, setShowDropDownOptions] = useState(false);
+  return (
+    <div
+      className={mergeClasses(
+        className,
+        " bg-background hover:bg-accent p-2 rounded-md select-none"
+      )}
+      onClick={() => setShowDropDownOptions((prev) => !prev)}
+      {...props}
+    >
+      <EllipsisVertical className="text-black h-4 w-4" />
+      {showDropDownOptions ? (
+        <div className="absolute right-5 flex flex-col mt-4">{children}</div>
+      ) : null}
+    </div>
+  );
+};
+
+export const DropDownItem = ({
+  className,
+  children,
+  icon,
+  ...props
+}: DropDownItemProps) => {
   return (
     <Button
       className={mergeClasses(
         className,
-        " bg-background hover:bg-accent h-7 w-7"
+        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none"
       )}
       {...props}
     >
-      <EllipsisVertical className="text-black" />
+      {icon}
+      {children}
     </Button>
-  );
-};
-export const DropDownItem = ({
-  className,
-  ...props
-}: React.ComponentProps<"button">) => {
-  return (
-    <Button
-      className={mergeClasses(
-        className,
-        " bg-background hover:bg-accent h-10 w-full border-b-2 rounded-none"
-      )}
-      {...props}
-    />
   );
 };

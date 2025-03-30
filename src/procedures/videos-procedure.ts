@@ -14,7 +14,7 @@ export const VideosProcedure = createTRPCRouter({
         id: z.string().nonempty(),
         title: z.string(),
         description: z.string(),
-        categoryId: z.string(),
+        categoryId: z.string().nullish(),
         visibility: z.string(),
       })
     )
@@ -28,7 +28,7 @@ export const VideosProcedure = createTRPCRouter({
         .set({
           title: title,
           description: description,
-          categoryId: categoryId,
+          categoryId: categoryId || null,
           visibility: visibility,
         })
         .where(and(eq(videos.userId, id), eq(videos.id, videoId)))
@@ -42,6 +42,38 @@ export const VideosProcedure = createTRPCRouter({
         update,
       };
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().nonempty() }))
+    .mutation(async (opts) => {
+      const { id } = opts.ctx;
+      const { input } = opts;
+      const { id: videoId } = input;
+
+      if (!videoId) {
+        throw new TRPCError({
+          message: "Video Id should be present",
+          code: "NOT_FOUND",
+        });
+      }
+
+      const deletedVideo = await db
+        .delete(videos)
+        .where(and(eq(videos.id, videoId), eq(videos.userId, id)))
+        .returning();
+
+      if (!deletedVideo) {
+        throw new TRPCError({
+          message: "Deletion Failed",
+          code: "BAD_REQUEST",
+        });
+      }
+
+      return {
+        delete: deletedVideo,
+      };
+    }),
+
   create: protectedProcedure.mutation(async (opts) => {
     const { id } = opts.ctx;
 

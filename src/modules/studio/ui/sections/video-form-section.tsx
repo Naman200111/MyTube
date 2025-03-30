@@ -6,7 +6,7 @@ import { Select, SelectItem } from "@/components/select";
 import Textarea from "@/components/textarea";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-// import { EllipsisVertical } from "lucide-react";
+import { Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -21,10 +21,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const [video] = trpc.studio.getOne.useSuspenseQuery({ videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
-  // const [editClick, setEditClick] = useState(false);
-
-  // console.log(categories, "categories");
-
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
@@ -32,6 +28,16 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     },
     onError: () => {
       toast.error("Error while applying changes!");
+    },
+  });
+
+  const deleteVideo = trpc.videos.delete.useMutation({
+    onSuccess: () => {
+      utils.studio.getMany.invalidate();
+      toast.success("Video Deleted");
+    },
+    onError: () => {
+      toast.error("Video Deletion failed");
     },
   });
 
@@ -43,8 +49,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     visibility: video?.[0]?.visibility || "Private",
   });
 
-  // console.log(formData, "formData");
-
   const handleFormChange = (formField: string, value: string) => {
     setFormData((prev) => {
       return {
@@ -53,8 +57,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
       };
     });
   };
-
-  // console.log(editClick, "editClick");
 
   return (
     <div className="w-full px-6 pt-6 pb-4 flex flex-col gap-6 max-w-[1440px]">
@@ -65,7 +67,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             Manage your videos here
           </div>
         </div>
-        <div className="flex gap-4 items-center cursor-pointer">
+        <div className="flex gap-2 items-center cursor-pointer">
           <Link href="/studio">
             <Button
               onClick={() => update.mutate(formData)}
@@ -74,28 +76,16 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
               Save
             </Button>
           </Link>
-          {/* <div className="flex flex-col">
-            <DropDownTrigger
-              onClick={() => setEditClick(true)}
-              // onMouseLeave={() => setEditClick(false)}
-            />
-            {editClick && (
-              <div className="right-0 w-40 bg-white border rounded shadow-md">
-                <DropDownItem onClick={() => alert("Clicked 1")}>
-                  1
-                </DropDownItem>
-                <DropDownItem onClick={() => alert("Clicked 2")}>
-                  2
-                </DropDownItem>
-              </div>
-            )}
-          </div> */}
-          {/* <DropDownTrigger
-            onClick={() => setEditClick((prev) => !prev)}
-            onMouseLeave={() => setEditClick(false)}
-          >
-            {editClick ? <DropDownItem>1</DropDownItem> : null}
-          </DropDownTrigger> */}
+          <DropDownTrigger>
+            <Link href="/studio">
+              <DropDownItem
+                icon={<Trash />}
+                onClick={() => deleteVideo.mutate({ id: formData.id })}
+              >
+                Delete
+              </DropDownItem>
+            </Link>
+          </DropDownTrigger>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-10">
