@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const mergeClasses = (
   class1: string | undefined,
-  class2: string | undefined
+  class2?: string | undefined
 ) => {
   return `${class1 ? class1 : ""} ${class2 ? class2 : ""}`;
 };
