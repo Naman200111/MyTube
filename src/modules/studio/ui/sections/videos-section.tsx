@@ -12,8 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/table";
-import { getFormattedDate } from "@/lib/utils";
-import { Loader2Icon, Lock } from "lucide-react";
+import { getFormattedDate, getVideoTimeFromDuration } from "@/lib/utils";
+import { Globe2, Loader2Icon, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -42,8 +42,7 @@ const VideosSectionSuspense = () => {
   );
 
   const pages = data.pages;
-  const videos = pages?.[0]?.data || [];
-  console.log(pages, "pages");
+  const videos = pages.flatMap((page) => page.data) || [];
 
   return (
     <div>
@@ -68,23 +67,30 @@ const VideosSectionSuspense = () => {
                 className="hover:bg-primary-foreground cursor-pointer"
               >
                 <TableDescription>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col relative">
+                    <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground  text-background">
+                      {getVideoTimeFromDuration(video.duration)}
+                    </div>
                     <Image
                       src={video.thumbnailURL || "/placeholder.svg"}
                       alt="Fallback image"
                       width={160}
                       height={160}
-                      className="rounded-md"
+                      className="rounded-md w-full h-full object-cover"
                     />
                   </div>
                 </TableDescription>
                 <TableDescription>
-                  <div>{video.title}</div>
-                  <div>{video.description}</div>
+                  <div className="mb-2">{video.title}</div>
+                  <div className="line-clamp-2">{video.description}</div>
                 </TableDescription>
                 <TableDescription className="px-6 py-4">
                   <div className="flex items-center gap-1">
-                    <Lock className="h-4 w-4" />
+                    {video.visibility === "Private" ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <Globe2 className="h-4 w-4" />
+                    )}
                     <div>{video.visibility}</div>
                   </div>
                 </TableDescription>

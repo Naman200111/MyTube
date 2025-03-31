@@ -13,7 +13,7 @@ const StudioNavbar = () => {
           <div className="flex items-center gap-2">
             <Image src="/logo.svg" alt="Logo" width={40} height={40} />
             <p className="text-xl font-semibold">
-              <Link href="/">Studio</Link>
+              <Link href="/studio">Studio</Link>
             </p>
           </div>
         </div>

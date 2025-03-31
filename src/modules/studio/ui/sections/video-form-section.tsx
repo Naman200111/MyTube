@@ -6,11 +6,13 @@ import { Select, SelectItem } from "@/components/select";
 import Textarea from "@/components/textarea";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { Trash } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import MuxPlayer from "@mux/mux-player-react";
+import { getSnakeCasing } from "@/lib/utils";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -24,6 +26,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate();
       toast.success("Video Changes Saved");
     },
     onError: () => {
@@ -47,7 +50,11 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     description: video?.[0]?.description || "",
     categoryId: video?.[0]?.categoryId || "",
     visibility: video?.[0]?.visibility || "Private",
+    playbackId: video?.[0]?.playbackId || "",
+    muxStatus: video?.[0]?.muxStatus || "preparing",
   });
+
+  const videoLink = `http://localhost:3000/video/${formData.playbackId}`;
 
   const handleFormChange = (formField: string, value: string) => {
     setFormData((prev) => {
@@ -58,8 +65,13 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     });
   };
 
+  const handleCopyClick = () => {
+    toast.success("Copied to clipboard");
+    navigator.clipboard.writeText(videoLink);
+  };
+
   return (
-    <div className="w-full px-6 pt-6 pb-4 flex flex-col gap-6 max-w-[1440px]">
+    <div className="w-full px-6 pt-6 pb-4 flex flex-col gap-6 max-w-[1280px]">
       <div className="w-full flex justify-between">
         <div>
           <div className="text-2xl font-bold">Video Details</div>
@@ -88,8 +100,8 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </DropDownTrigger>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-10">
-        <div className="flex flex-col gap-8">
+      <div className="grid grid-cols-3 gap-14">
+        <div className="flex flex-col gap-8 col-span-2">
           <div className="flex flex-col">
             <span className="font-medium">Title</span>
             <Input
@@ -135,7 +147,48 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             </Select>
           </div>
         </div>
-        <div>column2</div>
+        <div className="flex flex-col gap-10 col-span-1 h-[60%]">
+          <div className="bg-gray-100 flex flex-col gap-10 rounded-md pb-4 text-muted-foreground">
+            <MuxPlayer
+              className="object-cover"
+              playbackId={formData.playbackId}
+              placeholder="/pplaceholder.svg"
+              playerInitTime={0}
+            />
+            <div className="flex flex-col gap-1 px-4">
+              <div>Video Link</div>
+              <div className="flex gap-2 items-center">
+                <div className="truncate text-blue-600">{videoLink}</div>
+                <Copy
+                  onClick={handleCopyClick}
+                  className="cursor-pointer"
+                  size={40}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 px-4 pb-4 ">
+              <span>Video Status</span>
+              <span className="text-primary">
+                {getSnakeCasing(formData.muxStatus)}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="font-medium">Visibility</span>
+            <Select
+              defaultValue={formData.visibility}
+              onChange={(e) => handleFormChange("visibility", e.target.value)}
+            >
+              <SelectItem key="private" value="Private">
+                Private
+              </SelectItem>
+              <SelectItem key="public" value="Public">
+                Public
+              </SelectItem>
+            </Select>
+          </div>
+        </div>
       </div>
     </div>
   );

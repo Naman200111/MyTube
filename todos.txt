@@ -1,6 +1,6 @@
-1. add duration
+1. add duration (done)
 2. dropdown for delete option partial (done)
-3. complete video form (add mux player, add mux status and visibility)
+3. complete video form (add mux player, add mux status and visibility) (done)
 
 
 adding skeletons

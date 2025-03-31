@@ -17,14 +17,16 @@ export const DropDownTrigger = ({
     <div
       className={mergeClasses(
         className,
-        " bg-background hover:bg-accent p-2 rounded-md select-none"
+        "relative bg-background hover:bg-accent p-2 rounded-md select-none"
       )}
       onClick={() => setShowDropDownOptions((prev) => !prev)}
       {...props}
     >
-      <EllipsisVertical className="text-black h-4 w-4" />
+      <EllipsisVertical className=" text-black h-4 w-4" />
       {showDropDownOptions ? (
-        <div className="absolute right-5 flex flex-col mt-4">{children}</div>
+        <div className="flex flex-col absolute right-0 z-[1] top-[40px]">
+          {children}
+        </div>
       ) : null}
     </div>
   );
@@ -40,7 +42,7 @@ export const DropDownItem = ({
     <Button
       className={mergeClasses(
         className,
-        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none"
+        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none "
       )}
       {...props}
     >

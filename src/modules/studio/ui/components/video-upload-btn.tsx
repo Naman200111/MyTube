@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,12 +12,18 @@ import { trpc } from "@/trpc/client";
 import { Loader2Icon, Plus } from "lucide-react";
 import MuxUploader from "@mux/mux-uploader-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const VideoUploadModal = () => {
+  const router = useRouter();
   const utils = trpc.useUtils();
+
+  const [muxUploaderVisibility, setMuxUploaderVisibility] = useState(false);
+
   const create = trpc.videos.create.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate();
       toast.success("Video created successfully");
     },
     onError: () => {
@@ -29,7 +36,10 @@ const VideoUploadModal = () => {
       <DialogTrigger asChild>
         <Button
           variant="secondary"
-          onClick={() => create.mutate()}
+          onClick={() => {
+            create.mutate();
+            setMuxUploaderVisibility(true);
+          }}
           disabled={create.isPending}
         >
           {create.isPending ? (
@@ -40,10 +50,18 @@ const VideoUploadModal = () => {
           Create
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogTitle>Upload Video</DialogTitle>
-        <MuxUploader endpoint={create.data?.url} />
-      </DialogContent>
+      {muxUploaderVisibility ? (
+        <DialogContent>
+          <DialogTitle>Upload Video</DialogTitle>
+          <MuxUploader
+            endpoint={create.data?.url}
+            onSuccess={() => {
+              router.push(`/studio/videos/${create.data?.video?.id}`);
+              setMuxUploaderVisibility(false);
+            }}
+          />
+        </DialogContent>
+      ) : null}
     </Dialog>
   );
 };

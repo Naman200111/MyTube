@@ -1,4 +1,9 @@
 import { mergeClasses } from "@/lib/utils";
+// import { ReactNode } from "react";
+
+// interface SelectItemProps extends React.ComponentProps<"div"> {
+//   icon?: ReactNode;
+// }
 
 export const Select = ({
   className,
@@ -17,6 +22,8 @@ export const Select = ({
 
 export const SelectItem = ({
   className,
+  children,
+  // icon,
   ...props
 }: React.ComponentProps<"option">) => {
   return (
@@ -26,6 +33,9 @@ export const SelectItem = ({
         "p-1 mt-2 pl-2 border rounded-md border-muted-foreground focus:border-muted-foreground"
       )}
       {...props}
-    />
+    >
+      {/* {icon} */}
+      {children}
+    </option>
   );
 };

@@ -23,3 +23,27 @@ export const getFormattedDate = (date: Date) => {
 
   return `${day}-${month}-${year} ${twelveHoursFormatHour}:${minutes} ${PMorAM}`;
 };
+
+export const getVideoTimeFromDuration = (duration: number = 0) => {
+  const hours = Math.floor(duration / 3600);
+  const minutes = Math.floor((duration % 3600) / 60);
+  const seconds = Math.floor(duration % 60);
+
+  const formattedSeconds = seconds.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  if (hours) {
+    return `${hours}:${formattedMinutes}:${formattedSeconds}`;
+  } else {
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
+};
+
+export const getSnakeCasing = (text: string) => {
+  const words = text.split(" ");
+  const snakeCasedString = "";
+  const snakeCasedWords = words.map((word) => {
+    return word[0].toUpperCase() + word.slice(1);
+  });
+  return snakeCasedString.concat(...snakeCasedWords.join(" "));
+};
