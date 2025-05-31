@@ -38,10 +38,11 @@ export const protectedProcedure = t.procedure.use(async (opts) => {
     throw new TRPCError({ code: "NOT_FOUND" });
   }
 
-  const { success } = await ratelimiter.limit(data.id);
-  if (!success) {
-    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-  }
+  // upstash db goes down after 14 days, commenting for now
+  // const { success } = await ratelimiter.limit(data.id);
+  // if (!success) {
+  //   throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+  // }
 
   return opts.next({
     ctx: {

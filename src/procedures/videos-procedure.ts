@@ -30,6 +30,7 @@ export const VideosProcedure = createTRPCRouter({
           description: description,
           categoryId: categoryId || null,
           visibility: visibility,
+          updatedAt: new Date(),
         })
         .where(and(eq(videos.userId, id), eq(videos.id, videoId)))
         .returning();

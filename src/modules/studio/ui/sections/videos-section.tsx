@@ -46,7 +46,7 @@ const VideosSectionSuspense = () => {
 
   return (
     <div>
-      <Table>
+      <Table className="w-full">
         <TableHeader className="text-gray-600 text-sm w-full h-10">
           <TableRow>
             <TableHead className="w-[10%]">Video</TableHead>

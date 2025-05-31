@@ -9,7 +9,7 @@ import { trpc } from "@/trpc/client";
 import { Copy, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import MuxPlayer from "@mux/mux-player-react";
 import { getSnakeCasing } from "@/lib/utils";
@@ -26,7 +26,9 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
-      utils.studio.getOne.invalidate();
+      // invalidate basically update a video values, so specifically updaing one video and keeping cache of others
+      // utils.studio.getOne.invalidate();
+      utils.studio.getOne.invalidate({ videoId });
       toast.success("Video Changes Saved");
     },
     onError: () => {
@@ -54,6 +56,18 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     muxStatus: video?.[0]?.muxStatus || "preparing",
   });
 
+  useEffect(() => {
+    setFormData({
+      id: video?.[0]?.id || "",
+      title: video?.[0]?.title || "",
+      description: video?.[0]?.description || "",
+      categoryId: video?.[0]?.categoryId || "",
+      visibility: video?.[0]?.visibility || "Private",
+      playbackId: video?.[0]?.playbackId || "",
+      muxStatus: video?.[0]?.muxStatus || "preparing",
+    });
+  }, [video]);
+
   const videoLink = `http://localhost:3000/video/${formData.playbackId}`;
 
   const handleFormChange = (formField: string, value: string) => {
@@ -79,7 +93,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             Manage your videos here
           </div>
         </div>
-        <div className="flex gap-2 items-center cursor-pointer">
+        <div className="flex gap-2 items-center cursor-pointer lg:col-span-2">
           <Link href="/studio">
             <Button
               onClick={() => update.mutate(formData)}
@@ -150,9 +164,9 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
         <div className="flex flex-col gap-10 col-span-1 h-[60%]">
           <div className="bg-gray-100 flex flex-col gap-10 rounded-md pb-4 text-muted-foreground">
             <MuxPlayer
-              className="object-cover"
+              className="object-contain"
               playbackId={formData.playbackId}
-              placeholder="/pplaceholder.svg"
+              placeholder="/placeholder.svg"
               playerInitTime={0}
             />
             <div className="flex flex-col gap-1 px-4">

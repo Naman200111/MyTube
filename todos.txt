@@ -1,6 +1,5 @@
-1. add duration (done)
-2. dropdown for delete option partial (done)
-3. complete video form (add mux player, add mux status and visibility) (done)
+1. add icons for private and public dropdown
+2. upload thumbnail option
 4. fix initial video upload UI issue in form section (copy icon size changes)
 
 
