@@ -6,7 +6,7 @@ import { Select, SelectItem } from "@/components/select";
 import Textarea from "@/components/textarea";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { Copy, Loader2Icon, Trash } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -49,7 +49,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     },
   });
 
-  const [videoLink, setVideoLink] = useState<string>("");
+  const videoLink = `http://localhost:3000/video/${video?.[0]?.id}`;
   const [formData, setFormData] = useState({
     id: video?.[0]?.id || "",
     title: video?.[0]?.title || "",
@@ -61,8 +61,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   });
 
   useEffect(() => {
-    if (video?.[0]?.playbackId) {
-      setVideoLink(`http://localhost:3000/video/${video?.[0]?.playbackId}`);
+    if (video?.[0]?.id) {
       setFormData((prev) => ({
         ...prev,
         playbackId: video?.[0]?.playbackId || "",
@@ -168,23 +167,19 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             />
             <div className="flex flex-col gap-1 px-4">
               <div>Video Link</div>
-              {videoLink ? (
-                <div className="flex gap-2 items-center">
-                  <div
-                    className="truncate text-blue-600 cursor-pointer"
-                    onClick={() => router.push(videoLink)}
-                  >
-                    {videoLink}
-                  </div>
-                  <Copy
-                    onClick={handleCopyClick}
-                    className="cursor-pointer text-slate-900"
-                    size={30}
-                  />
+              <div className="flex gap-2 items-center">
+                <div
+                  className="truncate text-blue-600 cursor-pointer"
+                  onClick={() => router.push(videoLink)}
+                >
+                  {videoLink}
                 </div>
-              ) : (
-                <Loader2Icon className="animate-spin text-blue-600" />
-              )}
+                <Copy
+                  onClick={handleCopyClick}
+                  className="cursor-pointer text-slate-900"
+                  size={30}
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-1 px-4 pb-4 ">
               <span>Video Status</span>

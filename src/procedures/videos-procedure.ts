@@ -2,12 +2,33 @@ import { db } from "@/db";
 import { videos } from "@/db/schema";
 
 import { mux } from "@/mux/mux";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
+  getOne: baseProcedure
+    .input(
+      z.object({
+        videoId: z.string().uuid().nonempty(),
+      })
+    )
+    .query(async (opts) => {
+      const { input } = opts;
+      const { videoId } = input;
+      // Todos: add user id check
+      const videoData = await db
+        .select()
+        .from(videos)
+        .where(eq(videos.id, videoId));
+      return videoData;
+    }),
+
   update: protectedProcedure
     .input(
       z.object({

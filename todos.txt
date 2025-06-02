@@ -1,6 +1,6 @@
 1. add icons for private and public dropdown
 2. upload thumbnail option
-4. fix initial video upload UI issue in form section (copy icon size changes)
+3. add background ai jobs
 
 
 adding skeletons
