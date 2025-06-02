@@ -6,13 +6,13 @@ import { Select, SelectItem } from "@/components/select";
 import Textarea from "@/components/textarea";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { Copy, Trash } from "lucide-react";
+import { Copy, Loader2Icon, Trash } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import MuxPlayer from "@mux/mux-player-react";
 import { getSnakeCasing } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -20,6 +20,7 @@ interface VideoFormSectionProps {
 
 const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const utils = trpc.useUtils();
+  const router = useRouter();
   const [video] = trpc.studio.getOne.useSuspenseQuery({ videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
@@ -30,6 +31,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
       // utils.studio.getOne.invalidate();
       utils.studio.getOne.invalidate({ videoId });
       toast.success("Video Changes Saved");
+      router.push("/studio");
     },
     onError: () => {
       toast.error("Error while applying changes!");
@@ -40,12 +42,14 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     onSuccess: () => {
       utils.studio.getMany.invalidate();
       toast.success("Video Deleted");
+      router.push("/studio");
     },
     onError: () => {
       toast.error("Video Deletion failed");
     },
   });
 
+  const [videoLink, setVideoLink] = useState<string>("");
   const [formData, setFormData] = useState({
     id: video?.[0]?.id || "",
     title: video?.[0]?.title || "",
@@ -57,18 +61,15 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   });
 
   useEffect(() => {
-    setFormData({
-      id: video?.[0]?.id || "",
-      title: video?.[0]?.title || "",
-      description: video?.[0]?.description || "",
-      categoryId: video?.[0]?.categoryId || "",
-      visibility: video?.[0]?.visibility || "Private",
-      playbackId: video?.[0]?.playbackId || "",
-      muxStatus: video?.[0]?.muxStatus || "preparing",
-    });
+    if (video?.[0]?.playbackId) {
+      setVideoLink(`http://localhost:3000/video/${video?.[0]?.playbackId}`);
+      setFormData((prev) => ({
+        ...prev,
+        playbackId: video?.[0]?.playbackId || "",
+        muxStatus: video?.[0]?.muxStatus || "",
+      }));
+    }
   }, [video]);
-
-  const videoLink = `http://localhost:3000/video/${formData.playbackId}`;
 
   const handleFormChange = (formField: string, value: string) => {
     setFormData((prev) => {
@@ -94,23 +95,19 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </div>
         </div>
         <div className="flex gap-2 items-center cursor-pointer lg:col-span-2">
-          <Link href="/studio">
-            <Button
-              onClick={() => update.mutate(formData)}
-              disabled={update.isPending}
-            >
-              Save
-            </Button>
-          </Link>
+          <Button
+            onClick={() => update.mutate(formData)}
+            disabled={update.isPending}
+          >
+            Save
+          </Button>
           <DropDownTrigger>
-            <Link href="/studio">
-              <DropDownItem
-                icon={<Trash />}
-                onClick={() => deleteVideo.mutate({ id: formData.id })}
-              >
-                Delete
-              </DropDownItem>
-            </Link>
+            <DropDownItem
+              icon={<Trash />}
+              onClick={() => deleteVideo.mutate({ id: formData.id })}
+            >
+              Delete
+            </DropDownItem>
           </DropDownTrigger>
         </div>
       </div>
@@ -161,24 +158,33 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             </Select>
           </div>
         </div>
-        <div className="flex flex-col gap-10 col-span-1 h-[60%]">
-          <div className="bg-gray-100 flex flex-col gap-10 rounded-md pb-4 text-muted-foreground">
+        <div className="flex flex-col gap-10 col-span-1">
+          <div className="bg-gray-100 flex flex-col gap-6 rounded-md pb-4 text-muted-foreground">
             <MuxPlayer
-              className="object-contain"
+              className="w-full aspect-video"
               playbackId={formData.playbackId}
               placeholder="/placeholder.svg"
               playerInitTime={0}
             />
             <div className="flex flex-col gap-1 px-4">
               <div>Video Link</div>
-              <div className="flex gap-2 items-center">
-                <div className="truncate text-blue-600">{videoLink}</div>
-                <Copy
-                  onClick={handleCopyClick}
-                  className="cursor-pointer"
-                  size={40}
-                />
-              </div>
+              {videoLink ? (
+                <div className="flex gap-2 items-center">
+                  <div
+                    className="truncate text-blue-600 cursor-pointer"
+                    onClick={() => router.push(videoLink)}
+                  >
+                    {videoLink}
+                  </div>
+                  <Copy
+                    onClick={handleCopyClick}
+                    className="cursor-pointer text-slate-900"
+                    size={30}
+                  />
+                </div>
+              ) : (
+                <Loader2Icon className="animate-spin text-blue-600" />
+              )}
             </div>
             <div className="flex flex-col gap-1 px-4 pb-4 ">
               <span>Video Status</span>

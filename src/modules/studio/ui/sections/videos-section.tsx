@@ -81,8 +81,10 @@ const VideosSectionSuspense = () => {
                   </div>
                 </TableDescription>
                 <TableDescription>
-                  <div className="mb-2">{video.title}</div>
-                  <div className="line-clamp-2">{video.description}</div>
+                  <div className="mb-2 text-lg">{video.title}</div>
+                  <div className="line-clamp-2 text-sm text-gray-800">
+                    {video.description}
+                  </div>
                 </TableDescription>
                 <TableDescription className="px-6 py-4">
                   <div className="flex items-center gap-1">

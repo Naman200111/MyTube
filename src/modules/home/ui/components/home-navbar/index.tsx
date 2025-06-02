@@ -1,8 +1,6 @@
-// import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import AuthButton from "@/modules/auth/ui/components/AuthButton";
-import { SearchIcon, VideoIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,7 +12,7 @@ const HomeNavbar = () => {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             <Image src="/logo.svg" alt="Logo" width={40} height={40} />
-            <p className="text-xl font-semibold">
+            <p className="hidden text-xl font-semibold md:block">
               <Link href="/">MyTube</Link>
             </p>
           </div>
@@ -24,20 +22,14 @@ const HomeNavbar = () => {
         <input
           type="text"
           placeholder="Search"
-          className="px-2 py-1 rounded-l-full border 
+          className="ml-2 px-2 py-1 rounded-l-full border 
         border-gray-300 max-w-[500px] w-full"
         />
-        <button className="px-2 py-1 border border-gray-300 rounded-r-full border-l-0 bg-gray-100">
-          <SearchIcon className="mx-1 text-gray-500 ml-2  cursor-pointer" />
+        <button className="mr-2 px-2 py-1 border border-gray-300 rounded-r-full border-l-0 bg-gray-100">
+          <SearchIcon className="mx-1 text-gray-500 ml-2 cursor-pointer" />
         </button>
       </div>
       <div className="flex gap-2">
-        <Link href={"/studio"}>
-          <Button variant="default">
-            <VideoIcon />
-            Studio
-          </Button>
-        </Link>
         <AuthButton />
       </div>
     </div>
