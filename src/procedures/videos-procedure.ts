@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { videos } from "@/db/schema";
+import { users, videos } from "@/db/schema";
 
 import { mux } from "@/mux/mux";
 import {
@@ -7,8 +7,9 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
+import { TRPCClientError } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
@@ -21,11 +22,19 @@ export const VideosProcedure = createTRPCRouter({
     .query(async (opts) => {
       const { input } = opts;
       const { videoId } = input;
-      // Todos: add user id check
+
       const videoData = await db
-        .select()
+        .select({
+          ...getTableColumns(users),
+          ...getTableColumns(videos),
+        })
         .from(videos)
+        .innerJoin(users, eq(videos.userId, users.id))
         .where(eq(videos.id, videoId));
+
+      if (!videoData) {
+        throw new TRPCError({ message: "Video not found", code: "NOT_FOUND" });
+      }
       return videoData;
     }),
 

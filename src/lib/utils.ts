@@ -42,8 +42,43 @@ export const getVideoTimeFromDuration = (duration: number = 0) => {
 export const getSnakeCasing = (text: string) => {
   const words = text.split(" ");
   const snakeCasedString = "";
+  console.log(words, "words");
   const snakeCasedWords = words.map((word) => {
+    console.log(word, "word");
     return word[0].toUpperCase() + word.slice(1);
   });
   return snakeCasedString.concat(...snakeCasedWords.join(" "));
+};
+
+export const getLongFormDateFromDate = (date: Date) => {
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
+export const getShortFormDateFromDate = (date: Date) => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  const minute = 60;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  const month = 30 * day; // Approximation
+  const year = 365 * day; // Approximation
+
+  if (diffInSeconds < minute) return `${diffInSeconds} seconds ago`;
+  if (diffInSeconds < hour)
+    return `${Math.floor(diffInSeconds / minute)} minutes ago`;
+  if (diffInSeconds < day)
+    return `${Math.floor(diffInSeconds / hour)} hours ago`;
+  if (diffInSeconds < week)
+    return `${Math.floor(diffInSeconds / day)} days ago`;
+  if (diffInSeconds < month)
+    return `${Math.floor(diffInSeconds / week)} weeks ago`;
+  if (diffInSeconds < year)
+    return `${Math.floor(diffInSeconds / month)} months ago`;
+  return `${Math.floor(diffInSeconds / year)} years ago`;
 };
