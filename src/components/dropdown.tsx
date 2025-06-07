@@ -4,7 +4,7 @@ import { mergeClasses } from "@/lib/utils";
 import { ReactNode, useState } from "react";
 
 interface DropDownItemProps extends React.ComponentProps<"button"> {
-  icon: ReactNode;
+  icon?: ReactNode;
 }
 
 export const DropDownTrigger = ({
@@ -15,16 +15,13 @@ export const DropDownTrigger = ({
   const [showDropDownOptions, setShowDropDownOptions] = useState(false);
   return (
     <div
-      className={mergeClasses(
-        className,
-        "relative bg-background hover:bg-accent p-2 rounded-md select-none"
-      )}
+      className={mergeClasses(className, "relative p-2 rounded-md select-none")}
       onClick={() => setShowDropDownOptions((prev) => !prev)}
       {...props}
     >
       <EllipsisVertical className=" text-black h-4 w-4" />
       {showDropDownOptions ? (
-        <div className="flex flex-col absolute right-0 z-[1] top-[40px]">
+        <div className="flex flex-col absolute right-0 z-[1] top-[40px] items-start">
           {children}
         </div>
       ) : null}
@@ -42,7 +39,7 @@ export const DropDownItem = ({
     <Button
       className={mergeClasses(
         className,
-        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none "
+        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none"
       )}
       {...props}
     >

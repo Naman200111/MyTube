@@ -1,5 +1,12 @@
+import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+  ListPlusIcon,
+  ShareIcon,
+  ThumbsDown,
+  ThumbsUp,
+  Trash,
+} from "lucide-react";
 import Image from "next/image";
 
 interface VideoStatsProps {
@@ -12,7 +19,7 @@ const VideoStats = ({ title, name, imageUrl }: VideoStatsProps) => {
     <div className="flex flex-col gap-2">
       <p className="font-bold">{title}</p>
       <div className="flex justify-between">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Image
             src={imageUrl}
             alt="P"
@@ -28,7 +35,7 @@ const VideoStats = ({ title, name, imageUrl }: VideoStatsProps) => {
           <Button className="rounded-full">Subscribe</Button>
         </div>
         <div className="flex gap-4">
-          <div className="flex items-center">
+          <div className="flex items-center cursor-pointer">
             <div className="p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-gray-100">
               <ThumbsUp className="" size={15} />
               <p className="text-xs">20</p>
@@ -37,8 +44,21 @@ const VideoStats = ({ title, name, imageUrl }: VideoStatsProps) => {
               <ThumbsDown size={15} />
             </div>
           </div>
-          <div className="p-3 rounded-full bg-gray-100 flex items-center">
-            <Ellipsis size={10} />
+          <div className="rounded-full bg-gray-100 flex items-center cursor-pointer">
+            <DropDownTrigger className="bg-accent flex">
+              <DropDownItem
+                className="w-[150px] self-start justify-self-start"
+                icon={<ShareIcon />}
+              >
+                Share
+              </DropDownItem>
+              <DropDownItem className="w-[150px]" icon={<ListPlusIcon />}>
+                Add to playlist
+              </DropDownItem>
+              <DropDownItem className="w-[150px]" icon={<Trash />}>
+                Remove
+              </DropDownItem>
+            </DropDownTrigger>
           </div>
         </div>
       </div>

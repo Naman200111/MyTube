@@ -56,4 +56,16 @@ export const videos = pgTable("videos", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const videoViews = pgTable("video_views", {
+  id: uuid("id").notNull().defaultRandom().primaryKey(),
+  videoId: uuid("video_id")
+    .notNull()
+    .references(() => videos.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  // updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const createVideoInsertSchema = createInsertSchema(videos);
