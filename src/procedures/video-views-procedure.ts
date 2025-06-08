@@ -1,10 +1,11 @@
 import { db } from "@/db";
 import { videoViews } from "@/db/schema";
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideoViewsProcedure = createTRPCRouter({
-  create: baseProcedure
+  create: protectedProcedure
     .input(
       z.object({
         userId: z.string().uuid().nonempty(),
@@ -12,9 +13,17 @@ export const VideoViewsProcedure = createTRPCRouter({
       })
     )
     .mutation(async (opts) => {
-      const { input, ctx } = opts;
-      // const { clerkUserId } =  ctx;
+      const { input } = opts;
       const { userId, videoId } = input;
+      const [existingView] = await db
+        .select()
+        .from(videoViews)
+        .where(
+          and(eq(videoViews.userId, userId), eq(videoViews.videoId, videoId))
+        );
+      if (existingView) {
+        return existingView;
+      }
       const data = await db
         .insert(videoViews)
         .values({

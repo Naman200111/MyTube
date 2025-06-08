@@ -25,8 +25,31 @@ const VideoSection = ({ videoId }: VideoSectionProps) => {
 
 const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
   const [data] = trpc.videos.getOne.useSuspenseQuery({ videoId });
-  const { muxStatus, title, description, createdAt, imageUrl, name } = data[0];
+  const {
+    muxStatus,
+    title,
+    description,
+    createdAt,
+    imageUrl,
+    name,
+    userId,
+    id,
+    view_count: viewCount,
+  } = data[0];
+
   const isProcessing = muxStatus !== "ready";
+  const utils = trpc.useUtils();
+  const createView = trpc.videoViews.create.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate();
+    },
+  });
+  const handlePlay = () => {
+    createView.mutate({
+      userId,
+      videoId: id,
+    });
+  };
 
   return (
     <>
@@ -37,7 +60,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         )}
       >
         <>
-          <VideoPlayer playbackId={data?.[0]?.playbackId} autoPlay={true} />
+          <VideoPlayer playbackId={data?.[0]?.playbackId} onPlay={handlePlay} />
           {isProcessing ? (
             <div className="p-2 bg-yellow-300 flex gap-2">
               <AlertTriangleIcon />
@@ -47,7 +70,11 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         </>
       </div>
       <VideoStats title={title} imageUrl={imageUrl} name={name} />
-      <VideoDescription createdAt={createdAt} description={description} />
+      <VideoDescription
+        createdAt={createdAt}
+        description={description}
+        viewCount={viewCount}
+      />
     </>
   );
 };

@@ -1,6 +1,8 @@
 import {
   getLongFormDateFromDate,
   getShortFormDateFromDate,
+  getViewCountLongForm,
+  getViewCountShortForm,
   mergeClasses,
 } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -9,22 +11,25 @@ import { useState } from "react";
 interface VideoDescriptionProps {
   createdAt: Date;
   description: string | null;
+  viewCount: number;
 }
 const VideoDescription = ({
   createdAt,
   description,
+  viewCount,
 }: VideoDescriptionProps) => {
   const [showingMoreDesc, setShowingMoreDesc] = useState<boolean>(false);
   const createdAtLongForm = getLongFormDateFromDate(createdAt);
   const createdAtShortForm = getShortFormDateFromDate(createdAt);
+  const viewCountLongForm = getViewCountLongForm(viewCount);
+  const viewCountShortForm = getViewCountShortForm(viewCount);
   return (
     <div className="bg-gray-100 p-2 rounded-md">
       <div className="mb-1">
-        <p>
-          {/* Todo: actual views from database */}V Views{" "}
+        <p className="text-sm font-semibold">
+          {showingMoreDesc ? viewCountLongForm : viewCountShortForm} views{" "}
           {showingMoreDesc ? createdAtLongForm : createdAtShortForm}
         </p>
-        {/* views and date posted */}
       </div>
       <div
         className={mergeClasses(showingMoreDesc ? "mb-1" : "line-clamp-2 mb-1")}
@@ -32,7 +37,7 @@ const VideoDescription = ({
         {description || "No Description"}
       </div>
       <div
-        className="text-sm select-none cursor-pointer"
+        className="text-sm select-none cursor-pointer font-semibold"
         onClick={() => setShowingMoreDesc((prev) => !prev)}
       >
         {showingMoreDesc ? (

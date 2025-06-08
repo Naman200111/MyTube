@@ -2,17 +2,13 @@ import { db } from "@/db";
 import { users, videos, videoViews } from "@/db/schema";
 
 import { mux } from "@/mux/mux";
-import {
-  baseProcedure,
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
-  getOne: baseProcedure
+  getOne: protectedProcedure
     .input(
       z.object({
         videoId: z.string().uuid().nonempty(),
@@ -26,6 +22,8 @@ export const VideosProcedure = createTRPCRouter({
         .select({
           ...getTableColumns(users),
           ...getTableColumns(videos),
+          // creates a subquery
+          view_count: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
         })
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))

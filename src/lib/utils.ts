@@ -82,3 +82,14 @@ export const getShortFormDateFromDate = (date: Date) => {
     return `${Math.floor(diffInSeconds / month)} months ago`;
   return `${Math.floor(diffInSeconds / year)} years ago`;
 };
+
+export const getViewCountLongForm = (num: number) => {
+  return num.toLocaleString("en-us");
+};
+
+export const getViewCountShortForm = (num: number) => {
+  if (num >= 1e7) return (num / 1e7).toFixed(2).replace(/\.0$/, "") + " Cr";
+  if (num >= 1e5) return (num / 1e5).toFixed(2).replace(/\.0$/, "") + " Lakh";
+  if (num >= 1e3) return (num / 1e3).toFixed(2).replace(/\.0$/, "") + " K";
+  return num.toString();
+};

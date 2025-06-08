@@ -5,8 +5,11 @@ import {
   timestamp,
   uniqueIndex,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+
+const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
 
 export const users = pgTable(
   "users",
@@ -65,7 +68,18 @@ export const videoViews = pgTable("video_views", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  // updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const videoReactions = pgTable("video_reactions", {
+  id: uuid("id").defaultRandom().notNull().primaryKey(),
+  videoId: uuid("video_id")
+    .notNull()
+    .references(() => videos.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  type: reactionType("type").notNull(),
 });
 
 export const createVideoInsertSchema = createInsertSchema(videos);
