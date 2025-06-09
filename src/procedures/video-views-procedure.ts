@@ -8,13 +8,13 @@ export const VideoViewsProcedure = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        userId: z.string().uuid().nonempty(),
         videoId: z.string().uuid().nonempty(),
       })
     )
     .mutation(async (opts) => {
-      const { input } = opts;
-      const { userId, videoId } = input;
+      const { input, ctx } = opts;
+      const { id: userId } = ctx;
+      const { videoId } = input;
       const [existingView] = await db
         .select()
         .from(videoViews)

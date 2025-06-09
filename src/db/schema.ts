@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
-const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
+export const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
 
 export const users = pgTable(
   "users",

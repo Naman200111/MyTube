@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { users, videos, videoViews } from "@/db/schema";
+import { users, videoReactions, videos, videoViews } from "@/db/schema";
 
 import { mux } from "@/mux/mux";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
@@ -24,6 +24,20 @@ export const VideosProcedure = createTRPCRouter({
           ...getTableColumns(videos),
           // creates a subquery
           view_count: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          like_count: db.$count(
+            videoReactions,
+            and(
+              eq(videos.id, videoReactions.videoId),
+              eq(videoReactions.type, "like")
+            )
+          ),
+          dislike_count: db.$count(
+            videoReactions,
+            and(
+              eq(videos.id, videoReactions.videoId),
+              eq(videoReactions.type, "dislike")
+            )
+          ),
         })
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))

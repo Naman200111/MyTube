@@ -32,9 +32,10 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     createdAt,
     imageUrl,
     name,
-    userId,
     id,
     view_count: viewCount,
+    like_count: likeCount,
+    dislike_count: dislikeCount,
   } = data[0];
 
   const isProcessing = muxStatus !== "ready";
@@ -46,7 +47,6 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
   });
   const handlePlay = () => {
     createView.mutate({
-      userId,
       videoId: id,
     });
   };
@@ -69,7 +69,14 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
           ) : null}
         </>
       </div>
-      <VideoStats title={title} imageUrl={imageUrl} name={name} />
+      <VideoStats
+        title={title}
+        imageUrl={imageUrl}
+        name={name}
+        videoId={id}
+        likeCount={likeCount}
+        dislikeCount={dislikeCount}
+      />
       <VideoDescription
         createdAt={createdAt}
         description={description}

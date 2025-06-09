@@ -1,8 +1,8 @@
 import {
   getLongFormDateFromDate,
   getShortFormDateFromDate,
-  getViewCountLongForm,
-  getViewCountShortForm,
+  getCountLongForm,
+  getCountShortForm,
   mergeClasses,
 } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -21,8 +21,9 @@ const VideoDescription = ({
   const [showingMoreDesc, setShowingMoreDesc] = useState<boolean>(false);
   const createdAtLongForm = getLongFormDateFromDate(createdAt);
   const createdAtShortForm = getShortFormDateFromDate(createdAt);
-  const viewCountLongForm = getViewCountLongForm(viewCount);
-  const viewCountShortForm = getViewCountShortForm(viewCount);
+  const viewCountLongForm = getCountLongForm(viewCount);
+  const viewCountShortForm = getCountShortForm(viewCount);
+
   return (
     <div className="bg-gray-100 p-2 rounded-md">
       <div className="mb-1">

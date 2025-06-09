@@ -1,5 +1,7 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
+import { getCountShortForm, mergeClasses } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
 import {
   ListPlusIcon,
   ShareIcon,
@@ -8,13 +10,77 @@ import {
   Trash,
 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface VideoStatsProps {
   title: string;
   name: string;
   imageUrl: string;
+  videoId: string;
+  likeCount: number;
+  dislikeCount: number;
 }
-const VideoStats = ({ title, name, imageUrl }: VideoStatsProps) => {
+
+type VideoReactionType = "like" | "dislike";
+
+const VideoStats = ({
+  title,
+  name,
+  imageUrl,
+  videoId,
+  likeCount,
+  dislikeCount,
+}: VideoStatsProps) => {
+  const utils = trpc.useUtils();
+  const [reactionUpdateInProgress, setReactionUpdateInProgress] =
+    useState(false);
+  const [userReaction] = trpc.videoReactions.getOne.useSuspenseQuery({
+    videoId,
+  });
+
+  const likeReaction = trpc.videoReactions.like.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate({ videoId });
+      utils.videoReactions.getOne.invalidate({ videoId });
+      setReactionUpdateInProgress(false);
+    },
+    onError: () => {
+      toast.error("Failed to like video");
+    },
+  });
+
+  const dislikeReaction = trpc.videoReactions.dislike.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate({ videoId });
+      utils.videoReactions.getOne.invalidate({ videoId });
+      setReactionUpdateInProgress(false);
+    },
+    onError: () => {
+      toast.error("Failed to dislike video");
+    },
+  });
+
+  const handleVideoReaction = (type: VideoReactionType) => {
+    if (reactionUpdateInProgress) return;
+    setReactionUpdateInProgress(true);
+    if (type === "like") {
+      likeReaction.mutate({
+        videoId,
+      });
+    } else {
+      dislikeReaction.mutate({
+        videoId,
+      });
+    }
+  };
+
+  const likeCountNomenclature = getCountShortForm(likeCount);
+  const dislikeCountNomenclature = getCountShortForm(dislikeCount);
+  const likeButtonFillValue = userReaction.type === "like" ? "black" : "none";
+  const dislikeButtonFillValue =
+    userReaction.type === "dislike" ? "black" : "none";
+
   return (
     <div className="flex flex-col gap-2">
       <p className="font-bold">{title}</p>
@@ -36,12 +102,25 @@ const VideoStats = ({ title, name, imageUrl }: VideoStatsProps) => {
         </div>
         <div className="flex gap-4">
           <div className="flex items-center cursor-pointer">
-            <div className="p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-gray-100">
-              <ThumbsUp className="" size={15} />
-              <p className="text-xs">20</p>
+            <div
+              className={mergeClasses(
+                "p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-gray-100 hover:bg-slate-200",
+                reactionUpdateInProgress ? "opacity-50" : ""
+              )}
+              onClick={() => handleVideoReaction("like")}
+            >
+              <ThumbsUp fill={likeButtonFillValue} size={15} />
+              <p className="text-xs">{likeCountNomenclature}</p>
             </div>
-            <div className="p-2 rounded-full rounded-l-none bg-gray-100 flex gap-2 items-center">
-              <ThumbsDown size={15} />
+            <div
+              className={mergeClasses(
+                "p-2 rounded-full rounded-l-none bg-gray-100 flex gap-2 items-center hover:bg-slate-200",
+                reactionUpdateInProgress ? "opacity-50" : ""
+              )}
+              onClick={() => handleVideoReaction("dislike")}
+            >
+              <ThumbsDown fill={dislikeButtonFillValue} size={15} />
+              <p className="text-xs">{dislikeCountNomenclature}</p>
             </div>
           </div>
           <div className="rounded-full bg-gray-100 flex items-center cursor-pointer">
