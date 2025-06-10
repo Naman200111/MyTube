@@ -100,22 +100,4 @@ export const VideoReactionProcedure = createTRPCRouter({
         type: "dislike",
       });
     }),
-
-  getOne: protectedProcedure
-    .input(z.object({ videoId: z.string().uuid().nonempty() }))
-    .query(async (opts) => {
-      const { input, ctx } = opts;
-      const { videoId } = input;
-      const { id: userId } = ctx;
-      const [getReaction] = await db
-        .select()
-        .from(videoReactions)
-        .where(
-          and(
-            eq(videoReactions.videoId, videoId),
-            eq(videoReactions.userId, userId)
-          )
-        );
-      return getReaction || {};
-    }),
 });

@@ -36,6 +36,18 @@ export const categories = pgTable(
   (t) => [uniqueIndex("name_idx").on(t.name)]
 );
 
+export const subscriptions = pgTable("subscriptions", {
+  id: uuid("id").defaultRandom().notNull().primaryKey(),
+  creatorId: uuid("creator_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  viewerId: uuid("viewer_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const videos = pgTable("videos", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
   title: text("title").notNull(),
@@ -80,6 +92,8 @@ export const videoReactions = pgTable("video_reactions", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   type: reactionType("type").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const createVideoInsertSchema = createInsertSchema(videos);

@@ -1,52 +1,107 @@
 import { db } from "@/db";
-import { users, videoReactions, videos, videoViews } from "@/db/schema";
+import {
+  subscriptions,
+  users,
+  videoReactions,
+  videos,
+  videoViews,
+} from "@/db/schema";
 
 import { mux } from "@/mux/mux";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
-  getOne: protectedProcedure
+  getOne: baseProcedure
     .input(
       z.object({
         videoId: z.string().uuid().nonempty(),
       })
     )
     .query(async (opts) => {
-      const { input } = opts;
+      const { input, ctx } = opts;
+      const { clerkUserId } = ctx;
       const { videoId } = input;
 
+      // Todos: add support to non login user also watch video
+      if (!clerkUserId) {
+        throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
+      }
+
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkId, clerkUserId));
+      if (!user) {
+        throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
+      }
+
+      const viewerReactionWithTable = db.$with("viewer_reaction").as(
+        db
+          .select({
+            videoId: videoReactions.videoId,
+            type: videoReactions.type,
+          })
+          .from(videoReactions)
+          .where(eq(videoReactions.userId, user.id))
+      );
+
+      console.log(user.id);
       const videoData = await db
+        .with(viewerReactionWithTable)
         .select({
           ...getTableColumns(users),
           ...getTableColumns(videos),
           // creates a subquery
-          view_count: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
-          like_count: db.$count(
+          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          likeCount: db.$count(
             videoReactions,
             and(
               eq(videos.id, videoReactions.videoId),
               eq(videoReactions.type, "like")
             )
           ),
-          dislike_count: db.$count(
+          dislikeCount: db.$count(
             videoReactions,
             and(
               eq(videos.id, videoReactions.videoId),
               eq(videoReactions.type, "dislike")
             )
           ),
+          viewerReaction: viewerReactionWithTable.type,
+          subscribersCount: db.$count(
+            subscriptions,
+            eq(subscriptions.creatorId, users.id)
+          ),
+          // Todos: make this boolean instead of count
+          isViewerSubscribed: db.$count(
+            subscriptions,
+            and(
+              eq(subscriptions.creatorId, users.id),
+              eq(subscriptions.viewerId, user.id)
+            )
+          ),
         })
         .from(videos)
         .innerJoin(users, eq(videos.userId, users.id))
-        // .innerJoin(videoViews, eq(videos.id, videoViews.videoId))
+        .leftJoin(
+          viewerReactionWithTable,
+          eq(videos.id, viewerReactionWithTable.videoId)
+        )
         .where(eq(videos.id, videoId));
 
+      //Todo : remove console
+      console.log(videoData, "videoData");
       if (!videoData) {
         throw new TRPCError({ message: "Video not found", code: "NOT_FOUND" });
       }
+
       return videoData;
     }),
 

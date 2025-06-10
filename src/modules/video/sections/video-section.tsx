@@ -33,9 +33,12 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     imageUrl,
     name,
     id,
-    view_count: viewCount,
-    like_count: likeCount,
-    dislike_count: dislikeCount,
+    viewCount,
+    likeCount,
+    dislikeCount,
+    viewerReaction,
+    subscribersCount,
+    isViewerSubscribed,
   } = data[0];
 
   const isProcessing = muxStatus !== "ready";
@@ -76,6 +79,9 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         videoId={id}
         likeCount={likeCount}
         dislikeCount={dislikeCount}
+        viewerReaction={viewerReaction}
+        subscribersCount={subscribersCount}
+        isViewerSubscribed={isViewerSubscribed}
       />
       <VideoDescription
         createdAt={createdAt}

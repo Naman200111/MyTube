@@ -2,6 +2,7 @@ import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
 import { getCountShortForm, mergeClasses } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { useAuth, useClerk } from "@clerk/nextjs";
 import {
   ListPlusIcon,
   ShareIcon,
@@ -13,6 +14,9 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
+type VideoReactionType = "like" | "dislike" | null;
+type SubscribeOptions = "subscribe" | "unsubscribe";
+
 interface VideoStatsProps {
   title: string;
   name: string;
@@ -20,9 +24,10 @@ interface VideoStatsProps {
   videoId: string;
   likeCount: number;
   dislikeCount: number;
+  viewerReaction: VideoReactionType;
+  subscribersCount: number;
+  isViewerSubscribed: number;
 }
-
-type VideoReactionType = "like" | "dislike";
 
 const VideoStats = ({
   title,
@@ -31,21 +36,29 @@ const VideoStats = ({
   videoId,
   likeCount,
   dislikeCount,
+  viewerReaction,
+  subscribersCount,
+  isViewerSubscribed,
 }: VideoStatsProps) => {
   const utils = trpc.useUtils();
+  const auth = useAuth();
+  const clerk = useClerk();
+
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
-  const [userReaction] = trpc.videoReactions.getOne.useSuspenseQuery({
-    videoId,
-  });
 
   const likeReaction = trpc.videoReactions.like.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
-      utils.videoReactions.getOne.invalidate({ videoId });
       setReactionUpdateInProgress(false);
     },
     onError: () => {
+      // Todos: Ask user to sign in
+      if (!auth.isSignedIn) {
+        clerk.openSignIn();
+        return;
+      }
+      setReactionUpdateInProgress(false);
       toast.error("Failed to like video");
     },
   });
@@ -53,11 +66,33 @@ const VideoStats = ({
   const dislikeReaction = trpc.videoReactions.dislike.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
-      utils.videoReactions.getOne.invalidate({ videoId });
       setReactionUpdateInProgress(false);
     },
     onError: () => {
+      // Todos: Ask user to sign in
+      if (!auth.isSignedIn) {
+        clerk.openSignIn();
+        return;
+      }
+      setReactionUpdateInProgress(false);
       toast.error("Failed to dislike video");
+    },
+  });
+
+  const subscribe = trpc.subscriptions.subscribe.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate({ videoId });
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+  const unsubscribe = trpc.subscriptions.unsubscribe.useMutation({
+    onSuccess: () => {
+      utils.videos.getOne.invalidate({ videoId });
+    },
+    onError: () => {
+      toast.error("Something went wrong");
     },
   });
 
@@ -75,11 +110,24 @@ const VideoStats = ({
     }
   };
 
+  const handleSubscribeOperation = (type: SubscribeOptions) => {
+    if (!auth.isSignedIn) {
+      clerk.openSignIn();
+      return;
+    }
+    if (type == "subscribe") {
+      subscribe.mutate({ videoId });
+    } else {
+      unsubscribe.mutate({ videoId });
+    }
+  };
+
   const likeCountNomenclature = getCountShortForm(likeCount);
   const dislikeCountNomenclature = getCountShortForm(dislikeCount);
-  const likeButtonFillValue = userReaction.type === "like" ? "black" : "none";
+  const likeButtonFillValue = viewerReaction === "like" ? "black" : "none";
   const dislikeButtonFillValue =
-    userReaction.type === "dislike" ? "black" : "none";
+    viewerReaction === "dislike" ? "black" : "none";
+  const subscribersCountNomenclature = getCountShortForm(subscribersCount);
 
   return (
     <div className="flex flex-col gap-2">
@@ -96,9 +144,27 @@ const VideoStats = ({
           <div>
             <p className="text-sm font-bold">{name}</p>
             {/* Todo: fill with actual data */}
-            <p className="text-xs">X subscribers</p>
+            <p className="text-xs">
+              {subscribersCountNomenclature} subscribers
+            </p>
           </div>
-          <Button className="rounded-full">Subscribe</Button>
+          {!isViewerSubscribed ? (
+            <Button
+              className="rounded-full"
+              onClick={() => handleSubscribeOperation("subscribe")}
+              disabled={subscribe.isPending || unsubscribe.isPending}
+            >
+              Subscribe
+            </Button>
+          ) : (
+            <Button
+              className="rounded-full"
+              onClick={() => handleSubscribeOperation("unsubscribe")}
+              disabled={subscribe.isPending || unsubscribe.isPending}
+            >
+              Unsubscribe
+            </Button>
+          )}
         </div>
         <div className="flex gap-4">
           <div className="flex items-center cursor-pointer">

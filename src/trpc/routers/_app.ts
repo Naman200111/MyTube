@@ -4,10 +4,12 @@ import { categoryProcedure } from "@/procedures/category-procedure";
 import { VideosProcedure } from "@/procedures/videos-procedure";
 import { VideoViewsProcedure } from "@/procedures/video-views-procedure";
 import { VideoReactionProcedure } from "@/procedures/video-reactions-procedure";
+import { subscriptionProcedure } from "@/procedures/subscription-procedure";
 
 export const appRouter = createTRPCRouter({
   categories: categoryProcedure,
   studio: StudioProcedure,
+  subscriptions: subscriptionProcedure,
   videos: VideosProcedure,
   videoViews: VideoViewsProcedure,
   videoReactions: VideoReactionProcedure,
