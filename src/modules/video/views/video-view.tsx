@@ -1,4 +1,4 @@
-import CommentsSection from "../sections/comments-section";
+import CommentSection from "../sections/comments-section";
 import SuggestionSection from "../sections/subscription-section";
 import VideoSection from "../sections/video-section";
 
@@ -11,7 +11,7 @@ const VideoView = ({ videoId }: VideoViewProps) => {
     <div className="flex flex-col gap-4 flex-1 mx-auto max-w-[1440px] p-2 lg:px-6 lg:flex-row">
       <div className="flex flex-col gap-4 lg:w-[70%]">
         <VideoSection videoId={videoId} />
-        <CommentsSection />
+        <CommentSection videoId={videoId} />
       </div>
       <SuggestionSection />
     </div>

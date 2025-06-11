@@ -116,7 +116,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             <span className="font-medium">Title</span>
             <Input
               type="text"
-              className="text-sm"
+              className="text-sm mt-2 pl-2"
               value={formData.title}
               placeholder="Video Title"
               onChange={(e) => handleFormChange("title", e.target.value)}
