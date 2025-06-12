@@ -13,10 +13,15 @@ export const DropDownTrigger = ({
   ...props
 }: React.ComponentProps<"div">) => {
   const [showDropDownOptions, setShowDropDownOptions] = useState(false);
+
   return (
     <div
       className={mergeClasses(className, "relative p-2 rounded-md select-none")}
-      onClick={() => setShowDropDownOptions((prev) => !prev)}
+      onClick={(e) => {
+        // Todos: open only one dropdown when clicked in case of comments (not one for each)
+        e.stopPropagation();
+        setShowDropDownOptions((prev) => !prev);
+      }}
       {...props}
     >
       <EllipsisVertical className=" text-black h-4 w-4" />

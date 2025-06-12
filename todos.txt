@@ -4,3 +4,8 @@
 
 
 adding skeletons
+
+
+next first upcoming pointers
+handle multiple dropdown in comments issue
+add infinite loading in comments

@@ -28,10 +28,11 @@ const CommentSectionSuspense = ({ videoId }: CommentSectionProps) => {
       {/* comments */}
       <div className="font-semibold">0 Comments</div>
       <CommentInput videoId={videoId} />
-      <div>
+      <div className="flex flex-col gap-6">
         {commentsList.map((commentItem, index) => (
           <CommentItem key={index} commentItem={commentItem} />
         ))}
+        <div className="my-4 text-gray-600 self-center">End of comments</div>
       </div>
     </div>
   );

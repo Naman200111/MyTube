@@ -6,7 +6,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { eq, getTableColumns } from "drizzle-orm";
+import { desc, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 
 export const CommentsProcedure = createTRPCRouter({
@@ -26,13 +26,14 @@ export const CommentsProcedure = createTRPCRouter({
       if (!user) {
         return new TRPCError({ message: "Unauthorized", code: "UNAUTHORIZED" });
       }
-      console.log(user.id, "userid");
+
       const [comment] = await db
         .insert(comments)
         .values({ videoId, userId: user.id, value })
         .returning();
       return comment;
     }),
+
   getMany: baseProcedure
     .input(z.object({ videoId: z.string().uuid().nonempty() }))
     .query(async ({ input: { videoId } }) => {
@@ -45,7 +46,22 @@ export const CommentsProcedure = createTRPCRouter({
         })
         .from(comments)
         .innerJoin(users, eq(users.id, comments.userId))
-        .where(eq(comments.videoId, videoId));
+        .where(eq(comments.videoId, videoId))
+        .orderBy(desc(comments.createdAt));
       return commentsList;
+    }),
+
+  delete: baseProcedure
+    .input(
+      z.object({
+        commentId: z.string().uuid().nonempty(),
+      })
+    )
+    .mutation(async ({ input: { commentId } }) => {
+      const [existingComment] = await db
+        .delete(comments)
+        .where(eq(comments.id, commentId))
+        .returning();
+      return { existingComment };
     }),
 });

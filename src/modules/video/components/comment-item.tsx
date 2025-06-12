@@ -1,5 +1,9 @@
+import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { getShortFormDateFromDate } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface CommentItemProps {
   commentItem: {
@@ -12,8 +16,8 @@ interface CommentItemProps {
       updatedAt: Date;
     };
     id: string;
-    videoId: string | null;
-    userId: string | null;
+    videoId: string;
+    userId: string;
     value: string | null;
     createdAt: Date;
     updatedAt: Date;
@@ -21,8 +25,30 @@ interface CommentItemProps {
 }
 
 const CommentItem = ({ commentItem }: CommentItemProps) => {
+  const { user } = useUser();
+  const utils = trpc.useUtils();
+  const isMyComment = user?.id === commentItem.user.clerkId;
+
+  const deleteComment = trpc.comments.delete.useMutation({
+    onSuccess: () => {
+      toast.message("Comment deleted");
+      utils.comments.getMany.invalidate({ videoId: commentItem.videoId });
+    },
+    onError: () => {
+      toast.message("Something went wrong");
+    },
+  });
+
+  const handleDeleteComment = () => {
+    if (!isMyComment) {
+      toast.error("You cannot perform this action !!");
+      return;
+    }
+    deleteComment.mutate({ commentId: commentItem.id });
+  };
+
   return (
-    <div className="flex gap-2 mb-6">
+    <div className="flex gap-2">
       <Image
         src={commentItem.user?.imageUrl || "/user-placeholder.svg"}
         alt="user"
@@ -30,14 +56,21 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
         height={30}
         className="rounded-full"
       />
-      <div className="flex flex-col text-xs">
-        <div className="flex gap-2 items-center">
-          <p className="font-semibold">{commentItem.user?.name || "User"}</p>
-          <p className="text-gray-500 text-xs">
-            {getShortFormDateFromDate(commentItem.createdAt)}
-          </p>
+      <div className="flex justify-between flex-1">
+        <div className="flex flex-col text-xs gap-[2px]">
+          <div className="flex gap-2 items-center">
+            <p className="font-semibold">{commentItem.user?.name || "User"}</p>
+            <p className="text-gray-500 text-xs">
+              {getShortFormDateFromDate(commentItem.createdAt)}
+            </p>
+          </div>
+          <p className="text-sm flex-1">{commentItem.value}</p>
         </div>
-        <p className="text-sm">{commentItem.value}</p>
+        <div className="flex-end cursor-pointer">
+          <DropDownTrigger className="hover:bg-gray-100 hover:rounded-full p-2">
+            <DropDownItem onClick={handleDeleteComment}>Delete</DropDownItem>
+          </DropDownTrigger>
+        </div>
       </div>
     </div>
   );
