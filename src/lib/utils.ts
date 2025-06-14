@@ -45,7 +45,7 @@ export const getSnakeCasing = (text: string) => {
   console.log(words, "words");
   const snakeCasedWords = words.map((word) => {
     console.log(word, "word");
-    return word[0].toUpperCase() + word.slice(1);
+    return word[0]?.toUpperCase() + word.slice(1);
   });
   return snakeCasedString.concat(...snakeCasedWords.join(" "));
 };

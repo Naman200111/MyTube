@@ -1,5 +1,5 @@
 1. add icons for private and public dropdown
-2. upload thumbnail option
+2. upload thumbnail upload option
 3. add background ai jobs
 
 
@@ -7,5 +7,4 @@ adding skeletons
 
 
 next first upcoming pointers
-handle multiple dropdown in comments issue
-add infinite loading in comments
+all non sign in user to open video, and not react/comment anything => promopt to login first

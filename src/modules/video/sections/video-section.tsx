@@ -58,7 +58,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     <>
       <div
         className={mergeClasses(
-          "flex flex-col overflow-hidden",
+          "flex flex-col overflow-hidden mx-2 md:m-0",
           isProcessing ? `rounded-b-none` : `rounded-xl`
         )}
       >

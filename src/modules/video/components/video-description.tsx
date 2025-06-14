@@ -25,7 +25,7 @@ const VideoDescription = ({
   const viewCountShortForm = getCountShortForm(viewCount);
 
   return (
-    <div className="bg-gray-100 p-2 rounded-md">
+    <div className="bg-gray-100 p-2 rounded-md mx-4 md:m-0">
       <div className="mb-1">
         <p className="text-sm font-semibold">
           {showingMoreDesc ? viewCountLongForm : viewCountShortForm} views{" "}

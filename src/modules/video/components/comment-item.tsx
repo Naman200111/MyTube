@@ -1,8 +1,10 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
+import useClickOutside from "@/hooks/use-click-outside";
 import { getShortFormDateFromDate } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface CommentItemProps {
@@ -29,10 +31,16 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
   const utils = trpc.useUtils();
   const isMyComment = user?.id === commentItem.user.clerkId;
 
+  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
+  useClickOutside(() => setShowMoreOptions(false));
+
   const deleteComment = trpc.comments.delete.useMutation({
     onSuccess: () => {
       toast.message("Comment deleted");
-      utils.comments.getMany.invalidate({ videoId: commentItem.videoId });
+      utils.comments.getMany.invalidate({
+        videoId: commentItem.videoId,
+        limit: 5,
+      });
     },
     onError: () => {
       toast.message("Something went wrong");
@@ -67,8 +75,17 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
           <p className="text-sm flex-1">{commentItem.value}</p>
         </div>
         <div className="flex-end cursor-pointer">
-          <DropDownTrigger className="hover:bg-gray-100 hover:rounded-full p-2">
-            <DropDownItem onClick={handleDeleteComment}>Delete</DropDownItem>
+          <DropDownTrigger
+            className="hover:bg-gray-100 hover:rounded-full p-2"
+            onClick={() => setShowMoreOptions((prev) => !prev)}
+          >
+            {showMoreOptions ? (
+              <>
+                <DropDownItem onClick={handleDeleteComment}>
+                  Delete
+                </DropDownItem>
+              </>
+            ) : null}
           </DropDownTrigger>
         </div>
       </div>

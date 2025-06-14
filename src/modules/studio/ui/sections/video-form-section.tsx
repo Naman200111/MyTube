@@ -100,7 +100,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           >
             Save
           </Button>
-          <DropDownTrigger className="bg-background hover:bg-accent">
+          <DropDownTrigger className="bg-background hover:bg-accent p-2 rounded-full">
             <DropDownItem
               icon={<Trash />}
               onClick={() => deleteVideo.mutate({ id: formData.id })}

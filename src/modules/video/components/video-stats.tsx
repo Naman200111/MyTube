@@ -1,15 +1,10 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
+import useClickOutside from "@/hooks/use-click-outside";
 import { getCountShortForm, mergeClasses } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useAuth, useClerk } from "@clerk/nextjs";
-import {
-  ListPlusIcon,
-  ShareIcon,
-  ThumbsDown,
-  ThumbsUp,
-  Trash,
-} from "lucide-react";
+import { ListPlusIcon, ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -43,6 +38,8 @@ const VideoStats = ({
   const utils = trpc.useUtils();
   const auth = useAuth();
   const clerk = useClerk();
+  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
+  useClickOutside(() => setShowMoreOptions(false));
 
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
@@ -130,9 +127,9 @@ const VideoStats = ({
   const subscribersCountNomenclature = getCountShortForm(subscribersCount);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 mx-4 md:m-0">
       <p className="font-bold">{title}</p>
-      <div className="flex justify-between">
+      <div className="flex justify-between flex-col md:flex-row gap-2">
         <div className="flex gap-2 items-center">
           <Image
             src={imageUrl}
@@ -141,7 +138,7 @@ const VideoStats = ({
             height={30}
             className="rounded-full"
           />
-          <div>
+          <div className="flex-1 md:flex-none">
             <p className="text-sm font-bold">{name}</p>
             {/* Todo: fill with actual data */}
             <p className="text-xs">
@@ -153,6 +150,7 @@ const VideoStats = ({
               className="rounded-full"
               onClick={() => handleSubscribeOperation("subscribe")}
               disabled={subscribe.isPending || unsubscribe.isPending}
+              size="sm"
             >
               Subscribe
             </Button>
@@ -166,8 +164,8 @@ const VideoStats = ({
             </Button>
           )}
         </div>
-        <div className="flex gap-4">
-          <div className="flex items-center cursor-pointer">
+        <div className="flex gap-4 ">
+          <div className="flex items-center cursor-pointer flex-1 md:flex-none">
             <div
               className={mergeClasses(
                 "p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-gray-100 hover:bg-slate-200",
@@ -189,22 +187,18 @@ const VideoStats = ({
               <p className="text-xs">{dislikeCountNomenclature}</p>
             </div>
           </div>
-          <div className="rounded-full bg-gray-100 flex items-center cursor-pointer">
-            <DropDownTrigger className="bg-accent flex">
-              <DropDownItem
-                className="w-[150px] self-start justify-self-start"
-                icon={<ShareIcon />}
-              >
-                Share
-              </DropDownItem>
-              <DropDownItem className="w-[150px]" icon={<ListPlusIcon />}>
-                Add to playlist
-              </DropDownItem>
-              <DropDownItem className="w-[150px]" icon={<Trash />}>
-                Remove
-              </DropDownItem>
-            </DropDownTrigger>
-          </div>
+          <DropDownTrigger
+            className="bg-gray-100 flex items-center cursor-pointer p-2 m-1 rounded-full"
+            onClick={() => setShowMoreOptions((prev) => !prev)}
+          >
+            {showMoreOptions ? (
+              <>
+                <DropDownItem className="w-[150px]" icon={<ListPlusIcon />}>
+                  Add to playlist
+                </DropDownItem>
+              </>
+            ) : null}
+          </DropDownTrigger>
         </div>
       </div>
     </div>

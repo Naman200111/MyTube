@@ -20,7 +20,7 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
   const createComment = trpc.comments.create.useMutation({
     onSuccess: () => {
       toast.message("Comment Added");
-      utils.comments.getMany.invalidate({ videoId });
+      utils.comments.getMany.invalidate({ videoId, limit: 5 });
       setCommentValue("");
     },
     onError: (error) => {
@@ -55,14 +55,14 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
         />
         <Input
           placeholder="Add a comment"
-          className="flex-1 p-[0.25em] border border-t-0 border-l-0 border-r-0 rounded-none"
+          className="flex-1 p-[0.25em] border border-t-0 border-l-0 border-r-0 pl-3 rounded-none"
           onChange={(e) => setCommentValue(e.target.value)}
           value={commentValue}
-          // Todo: add enter support
-          // onKeyDown={(e) => {
-          //   e.preventDefault();
-          //   handleCommentSubmit();
-          // }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleCommentSubmit();
+            }
+          }}
         />
       </div>
       <Button

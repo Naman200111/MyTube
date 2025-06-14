@@ -6,7 +6,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, lt, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const CommentsProcedure = createTRPCRouter({
@@ -35,8 +35,23 @@ export const CommentsProcedure = createTRPCRouter({
     }),
 
   getMany: baseProcedure
-    .input(z.object({ videoId: z.string().uuid().nonempty() }))
-    .query(async ({ input: { videoId } }) => {
+    .input(
+      z.object({
+        videoId: z.string().uuid().nonempty(),
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { videoId, limit, cursor } }) => {
+      const commentsCount = await db.$count(
+        comments,
+        eq(comments.videoId, videoId)
+      );
       const commentsList = await db
         .select({
           ...getTableColumns(comments),
@@ -46,9 +61,38 @@ export const CommentsProcedure = createTRPCRouter({
         })
         .from(comments)
         .innerJoin(users, eq(users.id, comments.userId))
-        .where(eq(comments.videoId, videoId))
-        .orderBy(desc(comments.createdAt));
-      return commentsList;
+        .where(
+          and(
+            eq(comments.videoId, videoId),
+            cursor
+              ? or(
+                  lt(comments.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(comments.updatedAt, cursor.updatedAt),
+                    lt(comments.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(comments.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = commentsList.length > limit;
+      const items = hasMore ? commentsList.slice(0, -1) : commentsList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.updatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        commentsCount,
+        cursor: nextCursor,
+      };
     }),
 
   delete: baseProcedure
