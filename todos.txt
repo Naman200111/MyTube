@@ -7,4 +7,5 @@ adding skeletons
 
 
 next first upcoming pointers
-all non sign in user to open video, and not react/comment anything => promopt to login first
+all non sign in user to open video, and not react/comment anything => promopt to login first (make the baseProcedures)
+adding comments replies

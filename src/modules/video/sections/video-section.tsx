@@ -63,9 +63,13 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         )}
       >
         <>
-          <VideoPlayer playbackId={data?.[0]?.playbackId} onPlay={handlePlay} />
+          <VideoPlayer
+            playbackId={data?.[0]?.playbackId}
+            onPlay={handlePlay}
+            className={isProcessing ? "rounded-b-none" : ""}
+          />
           {isProcessing ? (
-            <div className="p-2 bg-yellow-300 flex gap-2">
+            <div className="p-2 bg-yellow-300 flex gap-2 rounded-md rounded-t-none pl-4">
               <AlertTriangleIcon />
               <p>Video is still under processing...</p>
             </div>

@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { comments, users } from "@/db/schema";
+import { commentReactions, comments, users } from "@/db/schema";
 import {
   baseProcedure,
   createTRPCRouter,
@@ -47,53 +47,87 @@ export const CommentsProcedure = createTRPCRouter({
           .nullish(),
       })
     )
-    .query(async ({ input: { videoId, limit, cursor } }) => {
-      const commentsCount = await db.$count(
-        comments,
-        eq(comments.videoId, videoId)
-      );
-      const commentsList = await db
-        .select({
-          ...getTableColumns(comments),
-          user: {
-            ...getTableColumns(users),
-          },
-        })
-        .from(comments)
-        .innerJoin(users, eq(users.id, comments.userId))
-        .where(
-          and(
-            eq(comments.videoId, videoId),
-            cursor
-              ? or(
-                  lt(comments.updatedAt, cursor.updatedAt),
-                  and(
-                    eq(comments.updatedAt, cursor.updatedAt),
-                    lt(comments.id, cursor.id)
+    .query(
+      async ({ input: { videoId, limit, cursor }, ctx: { clerkUserId } }) => {
+        const commentsCount = await db.$count(
+          comments,
+          eq(comments.videoId, videoId)
+        );
+
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.clerkId, clerkUserId || ""));
+
+        const viewerReactions = db
+          .$with("viewer_reactions")
+          .as(
+            db
+              .select()
+              .from(commentReactions)
+              .where(eq(commentReactions.userId, user.id))
+          );
+
+        const commentsList = await db
+          .with(viewerReactions)
+          .select({
+            ...getTableColumns(comments),
+            user: {
+              ...getTableColumns(users),
+            },
+            likeCount: db.$count(
+              commentReactions,
+              and(
+                eq(commentReactions.commentId, comments.id),
+                eq(commentReactions.type, "like")
+              )
+            ),
+            dislikeCount: db.$count(
+              commentReactions,
+              and(
+                eq(commentReactions.commentId, comments.id),
+                eq(commentReactions.type, "dislike")
+              )
+            ),
+            viewerReaction: viewerReactions.type,
+          })
+          .from(comments)
+          .innerJoin(users, eq(users.id, comments.userId))
+          .leftJoin(viewerReactions, eq(viewerReactions.commentId, comments.id))
+          .where(
+            and(
+              eq(comments.videoId, videoId),
+              cursor
+                ? or(
+                    lt(comments.updatedAt, cursor.updatedAt),
+                    and(
+                      eq(comments.updatedAt, cursor.updatedAt),
+                      lt(comments.id, cursor.id)
+                    )
                   )
-                )
-              : undefined
+                : undefined
+            )
           )
-        )
-        .orderBy(desc(comments.updatedAt))
-        .limit(limit + 1);
+          .orderBy(desc(comments.updatedAt))
+          .limit(limit + 1);
 
-      const hasMore = commentsList.length > limit;
-      const items = hasMore ? commentsList.slice(0, -1) : commentsList;
+        const hasMore = commentsList.length > limit;
+        const items = hasMore ? commentsList.slice(0, -1) : commentsList;
 
-      const nextCursor = hasMore
-        ? {
-            id: items[items.length - 1]?.id,
-            updatedAt: items[items.length - 1]?.updatedAt,
-          }
-        : null;
+        const nextCursor = hasMore
+          ? {
+              id: items[items.length - 1]?.id,
+              updatedAt: items[items.length - 1]?.updatedAt,
+            }
+          : null;
 
-      return {
-        items,
-        commentsCount,
-        cursor: nextCursor,
-      };
-    }),
+        return {
+          items,
+          commentsCount,
+          cursor: nextCursor,
+        };
+      }
+    ),
 
   delete: baseProcedure
     .input(

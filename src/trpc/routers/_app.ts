@@ -6,6 +6,7 @@ import { VideoViewsProcedure } from "@/procedures/video-views-procedure";
 import { VideoReactionProcedure } from "@/procedures/video-reactions-procedure";
 import { subscriptionProcedure } from "@/procedures/subscription-procedure";
 import { CommentsProcedure } from "@/procedures/comments-procedure";
+import { CommentReactionProcedure } from "@/procedures/comments-reaction-procedure";
 
 export const appRouter = createTRPCRouter({
   categories: categoryProcedure,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   videoViews: VideoViewsProcedure,
   videoReactions: VideoReactionProcedure,
   comments: CommentsProcedure,
+  commentReactions: CommentReactionProcedure,
 });
 
 export type AppRouter = typeof appRouter;

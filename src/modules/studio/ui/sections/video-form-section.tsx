@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import MuxPlayer from "@mux/mux-player-react";
 import { getSnakeCasing } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import useClickOutside from "@/hooks/use-click-outside";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -23,6 +24,9 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const router = useRouter();
   const [video] = trpc.studio.getOne.useSuspenseQuery({ videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
+
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
+  useClickOutside(() => setShowMoreOptions(false));
 
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
@@ -100,13 +104,18 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           >
             Save
           </Button>
-          <DropDownTrigger className="bg-background hover:bg-accent p-2 rounded-full">
-            <DropDownItem
-              icon={<Trash />}
-              onClick={() => deleteVideo.mutate({ id: formData.id })}
-            >
-              Delete
-            </DropDownItem>
+          <DropDownTrigger
+            className="bg-background hover:bg-accent p-2 rounded-full"
+            onClick={() => setShowMoreOptions((prev) => !prev)}
+          >
+            {showMoreOptions ? (
+              <DropDownItem
+                icon={<Trash />}
+                onClick={() => deleteVideo.mutate({ id: formData.id })}
+              >
+                Delete
+              </DropDownItem>
+            ) : null}
           </DropDownTrigger>
         </div>
       </div>

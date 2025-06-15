@@ -73,7 +73,7 @@ const VideosSectionSuspense = () => {
                     </div>
                     <Image
                       src={video.thumbnailURL || "/placeholder.svg"}
-                      alt="Fallback image"
+                      alt="Thumbnail"
                       width={160}
                       height={160}
                       className="rounded-md w-full h-full object-cover"
