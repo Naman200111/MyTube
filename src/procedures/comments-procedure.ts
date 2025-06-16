@@ -14,11 +14,13 @@ export const CommentsProcedure = createTRPCRouter({
     .input(
       z.object({
         videoId: z.string().uuid().nonempty(),
-        clerkUserId: z.string().nonempty(),
         value: z.string().nonempty(),
       })
     )
-    .mutation(async ({ input: { videoId, clerkUserId, value } }) => {
+    .mutation(async ({ input: { videoId, value }, ctx: { clerkUserId } }) => {
+      if (!clerkUserId) {
+        return new TRPCError({ message: "Unauthorized", code: "UNAUTHORIZED" });
+      }
       const [user] = await db
         .select()
         .from(users)
@@ -65,7 +67,7 @@ export const CommentsProcedure = createTRPCRouter({
             db
               .select()
               .from(commentReactions)
-              .where(eq(commentReactions.userId, user.id))
+              .where(eq(commentReactions.userId, user?.id))
           );
 
         const commentsList = await db
@@ -129,16 +131,16 @@ export const CommentsProcedure = createTRPCRouter({
       }
     ),
 
-  delete: baseProcedure
+  delete: protectedProcedure
     .input(
       z.object({
         commentId: z.string().uuid().nonempty(),
       })
     )
-    .mutation(async ({ input: { commentId } }) => {
+    .mutation(async ({ input: { commentId }, ctx: { id: userId } }) => {
       const [existingComment] = await db
         .delete(comments)
-        .where(eq(comments.id, commentId))
+        .where(and(eq(comments.id, commentId), eq(comments.userId, userId)))
         .returning();
       return { existingComment };
     }),

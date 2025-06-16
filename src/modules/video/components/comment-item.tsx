@@ -6,7 +6,7 @@ import {
   mergeClasses,
 } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
-import { useAuth, useClerk, useUser } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -35,11 +35,8 @@ interface CommentItemProps {
 }
 
 const CommentItem = ({ commentItem }: CommentItemProps) => {
-  const { user } = useUser();
-  const auth = useAuth();
   const clerk = useClerk();
   const utils = trpc.useUtils();
-  const isMyComment = user?.id === commentItem.user.clerkId;
 
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
@@ -55,7 +52,11 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
         limit: 5,
       });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.data?.code === "UNAUTHORIZED") {
+        clerk.openSignIn();
+        return;
+      }
       toast.message("Something went wrong");
     },
   });
@@ -65,13 +66,12 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
       utils.comments.getMany.invalidate({ videoId: commentItem.videoId });
       setReactionUpdateInProgress(false);
     },
-    onError: () => {
-      // Todos: Ask user to sign in
-      if (!auth.isSignedIn) {
+    onError: (error) => {
+      setReactionUpdateInProgress(false);
+      if (error.data?.code === "UNAUTHORIZED") {
         clerk.openSignIn();
         return;
       }
-      setReactionUpdateInProgress(false);
       toast.error("Failed to like comment");
     },
   });
@@ -81,33 +81,23 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
       utils.comments.getMany.invalidate({ videoId: commentItem.videoId });
       setReactionUpdateInProgress(false);
     },
-    onError: () => {
-      // Todos: Ask user to sign in
-      if (!auth.isSignedIn) {
+    onError: (error) => {
+      setReactionUpdateInProgress(false);
+      if (error.data?.code === "UNAUTHORIZED") {
         clerk.openSignIn();
         return;
       }
-      setReactionUpdateInProgress(false);
       toast.error("Failed to dislike comment");
     },
   });
 
   const handleDeleteComment = () => {
-    if (!isMyComment) {
-      toast.error("You cannot perform this action !!");
-      return;
-    }
     deleteComment.mutate({ commentId: commentItem.id });
   };
 
   const handleCommentReaction = (type: "like" | "dislike") => {
     if (reactionUpdateInProgress) return;
     setReactionUpdateInProgress(true);
-
-    if (!auth.isSignedIn) {
-      clerk.openSignIn();
-      return;
-    }
 
     if (type == "like") {
       likeReaction.mutate({ commentId: commentItem.id });

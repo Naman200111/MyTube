@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import useClickOutside from "@/hooks/use-click-outside";
 import { getCountShortForm, mergeClasses } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
-import { useAuth, useClerk } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { ListPlusIcon, ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -35,12 +35,12 @@ const VideoStats = ({
   subscribersCount,
   isViewerSubscribed,
 }: VideoStatsProps) => {
-  const utils = trpc.useUtils();
-  const auth = useAuth();
-  const clerk = useClerk();
-  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   useClickOutside(() => setShowMoreOptions(false));
 
+  const utils = trpc.useUtils();
+  const clerk = useClerk();
+
+  const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
 
@@ -49,13 +49,12 @@ const VideoStats = ({
       utils.videos.getOne.invalidate({ videoId });
       setReactionUpdateInProgress(false);
     },
-    onError: () => {
-      // Todos: Ask user to sign in
-      if (!auth.isSignedIn) {
+    onError: (error) => {
+      setReactionUpdateInProgress(false);
+      if (error.data?.code === "UNAUTHORIZED") {
         clerk.openSignIn();
         return;
       }
-      setReactionUpdateInProgress(false);
       toast.error("Failed to like video");
     },
   });
@@ -65,13 +64,12 @@ const VideoStats = ({
       utils.videos.getOne.invalidate({ videoId });
       setReactionUpdateInProgress(false);
     },
-    onError: () => {
-      // Todos: Ask user to sign in
-      if (!auth.isSignedIn) {
+    onError: (error) => {
+      setReactionUpdateInProgress(false);
+      if (error.data?.code === "UNAUTHORIZED") {
         clerk.openSignIn();
         return;
       }
-      setReactionUpdateInProgress(false);
       toast.error("Failed to dislike video");
     },
   });
@@ -80,7 +78,11 @@ const VideoStats = ({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.data?.code === "UNAUTHORIZED") {
+        clerk.openSignIn();
+        return;
+      }
       toast.error("Something went wrong");
     },
   });
@@ -88,7 +90,11 @@ const VideoStats = ({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.data?.code === "UNAUTHORIZED") {
+        clerk.openSignIn();
+        return;
+      }
       toast.error("Something went wrong");
     },
   });
@@ -96,6 +102,7 @@ const VideoStats = ({
   const handleVideoReaction = (type: VideoReactionType) => {
     if (reactionUpdateInProgress) return;
     setReactionUpdateInProgress(true);
+
     if (type === "like") {
       likeReaction.mutate({
         videoId,
@@ -108,10 +115,6 @@ const VideoStats = ({
   };
 
   const handleSubscribeOperation = (type: SubscribeOptions) => {
-    if (!auth.isSignedIn) {
-      clerk.openSignIn();
-      return;
-    }
     if (type == "subscribe") {
       subscribe.mutate({ videoId });
     } else {
@@ -140,7 +143,6 @@ const VideoStats = ({
           />
           <div className="flex-1 md:flex-none">
             <p className="text-sm font-bold">{name}</p>
-            {/* Todo: fill with actual data */}
             <p className="text-xs">
               {subscribersCountNomenclature} subscribers
             </p>

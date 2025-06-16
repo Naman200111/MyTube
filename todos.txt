@@ -1,11 +1,13 @@
-1. add icons for private and public dropdown
-2. upload thumbnail upload option
-3. add background ai jobs
+1. upload thumbnail upload option
+2. adding comments replies
+3. adding likes, comments, dislikes, views in studio table
+4. adding suggestions
+5. adding loaders in video-view
+6. search page
+7. home feed
+8. playlists
+9. user page
+1O. add background ai jobs
 
 
-adding skeletons
-
-
-next first upcoming pointers
-all non sign in user to open video, and not react/comment anything => promopt to login first (make the baseProcedures)
-adding comments replies
+ADDING SKELETONS (For better visual appearance)

@@ -1,7 +1,7 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { useAuth, useClerk, useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -12,7 +12,6 @@ interface CommentInputProps {
 
 const CommentInput = ({ videoId }: CommentInputProps) => {
   const clerk = useClerk();
-  const auth = useAuth();
   const { user } = useUser();
   const utils = trpc.useUtils();
   const [commentValue, setCommentValue] = useState("");
@@ -33,13 +32,9 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
   });
 
   const handleCommentSubmit = () => {
-    if (!auth.userId) {
-      return;
-    }
     createComment.mutate({
       videoId,
       value: commentValue,
-      clerkUserId: auth.userId,
     });
   };
 

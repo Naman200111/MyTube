@@ -29,18 +29,10 @@ export const VideosProcedure = createTRPCRouter({
       const { clerkUserId } = ctx;
       const { videoId } = input;
 
-      // Todos: add support to non login user also watch video
-      if (!clerkUserId) {
-        throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
-      }
-
       const [user] = await db
         .select()
         .from(users)
-        .where(eq(users.clerkId, clerkUserId));
-      if (!user) {
-        throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
-      }
+        .where(eq(users.clerkId, clerkUserId || ""));
 
       const viewerReactionWithTable = db.$with("viewer_reaction").as(
         db
@@ -49,7 +41,7 @@ export const VideosProcedure = createTRPCRouter({
             type: videoReactions.type,
           })
           .from(videoReactions)
-          .where(eq(videoReactions.userId, user.id))
+          .where(eq(videoReactions.userId, user?.id))
       );
 
       const videoData = await db
@@ -83,7 +75,7 @@ export const VideosProcedure = createTRPCRouter({
             subscriptions,
             and(
               eq(subscriptions.creatorId, users.id),
-              eq(subscriptions.viewerId, user.id)
+              eq(subscriptions.viewerId, user?.id)
             )
           ),
         })

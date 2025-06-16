@@ -8,6 +8,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import VideoStats from "../components/video-stats";
 import VideoDescription from "../components/video-description";
 import VideoPlayer from "../components/video-player";
+import { useAuth } from "@clerk/clerk-react";
 
 interface VideoSectionProps {
   videoId: string;
@@ -43,15 +44,20 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
 
   const isProcessing = muxStatus !== "ready";
   const utils = trpc.useUtils();
+
+  const auth = useAuth();
+
   const createView = trpc.videoViews.create.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate();
     },
   });
   const handlePlay = () => {
-    createView.mutate({
-      videoId: id,
-    });
+    if (auth.isSignedIn) {
+      createView.mutate({
+        videoId: id,
+      });
+    }
   };
 
   return (
