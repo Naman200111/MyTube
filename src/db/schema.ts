@@ -6,6 +6,7 @@ import {
   uniqueIndex,
   integer,
   pgEnum,
+  foreignKey,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
@@ -96,20 +97,33 @@ export const videoReactions = pgTable("video_reactions", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const comments = pgTable("comments", {
-  id: uuid("id").notNull().primaryKey().defaultRandom(),
-  videoId: uuid("video_id")
-    .notNull()
-    .references(() => videos.id, {
-      onDelete: "cascade",
-    }),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  value: text("value"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const comments = pgTable(
+  "comments",
+  {
+    id: uuid("id").notNull().primaryKey().defaultRandom(),
+    videoId: uuid("video_id")
+      .notNull()
+      .references(() => videos.id, {
+        onDelete: "cascade",
+      }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    parentId: uuid("parent_id"),
+    value: text("value"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (t) => {
+    return [
+      foreignKey({
+        columns: [t.parentId],
+        foreignColumns: [t.id],
+        name: "comment_parent_id_fkey",
+      }).onDelete("cascade"),
+    ];
+  }
+);
 
 export const commentReactions = pgTable("comment_reactions", {
   id: uuid("id").notNull().primaryKey().defaultRandom(),
