@@ -14,27 +14,45 @@ export const CommentsProcedure = createTRPCRouter({
     .input(
       z.object({
         videoId: z.string().uuid().nonempty(),
+        parentId: z.string().uuid().nullish(),
         value: z.string().nonempty(),
       })
     )
-    .mutation(async ({ input: { videoId, value }, ctx: { clerkUserId } }) => {
-      if (!clerkUserId) {
-        return new TRPCError({ message: "Unauthorized", code: "UNAUTHORIZED" });
-      }
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.clerkId, clerkUserId));
-      if (!user) {
-        return new TRPCError({ message: "Unauthorized", code: "UNAUTHORIZED" });
-      }
+    .mutation(
+      async ({ input: { videoId, value, parentId }, ctx: { clerkUserId } }) => {
+        if (!clerkUserId) {
+          return new TRPCError({ code: "UNAUTHORIZED" });
+        }
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.clerkId, clerkUserId));
+        if (!user) {
+          return new TRPCError({ code: "UNAUTHORIZED" });
+        }
 
-      const [comment] = await db
-        .insert(comments)
-        .values({ videoId, userId: user.id, value })
-        .returning();
-      return comment;
-    }),
+        if (parentId) {
+          const [existingComment] = await db
+            .select()
+            .from(comments)
+            .where(eq(comments.id, parentId));
+          if (!existingComment) {
+            return new TRPCError({ code: "NOT_FOUND" });
+          }
+
+          if (existingComment.parentId) {
+            // multiple level nesting not allowed
+            return new TRPCError({ code: "BAD_REQUEST" });
+          }
+        }
+
+        const [comment] = await db
+          .insert(comments)
+          .values({ videoId, userId: user.id, value, parentId })
+          .returning();
+        return comment;
+      }
+    ),
 
   getMany: baseProcedure
     .input(
@@ -77,6 +95,8 @@ export const CommentsProcedure = createTRPCRouter({
             user: {
               ...getTableColumns(users),
             },
+            // not working todo
+            replyCount: db.$count(comments, eq(comments.parentId, comments.id)),
             likeCount: db.$count(
               commentReactions,
               and(

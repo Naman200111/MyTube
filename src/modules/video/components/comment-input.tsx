@@ -1,5 +1,6 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
+import { getSnakeCasing } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
@@ -8,13 +9,22 @@ import { toast } from "sonner";
 
 interface CommentInputProps {
   videoId: string;
+  variant?: "comment" | "reply";
+  handleCommentInputClose?: () => void;
+  parentId?: string;
 }
 
-const CommentInput = ({ videoId }: CommentInputProps) => {
+const CommentInput = ({
+  videoId,
+  variant = "comment",
+  handleCommentInputClose,
+  parentId,
+}: CommentInputProps) => {
   const clerk = useClerk();
   const { user } = useUser();
   const utils = trpc.useUtils();
   const [commentValue, setCommentValue] = useState("");
+  const isReply = variant === "reply";
 
   const createComment = trpc.comments.create.useMutation({
     onSuccess: () => {
@@ -35,6 +45,7 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
     createComment.mutate({
       videoId,
       value: commentValue,
+      parentId,
     });
   };
 
@@ -44,12 +55,12 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
         <Image
           src={user?.imageUrl || "/user-placeholder.svg"}
           alt="user"
-          width={40}
-          height={30}
+          width={isReply ? 30 : 40}
+          height={isReply ? 20 : 30}
           className="rounded-full"
         />
         <Input
-          placeholder="Add a comment"
+          placeholder={isReply ? "Reply to this comment..." : "Add a comment"}
           className="flex-1 p-[0.25em] border border-t-0 border-l-0 border-r-0 pl-3 rounded-none"
           onChange={(e) => setCommentValue(e.target.value)}
           value={commentValue}
@@ -60,14 +71,27 @@ const CommentInput = ({ videoId }: CommentInputProps) => {
           }}
         />
       </div>
-      <Button
-        className="self-end mt-1"
-        size="sm"
-        disabled={!commentValue || createComment.isPending}
-        onClick={handleCommentSubmit}
-      >
-        Comment
-      </Button>
+      <div className="self-end mt-1 flex gap-1">
+        {isReply && (
+          <Button
+            className="rounded-full"
+            variant="ghost"
+            size="sm"
+            onClick={handleCommentInputClose}
+          >
+            Cancel
+          </Button>
+        )}
+
+        <Button
+          className="rounded-full"
+          size="sm"
+          disabled={!commentValue || createComment.isPending}
+          onClick={handleCommentSubmit}
+        >
+          {getSnakeCasing(variant)}
+        </Button>
+      </div>
     </div>
   );
 };

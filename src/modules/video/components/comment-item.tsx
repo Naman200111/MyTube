@@ -1,4 +1,5 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
+import { Button } from "@/components/ui/button";
 import useClickOutside from "@/hooks/use-click-outside";
 import {
   getCountShortForm,
@@ -11,6 +12,7 @@ import { ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
+import CommentInput from "./comment-input";
 
 interface CommentItemProps {
   commentItem: {
@@ -31,6 +33,7 @@ interface CommentItemProps {
     likeCount: number;
     dislikeCount: number;
     viewerReaction: "like" | "dislike" | null;
+    replyCount: number;
   };
 }
 
@@ -41,6 +44,9 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
+  const [showCommentReplyInput, setShowCommentReplyInput] =
+    useState<boolean>(false);
+  // const [showingCommentReply, setShowingCommentReply] = useState<boolean>(false);
 
   useClickOutside(() => setShowMoreOptions(false));
 
@@ -181,7 +187,33 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
             </div>
             <p className="text-xs">{dislikeCountNomenclature}</p>
           </div>
+          <Button
+            className="ml-2 rounded-full font-semibold"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowCommentReplyInput(true)}
+          >
+            Reply
+          </Button>
         </div>
+        {showCommentReplyInput && (
+          <CommentInput
+            videoId={commentItem.videoId}
+            variant="reply"
+            parentId={commentItem.id}
+            handleCommentInputClose={() => {
+              setShowCommentReplyInput(false);
+            }}
+          />
+        )}
+        {commentItem.replyCount > 0 && (
+          <Button>
+            {commentItem.replyCount}{" "}
+            {commentItem.replyCount > 1 ? "replies" : "reply"}
+          </Button>
+        )}
+        {/* {showingCommentReply && } */}
+        {/* child components render CommentItem again */}
       </div>
     </div>
   );

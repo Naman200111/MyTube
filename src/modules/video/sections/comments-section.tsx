@@ -31,6 +31,8 @@ const CommentSectionSuspense = ({ videoId }: CommentSectionProps) => {
 
   const pages = commentsList.pages;
   const items = pages.flatMap((page) => page.items) || [];
+  // const childItems;
+  console.log(items, "comments");
   const totalCommentsCount = pages[0].commentsCount;
 
   return (
