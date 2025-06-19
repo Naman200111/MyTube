@@ -25,7 +25,6 @@ export const VideoReactionProcedure = createTRPCRouter({
             eq(videoReactions.videoId, videoId)
           )
         );
-      console.log(existingReaction, "existingReaction");
       if (existingReaction) {
         await db
           .delete(videoReactions)
@@ -35,7 +34,6 @@ export const VideoReactionProcedure = createTRPCRouter({
               eq(videoReactions.videoId, videoId)
             )
           );
-        console.log(existingReaction.type);
         if (existingReaction.type === "dislike") {
           await db.insert(videoReactions).values({
             userId,

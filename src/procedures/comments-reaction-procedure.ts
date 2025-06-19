@@ -21,7 +21,6 @@ export const CommentReactionProcedure = createTRPCRouter({
             eq(commentReactions.commentId, commentId)
           )
         );
-      console.log(existingReaction, "existingReaction");
       if (existingReaction) {
         await db
           .delete(commentReactions)
@@ -31,7 +30,6 @@ export const CommentReactionProcedure = createTRPCRouter({
               eq(commentReactions.commentId, commentId)
             )
           );
-        console.log(existingReaction.type);
         if (existingReaction.type === "dislike") {
           await db.insert(commentReactions).values({
             userId,

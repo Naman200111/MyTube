@@ -8,11 +8,12 @@ import {
 } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useClerk } from "@clerk/nextjs";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import CommentInput from "./comment-input";
+import CommentReplies from "./comment-reply";
 
 interface CommentItemProps {
   commentItem: {
@@ -35,18 +36,23 @@ interface CommentItemProps {
     viewerReaction: "like" | "dislike" | null;
     replyCount: number;
   };
+  variant?: "comment" | "reply";
 }
 
-const CommentItem = ({ commentItem }: CommentItemProps) => {
+const CommentItem = ({
+  commentItem,
+  variant = "comment",
+}: CommentItemProps) => {
   const clerk = useClerk();
   const utils = trpc.useUtils();
 
+  const isReply = variant === "reply";
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
   const [showCommentReplyInput, setShowCommentReplyInput] =
     useState<boolean>(false);
-  // const [showingCommentReply, setShowingCommentReply] = useState<boolean>(false);
+  const [showCommentReplies, setShowCommentReplies] = useState<boolean>(false);
 
   useClickOutside(() => setShowMoreOptions(false));
 
@@ -125,8 +131,8 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
         <Image
           src={commentItem.user?.imageUrl || "/user-placeholder.svg"}
           alt="user"
-          width={40}
-          height={30}
+          width={!isReply ? 40 : 40}
+          height={!isReply ? 30 : 10}
           className="rounded-full"
         />
         <div className="flex justify-between flex-1">
@@ -187,14 +193,16 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
             </div>
             <p className="text-xs">{dislikeCountNomenclature}</p>
           </div>
-          <Button
-            className="ml-2 rounded-full font-semibold"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowCommentReplyInput(true)}
-          >
-            Reply
-          </Button>
+          {!isReply && (
+            <Button
+              className="ml-2 rounded-full font-semibold"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCommentReplyInput(true)}
+            >
+              Reply
+            </Button>
+          )}
         </div>
         {showCommentReplyInput && (
           <CommentInput
@@ -207,10 +215,22 @@ const CommentItem = ({ commentItem }: CommentItemProps) => {
           />
         )}
         {commentItem.replyCount > 0 && (
-          <Button>
+          <Button
+            onClick={() => setShowCommentReplies((prev) => !prev)}
+            size="sm"
+            variant="ghost"
+            className="mb-2"
+          >
+            <ChevronDown size={16} />
             {commentItem.replyCount}{" "}
             {commentItem.replyCount > 1 ? "replies" : "reply"}
           </Button>
+        )}
+        {showCommentReplies && (
+          <CommentReplies
+            parentId={commentItem.id}
+            videoId={commentItem.videoId}
+          />
         )}
         {/* {showingCommentReply && } */}
         {/* child components render CommentItem again */}

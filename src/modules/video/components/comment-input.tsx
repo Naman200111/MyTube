@@ -50,7 +50,7 @@ const CommentInput = ({
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 mt-1">
       <div className="flex gap-2 items-center">
         <Image
           src={user?.imageUrl || "/user-placeholder.svg"}

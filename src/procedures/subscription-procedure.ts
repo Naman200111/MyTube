@@ -28,7 +28,6 @@ export const subscriptionProcedure = createTRPCRouter({
       }
 
       const creatorId = user.creatorId;
-      console.log(viewerId, creatorId);
       const subscribe = await db
         .insert(subscriptions)
         .values({

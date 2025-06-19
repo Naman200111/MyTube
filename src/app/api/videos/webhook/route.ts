@@ -54,7 +54,6 @@ export const POST = async (request: Request) => {
       return new Response("No upload id for asset found", { status: 400 });
     }
 
-    console.log(assetData, "assetData");
     const { playback_ids, duration = 0 } = assetData;
     const PLAYBACK_ID = playback_ids?.[0]?.id;
 

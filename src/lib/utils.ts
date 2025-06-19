@@ -42,9 +42,7 @@ export const getVideoTimeFromDuration = (duration: number = 0) => {
 export const getSnakeCasing = (text: string) => {
   const words = text.split(" ");
   const snakeCasedString = "";
-  console.log(words, "words");
   const snakeCasedWords = words.map((word) => {
-    console.log(word, "word");
     return word[0]?.toUpperCase() + word.slice(1);
   });
   return snakeCasedString.concat(...snakeCasedWords.join(" "));

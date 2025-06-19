@@ -6,7 +6,16 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, getTableColumns, lt, or } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  isNotNull,
+  isNull,
+  lt,
+  or,
+} from "drizzle-orm";
 import { z } from "zod";
 
 export const CommentsProcedure = createTRPCRouter({
@@ -59,6 +68,7 @@ export const CommentsProcedure = createTRPCRouter({
       z.object({
         videoId: z.string().uuid().nonempty(),
         limit: z.number().min(1).max(100),
+        parentId: z.string().uuid().nullish(),
         cursor: z
           .object({
             id: z.string().uuid(),
@@ -68,7 +78,10 @@ export const CommentsProcedure = createTRPCRouter({
       })
     )
     .query(
-      async ({ input: { videoId, limit, cursor }, ctx: { clerkUserId } }) => {
+      async ({
+        input: { videoId, limit, cursor, parentId },
+        ctx: { clerkUserId },
+      }) => {
         const commentsCount = await db.$count(
           comments,
           eq(comments.videoId, videoId)
@@ -88,15 +101,26 @@ export const CommentsProcedure = createTRPCRouter({
               .where(eq(commentReactions.userId, user?.id))
           );
 
+        const commentReply = db.$with("comment_reply").as(
+          db
+            .select()
+            .from(comments)
+            .where(
+              and(eq(comments.videoId, videoId), isNotNull(comments.parentId))
+            )
+        );
+
         const commentsList = await db
-          .with(viewerReactions)
+          .with(viewerReactions, commentReply)
           .select({
             ...getTableColumns(comments),
             user: {
               ...getTableColumns(users),
             },
-            // not working todo
-            replyCount: db.$count(comments, eq(comments.parentId, comments.id)),
+            replyCount: db.$count(
+              commentReply,
+              eq(comments.id, commentReply.parentId)
+            ),
             likeCount: db.$count(
               commentReactions,
               and(
@@ -118,7 +142,12 @@ export const CommentsProcedure = createTRPCRouter({
           .leftJoin(viewerReactions, eq(viewerReactions.commentId, comments.id))
           .where(
             and(
-              eq(comments.videoId, videoId),
+              and(
+                eq(comments.videoId, videoId),
+                parentId
+                  ? eq(comments.parentId, parentId)
+                  : isNull(comments.parentId)
+              ),
               cursor
                 ? or(
                     lt(comments.updatedAt, cursor.updatedAt),
@@ -162,6 +191,10 @@ export const CommentsProcedure = createTRPCRouter({
         .delete(comments)
         .where(and(eq(comments.id, commentId), eq(comments.userId, userId)))
         .returning();
+
+      if (!existingComment) {
+        return new TRPCError({ code: "NOT_FOUND" });
+      }
       return { existingComment };
     }),
 });
