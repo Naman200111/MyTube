@@ -9,11 +9,11 @@ import {
 import { trpc } from "@/trpc/client";
 import { useClerk } from "@clerk/nextjs";
 import { ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import CommentInput from "./comment-input";
 import CommentReplies from "./comment-reply";
+import UserAvatar from "@/components/user-avatar";
 
 interface CommentItemProps {
   commentItem: {
@@ -128,12 +128,9 @@ const CommentItem = ({
   return (
     <div className="flex flex-col">
       <div className="flex gap-2">
-        <Image
-          src={commentItem.user?.imageUrl || "/user-placeholder.svg"}
-          alt="user"
-          width={!isReply ? 40 : 40}
-          height={!isReply ? 30 : 10}
-          className="rounded-full"
+        <UserAvatar
+          imageUrl={commentItem.user?.imageUrl || "/user-placeholder.svg"}
+          size={isReply ? "sm" : "default"}
         />
         <div className="flex justify-between flex-1">
           <div className="flex flex-col text-xs gap-[2px]">

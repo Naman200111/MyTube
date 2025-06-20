@@ -1,11 +1,11 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
 import useClickOutside from "@/hooks/use-click-outside";
 import { getCountShortForm, mergeClasses } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useClerk } from "@clerk/nextjs";
 import { ListPlusIcon, ThumbsDown, ThumbsUp } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -134,13 +134,7 @@ const VideoStats = ({
       <p className="font-bold">{title}</p>
       <div className="flex justify-between flex-col md:flex-row gap-2">
         <div className="flex gap-2 items-center">
-          <Image
-            src={imageUrl}
-            alt="P"
-            width={40}
-            height={30}
-            className="rounded-full"
-          />
+          <UserAvatar imageUrl={imageUrl} />
           <div className="flex-1 md:flex-none">
             <p className="text-sm font-bold">{name}</p>
             <p className="text-xs">

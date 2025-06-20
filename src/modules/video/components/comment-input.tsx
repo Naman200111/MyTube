@@ -1,9 +1,9 @@
 import Input from "@/components/input";
 import { Button } from "@/components/ui/button";
+import UserAvatar from "@/components/user-avatar";
 import { getSnakeCasing } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useClerk, useUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -52,12 +52,9 @@ const CommentInput = ({
   return (
     <div className="flex flex-col gap-1 mt-1">
       <div className="flex gap-2 items-center">
-        <Image
-          src={user?.imageUrl || "/user-placeholder.svg"}
-          alt="user"
-          width={isReply ? 30 : 40}
-          height={isReply ? 20 : 30}
-          className="rounded-full"
+        <UserAvatar
+          imageUrl={user?.imageUrl || "/user-placeholder.svg"}
+          size={isReply ? "sm" : "default"}
         />
         <Input
           placeholder={isReply ? "Reply to this comment..." : "Add a comment"}
