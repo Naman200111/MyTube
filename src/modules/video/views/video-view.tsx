@@ -1,5 +1,5 @@
 import CommentSection from "../sections/comments-section";
-import SuggestionSection from "../sections/subscription-section";
+import SuggestionSection from "../sections/suggestion-section";
 import VideoSection from "../sections/video-section";
 
 interface VideoViewProps {
@@ -8,12 +8,14 @@ interface VideoViewProps {
 
 const VideoView = ({ videoId }: VideoViewProps) => {
   return (
-    <div className="flex flex-col gap-4 flex-1 mx-auto max-w-[1440px] p-2 lg:px-6 lg:flex-row">
-      <div className="flex flex-col gap-4 lg:w-[70%]">
+    <div className="flex flex-col gap-4 max-w-[1440px] p-2 lg:px-6 lg:flex-row overflow-hidden">
+      <div className="flex flex-col gap-4 flex-1">
         <VideoSection videoId={videoId} />
         <CommentSection videoId={videoId} />
       </div>
-      <SuggestionSection />
+      <div className="w-[30%]">
+        <SuggestionSection videoId={videoId} />
+      </div>
     </div>
   );
 };

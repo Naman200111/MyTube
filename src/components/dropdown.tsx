@@ -13,7 +13,10 @@ export const DropDownTrigger = ({
   ...props
 }: React.ComponentProps<"div">) => {
   return (
-    <div className={mergeClasses(className, "relative select-none")} {...props}>
+    <div
+      className={mergeClasses(className, "relative select-none cursor-pointer")}
+      {...props}
+    >
       <EllipsisVertical className=" text-black" size={15} />
       {children ? (
         <div className="flex flex-col absolute right-0 z-[1] top-[2.25em] items-start border">

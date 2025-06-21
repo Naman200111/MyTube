@@ -8,7 +8,6 @@ import {
   pgEnum,
   foreignKey,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 
 export const reactionType = pgEnum("reaction_type", ["like", "dislike"]);
 
@@ -140,4 +139,4 @@ export const commentReactions = pgTable("comment_reactions", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const createVideoInsertSchema = createInsertSchema(videos);
+// export type VideoSchema = typeof videos.$inferSelect;
