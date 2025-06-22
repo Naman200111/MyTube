@@ -8,6 +8,7 @@ import {
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type SuggestionVideoType = inferProcedureOutput<
@@ -19,11 +20,15 @@ interface VideoSuggestionProps {
 }
 
 const VideoSuggestion = ({ item: video }: VideoSuggestionProps) => {
+  const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
   useClickOutside(() => setShowDropDown(false));
 
   return (
-    <div className="flex gap-2">
+    <div
+      className="flex gap-2 cursor-pointer"
+      onClick={() => router.push(`/video/${video.id}`)}
+    >
       <div className="flex flex-col relative">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground  text-background text-xs">
           {getVideoTimeFromDuration(video.duration)}

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import VideoSuggestion from "../components/video-suggestion";
 import InfiniteScroll from "@/components/infinite-scroll";
+import SuggestionSectionSkeleton from "../skeletons/suggestion-section";
 
 interface SuggestionSectionProps {
   videoId: string;
@@ -12,8 +13,8 @@ interface SuggestionSectionProps {
 
 export const SuggestionSection = ({ videoId }: SuggestionSectionProps) => {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <ErrorBoundary fallback={<p>Error</p>}>
+    <Suspense fallback={<SuggestionSectionSkeleton />}>
+      <ErrorBoundary fallback={<p>Failed to fetch Suggestions</p>}>
         <SuggestionSectionSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>
@@ -39,6 +40,7 @@ const SuggestionSectionSuspense = ({ videoId }: SuggestionSectionProps) => {
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
         isFetchingNextPage={isFetchingNextPage}
+        endMessage="No more suggestions to show."
       />
     </>
   );

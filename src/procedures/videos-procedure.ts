@@ -14,7 +14,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike, lt, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
@@ -94,6 +94,65 @@ export const VideosProcedure = createTRPCRouter({
       }
 
       return videoData;
+    }),
+
+  getManyFromQuery: baseProcedure
+    .input(
+      z.object({
+        query: z.string().default(""),
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { query, limit, cursor } }) => {
+      const videosList = await db
+        .select({
+          ...getTableColumns(videos),
+          user: {
+            ...getTableColumns(users),
+          },
+        })
+        .from(videos)
+        .innerJoin(users, eq(users.id, videos.userId))
+        .where(
+          and(
+            and(
+              query ? ilike(videos.title, query) : undefined,
+              eq(videos.visibility, "Public")
+            ),
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(videos.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = videosList.length > limit;
+      const items = hasMore ? videosList.slice(0, -1) : videosList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.updatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        cursor: nextCursor,
+      };
     }),
 
   update: protectedProcedure

@@ -5,6 +5,7 @@ interface InfiniteScrollProps {
   hasNextPage: boolean;
   fetchNextPage: () => void;
   isFetchingNextPage: boolean;
+  endMessage?: string;
   manual?: boolean;
 }
 
@@ -12,6 +13,7 @@ const InfiniteScroll = ({
   hasNextPage,
   fetchNextPage,
   isFetchingNextPage,
+  endMessage = "End of the List",
   manual = false,
 }: InfiniteScrollProps) => {
   const [showMoreClicked, setShowMoreClicked] = useState(false);
@@ -49,7 +51,7 @@ const InfiniteScroll = ({
           <p>Loading...</p>
         )
       ) : (
-        <p>End of the List</p>
+        <p>{endMessage}</p>
       )}
     </div>
   );

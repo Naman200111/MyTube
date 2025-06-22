@@ -6,6 +6,7 @@ import CommentItem from "../components/comment-item";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import InfiniteScroll from "@/components/infinite-scroll";
+import CommentSectionSkeleton from "../skeletons/comment-section";
 
 interface CommentSectionProps {
   videoId: string;
@@ -13,8 +14,8 @@ interface CommentSectionProps {
 
 export const CommentSection = ({ videoId }: CommentSectionProps) => {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <ErrorBoundary fallback={<p>Error</p>}>
+    <Suspense fallback={<CommentSectionSkeleton />}>
+      <ErrorBoundary fallback={<p>Failed to load comments..</p>}>
         <CommentSectionSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>
@@ -45,6 +46,8 @@ const CommentSectionSuspense = ({ videoId }: CommentSectionProps) => {
           hasNextPage={hasNextPage}
           fetchNextPage={fetchNextPage}
           isFetchingNextPage={isFetchingNextPage}
+          endMessage="No more comments to show."
+          manual={true}
         />
       </div>
     </div>

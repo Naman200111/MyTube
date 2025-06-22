@@ -9,6 +9,8 @@ import VideoStats from "../components/video-stats";
 import VideoDescription from "../components/video-description";
 import VideoPlayer from "../components/video-player";
 import { useAuth } from "@clerk/clerk-react";
+import VideoPageSkeleton from "../skeletons/video-page";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface VideoSectionProps {
   videoId: string;
@@ -16,8 +18,15 @@ interface VideoSectionProps {
 
 const VideoSection = ({ videoId }: VideoSectionProps) => {
   return (
-    <Suspense fallback={<>Loading...</>}>
-      <ErrorBoundary fallback={<>Error</>}>
+    <Suspense fallback={<VideoPageSkeleton />}>
+      <ErrorBoundary
+        fallback={
+          <>
+            <Skeleton className="h-[500px]" />
+            <p>Failed to fetch video</p>
+          </>
+        }
+      >
         <VideoSectionSuspense videoId={videoId} />
       </ErrorBoundary>
     </Suspense>

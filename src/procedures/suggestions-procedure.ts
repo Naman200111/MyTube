@@ -49,7 +49,8 @@ export const SuggestionProcedure = createTRPCRouter({
             and(
               and(
                 categoryId ? eq(videos.categoryId, categoryId) : undefined,
-                ne(videos.id, existingVideo?.id)
+                ne(videos.id, existingVideo?.id),
+                eq(videos.visibility, "Public")
               ),
               cursor
                 ? or(

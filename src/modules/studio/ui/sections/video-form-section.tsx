@@ -90,14 +90,14 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
 
   return (
     <div className="w-full px-6 pt-6 pb-4 flex flex-col gap-6 max-w-[1280px]">
-      <div className="w-full flex justify-between">
+      <div className="w-full flex flex-col gap-3 sm:flex-row sm:justify-between">
         <div>
           <div className="text-2xl font-bold">Video Details</div>
           <div className="text-sm text-muted-foreground">
             Manage your videos here
           </div>
         </div>
-        <div className="flex gap-2 items-center cursor-pointer lg:col-span-2">
+        <div className="flex gap-2 items-center cursor-pointer">
           <Button
             onClick={() => update.mutate(formData)}
             disabled={update.isPending}
@@ -119,8 +119,8 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </DropDownTrigger>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-14">
-        <div className="flex flex-col gap-8 col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-14">
+        <div className="flex flex-col gap-8 lg:col-span-2">
           <div className="flex flex-col">
             <span className="font-medium">Title</span>
             <Input
@@ -147,6 +147,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
               width={150}
               height={150}
               alt="Thumbnail"
+              className="overflow-hidden rounded-md"
             ></Image>
           </div>
           <div className="flex flex-col gap-2">
@@ -166,10 +167,10 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             </Select>
           </div>
         </div>
-        <div className="flex flex-col gap-10 col-span-1">
+        <div className="flex flex-col gap-10 lg:col-span-1">
           <div className="bg-gray-100 flex flex-col gap-6 rounded-md pb-4 text-muted-foreground">
             <MuxPlayer
-              className="w-full aspect-video"
+              className="w-full aspect-video overflow-hidden rounded-md rounded-b-none"
               playbackId={formData.playbackId}
               placeholder="/placeholder.svg"
               playerInitTime={0}
@@ -183,11 +184,12 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
                 >
                   {videoLink}
                 </div>
-                <Copy
-                  onClick={handleCopyClick}
-                  className="cursor-pointer text-slate-900"
-                  size={30}
-                />
+                <div>
+                  <Copy
+                    onClick={handleCopyClick}
+                    className="cursor-pointer text-slate-900 p-1"
+                  />
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-1 px-4 pb-4 ">
