@@ -1,4 +1,5 @@
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
+import UserAvatar from "@/components/user-avatar";
 import useClickOutside from "@/hooks/use-click-outside";
 import {
   getCountShortForm,
@@ -7,53 +8,79 @@ import {
 } from "@/lib/utils";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
+import { cva } from "class-variance-authority";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type SuggestionVideoType = inferProcedureOutput<
-  AppRouter["suggestions"]["getMany"]
->;
+type VideoType = inferProcedureOutput<AppRouter["suggestions"]["getMany"]>;
 
-interface VideoSuggestionProps {
-  item: SuggestionVideoType["items"][0];
+interface VideoCardProps {
+  item: VideoType["items"][0];
+  size?: "compact" | "default" | "grid" | "mobile";
 }
 
-const VideoSuggestion = ({ item: video }: VideoSuggestionProps) => {
+const videoCardVariants = cva("cursor-pointer w-full", {
+  variants: {
+    size: {
+      compact: "flex gap-2 mb-2",
+      default: "flex gap-4 mb-4",
+      grid: "flex flex-col gap-2",
+      mobile: "flex flex-col gap-2 mb-2",
+    },
+  },
+  defaultVariants: {},
+});
+
+const thumbnailVariantsMap = {
+  compact: { width: 120, height: 120 },
+  default: { width: 380, height: 380 },
+  grid: { width: 300, height: 300 },
+  mobile: { width: 300, height: 300 },
+};
+
+const VideoCard = ({ item: video, size = "default" }: VideoCardProps) => {
   const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
   useClickOutside(() => setShowDropDown(false));
 
   return (
     <div
-      className="flex gap-2 cursor-pointer"
+      className={videoCardVariants({ size })}
       onClick={() => router.push(`/video/${video.id}`)}
     >
       <div className="flex flex-col relative">
-        <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground  text-background text-xs">
+        <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs">
           {getVideoTimeFromDuration(video.duration)}
         </div>
         <Image
           src={video.thumbnailURL || "/placeholder.svg"}
           alt="Thumbnail"
-          width={120}
-          height={120}
-          className="rounded-md"
+          width={thumbnailVariantsMap[size].width}
+          height={thumbnailVariantsMap[size].height}
+          className="rounded-md overflow-hidden"
         />
       </div>
       <div className="flex flex-col gap-1 flex-1">
         <div className="text-sm font-semibold">{video.title}</div>
         <div className="text-[0.5em] text-gray-500">
-          <div>{video.user.name}</div>
+          <div className="flex gap-2">
+            <UserAvatar size="xs" imageUrl={video.user.imageUrl} />
+            <div>{video.user.name}</div>
+          </div>
           <div className="flex gap-1 items-center">
             <div>{getCountShortForm(video.viewCount)} views </div>
             <p className="font-bold mb-[0.5em]">.</p>
             <div>{getShortFormDateFromDate(video.createdAt)}</div>
           </div>
         </div>
+        <div className="text-sm text-gray-400">{video.description}</div>
       </div>
       <DropDownTrigger
-        onClick={() => setShowDropDown((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDropDown((prev) => !prev);
+        }}
         className="mt-1"
       >
         {showDropDown ? <DropDownItem>Add to playlist</DropDownItem> : null}
@@ -62,4 +89,4 @@ const VideoSuggestion = ({ item: video }: VideoSuggestionProps) => {
   );
 };
 
-export default VideoSuggestion;
+export default VideoCard;

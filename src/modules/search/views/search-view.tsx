@@ -1,7 +1,10 @@
+"use client";
+
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import SearchViewSkeleton from "../skeletons/search-view";
 import { trpc } from "@/trpc/client";
+import VideoCard from "@/modules/video/components/video-card";
 
 interface SearchViewProps {
   query: string;
@@ -23,9 +26,17 @@ const SearchViewSuspense = ({ query }: SearchViewProps) => {
     { query, limit: 10 },
     { getNextPageParam: (lastPage) => lastPage.cursor }
   );
+
+  const pages = searchedData.pages;
+  const searchedVideos = pages.flatMap((page) => page.items) || [];
+  console.log(searchedVideos, "searchedVideos");
+
   return (
-    <div>
-      Searched query: {query} : {JSON.stringify(searchedData)}
+    <div className="flex flex-col items-center w-[50%] mx-auto">
+      {searchedVideos.map((video, index) => (
+        <VideoCard key={index} item={video} />
+      ))}
+      {/* Searched query: {query} : {JSON.stringify(searchedData)} */}
     </div>
   );
 };

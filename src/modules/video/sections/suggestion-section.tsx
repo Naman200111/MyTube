@@ -3,7 +3,7 @@
 import { trpc } from "@/trpc/client";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import VideoSuggestion from "../components/video-suggestion";
+import VideoSuggestion from "../components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
 import SuggestionSectionSkeleton from "../skeletons/suggestion-section";
 
@@ -34,7 +34,7 @@ const SuggestionSectionSuspense = ({ videoId }: SuggestionSectionProps) => {
   return (
     <>
       {items.map((item, index) => (
-        <VideoSuggestion key={index} item={item} />
+        <VideoSuggestion key={index} item={item} size="compact" />
       ))}
       <InfiniteScroll
         hasNextPage={hasNextPage}

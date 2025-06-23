@@ -3,7 +3,7 @@ import Image from "next/image";
 
 interface UserAvatarProps {
   imageUrl: string;
-  size?: "default" | "sm";
+  size?: "default" | "sm" | "xs";
   className?: string;
 }
 
@@ -11,6 +11,7 @@ const dimensionMap = {
   default: { width: 40, height: 30 },
   // todos fix size for replies
   sm: { width: 30, height: 20 },
+  xs: { width: 20, height: 10 },
 };
 
 const UserAvatar = ({

@@ -13,13 +13,15 @@ const HomeNavbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
-  const triggerSearch = () => {
-    const url = new URL(`/search?query=${searchQuery}`, APP_URL);
+  const handleSearch = () => {
+    const url = new URL("/search", APP_URL);
+    console.log(searchQuery, "searchQuery");
     if (searchQuery) {
-      url.searchParams.set("query", searchQuery);
+      url.searchParams.set("query", encodeURIComponent(searchQuery.trim()));
     } else {
       url.searchParams.delete("query");
     }
+    console.log(url, url.toString(), "url");
     router.push(url.toString());
   };
 
@@ -42,7 +44,7 @@ const HomeNavbar = () => {
           placeholder="Search"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              triggerSearch();
+              handleSearch();
             }
           }}
           className="ml-2 px-2 py-1 rounded-l-full border 
@@ -52,7 +54,7 @@ const HomeNavbar = () => {
         <button className="mr-2 px-2 py-1 border border-gray-300 rounded-r-full border-l-0 bg-gray-100">
           <SearchIcon
             className="mx-1 text-gray-500 ml-2 cursor-pointer"
-            onClick={triggerSearch}
+            onClick={handleSearch}
           />
         </button>
       </div>
