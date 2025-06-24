@@ -6,6 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import VideoSuggestion from "../components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
 import SuggestionSectionSkeleton from "../skeletons/suggestion-section";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SuggestionSectionProps {
   videoId: string;
@@ -27,6 +28,7 @@ const SuggestionSectionSuspense = ({ videoId }: SuggestionSectionProps) => {
     { getNextPageParam: (lastPage) => lastPage.cursor }
   );
 
+  const isMobile = useIsMobile();
   const { hasNextPage, fetchNextPage, isFetchingNextPage } = query;
   const pages = data.pages;
   const items = pages.flatMap((page) => page.items) || [];
@@ -34,7 +36,11 @@ const SuggestionSectionSuspense = ({ videoId }: SuggestionSectionProps) => {
   return (
     <>
       {items.map((item, index) => (
-        <VideoSuggestion key={index} item={item} size="compact" />
+        <VideoSuggestion
+          key={index}
+          item={item}
+          size={isMobile ? "mobile" : "compact"}
+        />
       ))}
       <InfiniteScroll
         hasNextPage={hasNextPage}
