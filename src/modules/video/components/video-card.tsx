@@ -31,7 +31,7 @@ const videoCardVariants = cva("cursor-pointer w-full", {
   variants: {
     size: {
       compact: "flex gap-2 mb-2",
-      default: "flex gap-4 mb-4",
+      default: "flex gap-4 mb-4 h-[200px]",
       grid: "flex flex-col gap-2",
       mobile: "flex flex-col gap-2 mb-2",
     },
@@ -140,16 +140,15 @@ const VideoCard = ({ item: video, size = "default" }: VideoCardProps) => {
       className={videoCardVariants({ size })}
       onClick={() => router.push(`/video/${video.id}`)}
     >
-      <div className="flex flex-col relative">
-        <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs">
+      <div className="rounded-md overflow-hidden relative w-[50%]">
+        <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
         <Image
           src={video.thumbnailURL || "/placeholder.svg"}
           alt="Thumbnail"
-          width={thumbnailVariantsMap[size].width}
-          height={thumbnailVariantsMap[size].height}
-          className="rounded-md overflow-hidden"
+          fill
+          className="object-cover"
         />
       </div>
       {size === "mobile" || size === "grid" ? (
