@@ -32,7 +32,7 @@ const SearchViewSuspense = ({ query }: SearchViewProps) => {
   console.log(searchedVideos, "searchedVideos");
 
   return (
-    <div className="flex flex-col items-center w-[50%] mx-auto">
+    <div className="flex flex-col items-center w-[50%] mx-auto max-w-[1080px]">
       {searchedVideos.map((video, index) => (
         <VideoCard key={index} item={video} />
       ))}

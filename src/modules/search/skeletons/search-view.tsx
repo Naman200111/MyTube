@@ -19,6 +19,7 @@ const SearchViewSkeleton = () => {
       <SingleVideoCard />
       <SingleVideoCard />
       <SingleVideoCard />
+      <SingleVideoCard />
     </div>
   );
 };

@@ -13,7 +13,7 @@ const VideoView = ({ videoId }: VideoViewProps) => {
         <VideoSection videoId={videoId} />
         <CommentSection videoId={videoId} />
       </div>
-      <div className="lg:w-[35%] xl:w-[30%] 2xl:w-[25]">
+      <div className="lg:w-[35%] xl:w-[30%] 2xl:w-[25%]">
         <SuggestionSection videoId={videoId} />
       </div>
     </div>
