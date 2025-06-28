@@ -8,7 +8,6 @@ import {
 } from "@/lib/utils";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
-// import { cva } from "class-variance-authority";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,50 +20,26 @@ interface VideoCardProps {
   onClick?: () => void;
 }
 
-interface VideoCardPropsMobile {
+interface VideoCardProps_v2 {
+  onClick?: () => void;
   item: VideoType["items"][0];
   size?: "compact" | "default" | "grid" | "mobile";
   setShowDropDown: (prev: boolean) => void;
   showDropDown: boolean;
 }
 
-// const videoCardVariants = cva("cursor-pointer w-full", {
-//   variants: {
-//     size: {
-//       compact: "flex gap-2 mb-2 min-h-[80px]",
-//       default: "flex gap-4 mb-4 min-h-[200px]",
-//       grid: "flex flex-col gap-2 min-h-[220px]",
-//       mobile: "flex flex-col gap-2 mb-2 min-h-[300px]",
-//     },
-//   },
-//   defaultVariants: {
-//     size: "default",
-//   },
-// });
-
-// const videoDetailsVariant = cva("text-gray-500 flex", {
-//   variants: {
-//     size: {
-//       compact: "flex-col text-[0.6em]",
-//       default: "flex-col-reverse text-[0.5em]",
-//       grid: "flex-col text-[0.6em] ml-10",
-//       mobile: "flex-col text-[0.6em] ml-10",
-//     },
-//   },
-//   defaultVariants: {
-//     size: "default",
-//   },
-// });
-
 const VideoCardGrid = ({
-  size,
+  onClick,
   item: video,
   setShowDropDown,
   showDropDown,
-}: VideoCardPropsMobile) => {
+}: VideoCardProps_v2) => {
   return (
-    <div className="h-[220px] w-full flex flex-col gap-2">
-      <div className="rounded-md overflow-hidden relative flex-1 w-[100%]">
+    <div
+      className="cursor-pointer h-[260px] w-full flex flex-col gap-2"
+      onClick={onClick}
+    >
+      <div className="rounded-md overflow-hidden relative h-full w-[100%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -83,10 +58,8 @@ const VideoCardGrid = ({
               {video.title}
             </div>
           </div>
-          <div className="flex-col text-[0.6em] ml-10">
-            <div className="flex gap-2 items-center">
-              <div>{video.user.name}</div>
-            </div>
+          <div className="text-[0.6em] text-gray-500 ml-10">
+            <div>{video.user.name}</div>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
               <p className="font-bold mb-[0.5em]">.</p>
@@ -112,9 +85,13 @@ const VideoCardMobile = ({
   item: video,
   setShowDropDown,
   showDropDown,
-}: VideoCardPropsMobile) => {
+  onClick,
+}: VideoCardProps_v2) => {
   return (
-    <div className="h-[320px] sm:h-[420px] w-full flex flex-col gap-2">
+    <div
+      onClick={onClick}
+      className="cursor-pointer h-[320px] sm:h-[420px] w-full flex flex-col gap-2"
+    >
       <div className="rounded-md overflow-hidden relative h-full">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
@@ -159,7 +136,7 @@ const VideoCardMobile = ({
 
 const VideoCardPrimary = ({ item: video }: VideoCardProps) => {
   return (
-    <div className="h-[280px] w-full flex gap-2">
+    <div className="cursor-pointer h-[240px] w-full flex gap-2">
       <div className="rounded-md overflow-hidden relative h-full w-[60%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
@@ -171,7 +148,7 @@ const VideoCardPrimary = ({ item: video }: VideoCardProps) => {
           className="object-cover"
         />
       </div>
-      <div className="overflow-hidden">
+      <div className="overflow-hidden flex-1">
         <div className="text-sm font-semibold line-clamp-1">{video.title}</div>
         <div className="text-[0.5em] text-gray-500">
           <div className="flex gap-1 items-center">
@@ -194,7 +171,10 @@ const VideoCardPrimary = ({ item: video }: VideoCardProps) => {
 
 const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
   return (
-    <div className="h-[90px] w-full flex gap-2" onClick={onClick}>
+    <div
+      className="cursor-pointer h-[90px] w-full flex gap-2"
+      onClick={onClick}
+    >
       <div className="rounded-md overflow-hidden relative h-full w-[30%] lg:w-[50%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
@@ -229,30 +209,22 @@ const VideoCard = ({ item: video, size = "default" }: VideoCardProps) => {
   return (
     <>
       {size === "mobile" && (
-        <div
-          className="flex flex-col gap-1 mb-2 w-full"
+        <VideoCardMobile
+          item={video}
+          size={size}
+          setShowDropDown={setShowDropDown}
+          showDropDown={showDropDown}
           onClick={() => router.push(`/video/${video.id}`)}
-        >
-          <VideoCardMobile
-            item={video}
-            size={size}
-            setShowDropDown={setShowDropDown}
-            showDropDown={showDropDown}
-          />
-        </div>
+        />
       )}
       {size === "grid" && (
-        <div
-          className="flex flex-col gap-2"
+        <VideoCardGrid
+          item={video}
+          size={size}
+          setShowDropDown={setShowDropDown}
+          showDropDown={showDropDown}
           onClick={() => router.push(`/video/${video.id}`)}
-        >
-          <VideoCardGrid
-            item={video}
-            size={size}
-            setShowDropDown={setShowDropDown}
-            showDropDown={showDropDown}
-          />
-        </div>
+        />
       )}
       {size === "compact" && (
         <div className="flex gap-1 mb-2 w-full">

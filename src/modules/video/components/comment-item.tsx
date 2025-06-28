@@ -146,7 +146,7 @@ const CommentItem = ({
           </div>
           <div className="flex-end cursor-pointer">
             <DropDownTrigger
-              className="hover:bg-gray-100 hover:rounded-full p-2"
+              className="hover:bg-accent hover:rounded-full p-2"
               onClick={() => setShowMoreOptions((prev) => !prev)}
             >
               {showMoreOptions ? (
@@ -169,7 +169,7 @@ const CommentItem = ({
             )}
           >
             <div
-              className="p-[6px] rounded-full hover:bg-gray-200"
+              className="p-[6px] rounded-full hover:bg-accent"
               onClick={() => handleCommentReaction("like")}
             >
               <ThumbsUp fill={likeButtonFillValue} size={16} />
@@ -183,7 +183,7 @@ const CommentItem = ({
             )}
           >
             <div
-              className="p-[6px] rounded-full hover:bg-gray-200"
+              className="p-[6px] rounded-full hover:bg-accent"
               onClick={() => handleCommentReaction("dislike")}
             >
               <ThumbsDown fill={dislikeButtonFillValue} size={16} />

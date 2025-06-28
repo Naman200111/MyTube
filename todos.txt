@@ -3,9 +3,9 @@
 3. adding likes, comments, dislikes, views in studio table
 4. adding suggestions (only public videos) ✅
 5. adding loaders in video-view ✅
-5. improving code for video card variants
-6. search page
-7. home feed
+5. improving code for video card variants ✅
+6. search page 
+7. home feed ✅
 8. playlists
 9. user page
 10. making mobile responsive designs going fwd and fixing prev ones

@@ -164,7 +164,7 @@ const VideoStats = ({
           <div className="flex items-center cursor-pointer flex-1 md:flex-none">
             <div
               className={mergeClasses(
-                "p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-gray-100 hover:bg-slate-200",
+                "p-2 rounded-full rounded-r-none border-r-[0.5px] flex gap-2 items-center bg-accent hover:bg-gray-200",
                 reactionUpdateInProgress ? "opacity-50" : ""
               )}
               onClick={() => handleVideoReaction("like")}
@@ -174,7 +174,7 @@ const VideoStats = ({
             </div>
             <div
               className={mergeClasses(
-                "p-2 rounded-full rounded-l-none bg-gray-100 flex gap-2 items-center hover:bg-slate-200",
+                "p-2 rounded-full rounded-l-none bg-accent flex gap-2 items-center hover:bg-gray-200",
                 reactionUpdateInProgress ? "opacity-50" : ""
               )}
               onClick={() => handleVideoReaction("dislike")}
@@ -184,7 +184,7 @@ const VideoStats = ({
             </div>
           </div>
           <DropDownTrigger
-            className="bg-gray-100 flex items-center cursor-pointer p-2 m-1 rounded-full"
+            className="bg-accent flex items-center cursor-pointer p-2 m-1 rounded-full"
             onClick={() => setShowMoreOptions((prev) => !prev)}
           >
             {showMoreOptions ? (

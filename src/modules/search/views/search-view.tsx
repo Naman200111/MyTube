@@ -6,27 +6,31 @@ import SearchViewSkeleton from "../skeletons/search-view";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import InfiniteScroll from "@/components/infinite-scroll";
 
 interface SearchViewProps {
-  query: string;
+  searchQuery: string;
 }
 
-const SearchView = ({ query }: SearchViewProps) => {
+const SearchView = ({ searchQuery }: SearchViewProps) => {
   return (
     <Suspense fallback={<SearchViewSkeleton />}>
       <ErrorBoundary fallback={<p>Failed to fetch results..</p>}>
-        <SearchViewSuspense query={query} />
+        <SearchViewSuspense searchQuery={searchQuery} />
       </ErrorBoundary>
     </Suspense>
   );
 };
 
-const SearchViewSuspense = ({ query }: SearchViewProps) => {
+const SearchViewSuspense = ({ searchQuery }: SearchViewProps) => {
   const isMobile = useIsMobile();
-  const [searchedData] = trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
-    { query, limit: 10 },
-    { getNextPageParam: (lastPage) => lastPage.cursor }
-  );
+  const [searchedData, query] =
+    trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
+      { query: searchQuery, limit: 10 },
+      { getNextPageParam: (lastPage) => lastPage.cursor }
+    );
+
+  const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
   const pages = searchedData.pages;
   const searchedVideos = pages.flatMap((page) => page.items) || [];
@@ -41,6 +45,11 @@ const SearchViewSuspense = ({ query }: SearchViewProps) => {
           size={isMobile ? "mobile" : "default"}
         />
       ))}
+      <InfiniteScroll
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+      />
     </div>
   );
 };

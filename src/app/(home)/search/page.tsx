@@ -16,7 +16,7 @@ const SearchPage = async ({ params }: SearchPageProps) => {
   console.log(query, "searhc query");
   return (
     <HydrateClient>
-      <SearchView query={query} />
+      <SearchView searchQuery={query} />
     </HydrateClient>
   );
 };

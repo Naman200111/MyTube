@@ -19,7 +19,7 @@ export const DropDownTrigger = ({
     >
       <EllipsisVertical className=" text-black" size={15} />
       {children ? (
-        <div className="flex flex-col absolute right-0 z-[1] top-[2.25em] items-start border">
+        <div className="flex flex-col absolute right-0 z-[1] top-[2.25em] items-start border rounded-md overflow-hidden">
           {children}
         </div>
       ) : null}

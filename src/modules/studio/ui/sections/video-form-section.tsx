@@ -168,7 +168,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </div>
         </div>
         <div className="flex flex-col gap-10 lg:col-span-1">
-          <div className="bg-gray-100 flex flex-col gap-6 rounded-md pb-4 text-muted-foreground">
+          <div className="bg-accent flex flex-col gap-6 rounded-md pb-4 text-muted-foreground">
             <MuxPlayer
               className="w-full aspect-video overflow-hidden rounded-md rounded-b-none"
               playbackId={formData.playbackId}
