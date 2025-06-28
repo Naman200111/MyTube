@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 // import {
 //   Carousel,
 //   CarouselContent,
@@ -19,12 +19,17 @@ type categoryContent = {
 
 type categoryCarouselProps = {
   categories: categoryContent[];
+  setSelectedCategory: (val: string) => void;
+  selectedCategory: string;
 };
 
-const CategoryCarousel = ({ categories }: categoryCarouselProps) => {
+const CategoryCarousel = ({
+  categories,
+  setSelectedCategory,
+  selectedCategory,
+}: categoryCarouselProps) => {
   // improvements => conditionally render left and right scroll arrows
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(-1);
   const onScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const width = scrollRef.current.clientWidth;
@@ -35,8 +40,8 @@ const CategoryCarousel = ({ categories }: categoryCarouselProps) => {
     }
   };
 
-  const onSelectCategory = (idx: number) => {
-    setSelectedCategoryId(idx);
+  const onSelectCategory = (name: string) => {
+    setSelectedCategory(name);
   };
 
   return (
@@ -71,17 +76,19 @@ const CategoryCarousel = ({ categories }: categoryCarouselProps) => {
       ) : null}
       <div ref={scrollRef} className="flex flex-nowrap gap-2 overflow-hidden">
         <Badge
-          variant={selectedCategoryId === -1 ? "default" : "secondary"}
+          variant={selectedCategory === "" ? "default" : "secondary"}
           className="p-[6px]"
-          onClick={() => onSelectCategory(-1)}
+          onClick={() => onSelectCategory("")}
         >
           All
         </Badge>
         {categories.map((category: categoryContent, idx: number) => {
           return (
-            <div key={idx} onClick={() => onSelectCategory(idx)}>
+            <div key={idx} onClick={() => onSelectCategory(category.name)}>
               <Badge
-                variant={selectedCategoryId === idx ? "default" : "secondary"}
+                variant={
+                  selectedCategory === category.name ? "default" : "secondary"
+                }
                 className="p-[6px] text-nowrap"
               >
                 {category.name}

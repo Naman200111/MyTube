@@ -5,38 +5,56 @@ import { ErrorBoundary } from "react-error-boundary";
 import VideosHomeFeedSkeleton from "../skeletons/videos-home-feed-section";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
+import InfiniteScroll from "@/components/infinite-scroll";
 
-export const VideosHomeFeedSection = () => {
+interface VideoHomeFeedSectionProps {
+  selectedCategory: string;
+}
+
+export const VideosHomeFeedSection = ({
+  selectedCategory,
+}: VideoHomeFeedSectionProps) => {
   return (
     <Suspense fallback={<VideosHomeFeedSkeleton />}>
       <ErrorBoundary fallback={<p>Failed to fetch videos...</p>}>
-        <VideosHomeFeedSuspense />
+        <VideosHomeFeedSuspense selectedCategory={selectedCategory} />
       </ErrorBoundary>
     </Suspense>
   );
 };
 
-const VideosHomeFeedSuspense = () => {
-  const [data] = trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
+const VideosHomeFeedSuspense = ({
+  selectedCategory,
+}: VideoHomeFeedSectionProps) => {
+  const [data, query] = trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
     {
       limit: 12,
+      category: selectedCategory,
     },
     {
       getNextPageParam: (lastPage) => lastPage.cursor,
     }
   );
 
+  const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
   const pages = data.pages;
   const items = pages.flatMap((page) => page.items);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
-      <>
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
         {items.map((item, index) => (
           <VideoCard key={index} item={item} size="grid" />
         ))}
-      </>
-    </div>
+      </div>
+      <div className="mt-10">
+        <InfiniteScroll
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          fetchNextPage={fetchNextPage}
+        />
+      </div>
+    </>
   );
 };
 

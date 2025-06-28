@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import {
+  categories,
   subscriptions,
   users,
   videoReactions,
@@ -98,6 +99,7 @@ export const VideosProcedure = createTRPCRouter({
     .input(
       z.object({
         query: z.string().nullish(),
+        category: z.string().default(""),
         limit: z.number().min(1).max(100),
         cursor: z
           .object({
@@ -107,7 +109,12 @@ export const VideosProcedure = createTRPCRouter({
           .nullish(),
       })
     )
-    .query(async ({ input: { query, limit, cursor } }) => {
+    .query(async ({ input: { query, limit, cursor, category } }) => {
+      const [categoryData] = await db
+        .select()
+        .from(categories)
+        .where(eq(categories.name, category));
+
       const videosList = await db
         .select({
           ...getTableColumns(videos),
@@ -122,6 +129,7 @@ export const VideosProcedure = createTRPCRouter({
           and(
             and(
               query ? ilike(videos.title, `%${query}%`) : undefined,
+              categoryData ? eq(videos.categoryId, categoryData.id) : undefined,
               eq(videos.visibility, "Public")
             ),
             cursor

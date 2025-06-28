@@ -7,7 +7,15 @@ import { ErrorBoundary } from "react-error-boundary";
 import CategoryCarousel from "../components/category-carousel";
 import { Loader2Icon } from "lucide-react";
 
-export const CategorySection = () => {
+interface CategorySectionProps {
+  setSelectedCategory: (val: string) => void;
+  selectedCategory: string;
+}
+
+export const CategorySection = ({
+  setSelectedCategory,
+  selectedCategory,
+}: CategorySectionProps) => {
   return (
     <Suspense
       fallback={
@@ -17,13 +25,25 @@ export const CategorySection = () => {
       }
     >
       <ErrorBoundary fallback={<p>Error...</p>}>
-        <CategorySectionSuspense />
+        <CategorySectionSuspense
+          setSelectedCategory={setSelectedCategory}
+          selectedCategory={selectedCategory}
+        />
       </ErrorBoundary>
     </Suspense>
   );
 };
 
-const CategorySectionSuspense = () => {
+const CategorySectionSuspense = ({
+  setSelectedCategory,
+  selectedCategory,
+}: CategorySectionProps) => {
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
-  return <CategoryCarousel categories={categories} />;
+  return (
+    <CategoryCarousel
+      categories={categories}
+      setSelectedCategory={setSelectedCategory}
+      selectedCategory={selectedCategory}
+    />
+  );
 };

@@ -4,7 +4,7 @@
 4. adding suggestions (only public videos) ✅
 5. adding loaders in video-view ✅
 5. improving code for video card variants ✅
-6. search page 
+6. search page ✅
 7. home feed ✅
 8. playlists
 9. user page
