@@ -87,8 +87,6 @@ export const VideosProcedure = createTRPCRouter({
         )
         .where(eq(videos.id, videoId));
 
-      //Todo : remove console
-      console.log(videoData, "videoData");
       if (!videoData) {
         throw new TRPCError({ message: "Video not found", code: "NOT_FOUND" });
       }
@@ -123,7 +121,7 @@ export const VideosProcedure = createTRPCRouter({
         .where(
           and(
             and(
-              query ? ilike(videos.title, query) : undefined,
+              query ? ilike(videos.title, `%${query}%`) : undefined,
               eq(videos.visibility, "Public")
             ),
             cursor

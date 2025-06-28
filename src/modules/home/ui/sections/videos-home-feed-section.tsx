@@ -28,7 +28,6 @@ const VideosHomeFeedSuspense = () => {
 
   const pages = data.pages;
   const items = pages.flatMap((page) => page.items);
-  console.log(items, "items");
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">

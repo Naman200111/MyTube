@@ -19,7 +19,7 @@ const HomeNavbar = () => {
     if (searchQuery) {
       url.searchParams.set("query", encodeURIComponent(searchQuery.trim()));
     } else {
-      url.searchParams.delete("query");
+      // url.searchParams.delete("query");
     }
     console.log(url, url.toString(), "url");
     router.push(url.toString());

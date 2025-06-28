@@ -9,7 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import InfiniteScroll from "@/components/infinite-scroll";
 
 interface SearchViewProps {
-  searchQuery: string;
+  searchQuery?: string;
 }
 
 const SearchView = ({ searchQuery }: SearchViewProps) => {
@@ -34,7 +34,6 @@ const SearchViewSuspense = ({ searchQuery }: SearchViewProps) => {
 
   const pages = searchedData.pages;
   const searchedVideos = pages.flatMap((page) => page.items) || [];
-  console.log(searchedVideos, "searchedVideos");
 
   return (
     <div className="flex flex-col items-center w-full mx-2 lg:w-[70%] xl:w-[50%] lg:mx-auto max-w-[1080px]">
