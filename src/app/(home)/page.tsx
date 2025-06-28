@@ -5,6 +5,9 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   void trpc.categories.getMany.prefetch();
+  void trpc.videos.getManyFromQuery.prefetchInfinite({
+    limit: 12,
+  });
 
   return (
     <HydrateClient>

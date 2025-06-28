@@ -99,7 +99,7 @@ export const VideosProcedure = createTRPCRouter({
   getManyFromQuery: baseProcedure
     .input(
       z.object({
-        query: z.string().default(""),
+        query: z.string().nullish(),
         limit: z.number().min(1).max(100),
         cursor: z
           .object({
