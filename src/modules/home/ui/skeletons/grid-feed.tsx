@@ -4,7 +4,7 @@ const VideoGridCardSkeleton = () => {
   return <Skeleton className="h-[180px] m-2" />;
 };
 
-const VideosHomeFeedSkeleton = () => {
+const GridFeedViewSkeleton = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       <VideoGridCardSkeleton />
@@ -27,4 +27,4 @@ const VideosHomeFeedSkeleton = () => {
   );
 };
 
-export default VideosHomeFeedSkeleton;
+export default GridFeedViewSkeleton;

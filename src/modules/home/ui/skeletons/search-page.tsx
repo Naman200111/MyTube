@@ -12,7 +12,7 @@ const SingleVideoCard = () => {
   );
 };
 
-const SearchViewSkeleton = () => {
+const SearchPageViewSkeleton = () => {
   return (
     <div className="flex flex-col gap-2 mx-auto w-[80%] md:w-[600px] lg:w-[800px]">
       <SingleVideoCard />
@@ -24,4 +24,4 @@ const SearchViewSkeleton = () => {
   );
 };
 
-export default SearchViewSkeleton;
+export default SearchPageViewSkeleton;

@@ -1,4 +1,4 @@
-import SearchView from "@/modules/search/views/search-view";
+import SearchView from "@/modules/home/ui/views/search-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 
 interface SearchPageProps {

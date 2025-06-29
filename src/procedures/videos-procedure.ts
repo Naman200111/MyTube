@@ -188,12 +188,13 @@ export const VideosProcedure = createTRPCRouter({
         db
           .select({
             videoId: videoViews.id,
-            viewCount: count(videoViews.id),
+            viewCount: count(videoViews.id).as("viewCount"),
           })
           .from(videoViews)
           .groupBy(videoViews.id)
       );
 
+      //todo: logic of trending not working
       const videosList = await db
         .with(temp_table)
         .select({
@@ -205,6 +206,7 @@ export const VideosProcedure = createTRPCRouter({
         })
         .from(videos)
         .innerJoin(users, eq(users.id, videos.userId))
+        .leftJoin(temp_table, eq(temp_table.videoId, videos.id))
         .where(
           and(
             eq(videos.visibility, "Public"),

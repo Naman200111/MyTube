@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import SearchViewSkeleton from "../skeletons/search-view";
+import SearchPageViewSkeleton from "../skeletons/search-page";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,7 +14,7 @@ interface SearchViewProps {
 
 const SearchView = ({ searchQuery }: SearchViewProps) => {
   return (
-    <Suspense fallback={<SearchViewSkeleton />}>
+    <Suspense fallback={<SearchPageViewSkeleton />}>
       <ErrorBoundary fallback={<p>Failed to fetch results..</p>}>
         <SearchViewSuspense searchQuery={searchQuery} />
       </ErrorBoundary>

@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import VideosHomeFeedSkeleton from "../skeletons/videos-home-feed-section";
+import GridFeedViewSkeleton from "../skeletons/grid-feed";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
@@ -15,7 +15,7 @@ export const VideosHomeFeedSection = ({
   selectedCategory,
 }: VideoHomeFeedSectionProps) => {
   return (
-    <Suspense fallback={<VideosHomeFeedSkeleton />}>
+    <Suspense fallback={<GridFeedViewSkeleton />}>
       <ErrorBoundary fallback={<p>Failed to fetch videos...</p>}>
         <VideosHomeFeedSuspense selectedCategory={selectedCategory} />
       </ErrorBoundary>

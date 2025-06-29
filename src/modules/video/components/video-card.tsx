@@ -5,6 +5,7 @@ import {
   getCountShortForm,
   getShortFormDateFromDate,
   getVideoTimeFromDuration,
+  mergeClasses,
 } from "@/lib/utils";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
@@ -17,6 +18,7 @@ type VideoType = inferProcedureOutput<AppRouter["suggestions"]["getMany"]>;
 interface VideoCardProps {
   item: VideoType["items"][0];
   size?: "compact" | "default" | "grid" | "mobile";
+  variant?: "default" | "feed";
   onClick?: () => void;
 }
 
@@ -134,10 +136,20 @@ const VideoCardMobile = ({
   );
 };
 
-const VideoCardPrimary = ({ item: video }: VideoCardProps) => {
+const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
   return (
-    <div className="cursor-pointer h-[240px] w-full flex gap-2">
-      <div className="rounded-md overflow-hidden relative h-full w-[60%]">
+    <div
+      className={mergeClasses(
+        "cursor-pointer w-full flex gap-2",
+        variant === "feed" ? "h-[120px]" : "h-[240px]"
+      )}
+    >
+      <div
+        className={mergeClasses(
+          "rounded-md overflow-hidden relative h-full",
+          variant === "feed" ? "w-[30%]" : "w-[60%]"
+        )}
+      >
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -201,7 +213,11 @@ const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
   );
 };
 
-const VideoCard = ({ item: video, size = "default" }: VideoCardProps) => {
+const VideoCard = ({
+  item: video,
+  size = "default",
+  variant = "default",
+}: VideoCardProps) => {
   const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
   useClickOutside(() => setShowDropDown(false));
@@ -246,7 +262,7 @@ const VideoCard = ({ item: video, size = "default" }: VideoCardProps) => {
           className="flex gap-1 mb-2 w-full"
           onClick={() => router.push(`/video/${video.id}`)}
         >
-          <VideoCardPrimary item={video} size={size} />
+          <VideoCardPrimary item={video} size={size} variant={variant} />
           <DropDownTrigger
             onClick={(e) => {
               e.stopPropagation();
