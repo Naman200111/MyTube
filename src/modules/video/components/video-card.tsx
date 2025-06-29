@@ -38,10 +38,10 @@ const VideoCardGrid = ({
 }: VideoCardProps_v2) => {
   return (
     <div
-      className="cursor-pointer h-[280px] w-full flex flex-col gap-2"
+      className="cursor-pointer h-[260px] w-full flex flex-col gap-2"
       onClick={onClick}
     >
-      <div className="rounded-md overflow-hidden relative h-[60%] w-[100%]">
+      <div className="rounded-md overflow-hidden relative h-[70%] w-[100%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -54,13 +54,13 @@ const VideoCardGrid = ({
       </div>
       <div className="flex justify-between">
         <div>
-          <div className="flex gap-2">
-            <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
+          <div className="flex gap-2 items-center">
+            <UserAvatar size="xs" imageUrl={video.user.imageUrl} />
             <div className="text-xs font-semibold line-clamp-2">
               {video.title}
             </div>
           </div>
-          <div className="text-[0.6em] text-muted-foreground ml-10 mt-[4px]">
+          <div className="text-[0.6em] text-muted-foreground ml-7 mt-[4px]">
             <div>{video.user.name}</div>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>

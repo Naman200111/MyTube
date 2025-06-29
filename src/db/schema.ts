@@ -139,4 +139,26 @@ export const commentReactions = pgTable("comment_reactions", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const playlists = pgTable("playlists", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const playlistVideos = pgTable("playlist_videos", {
+  id: uuid("id").notNull().primaryKey().defaultRandom(),
+  videoId: uuid("video_id")
+    .notNull()
+    .references(() => videos.id, { onDelete: "cascade" }),
+  playlistId: uuid("playlist_id")
+    .notNull()
+    .references(() => playlists.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // export type VideoSchema = typeof videos.$inferSelect;
