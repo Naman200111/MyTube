@@ -225,6 +225,71 @@ export const VideosProcedure = createTRPCRouter({
       };
     }),
 
+  getManyLiked: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { limit, cursor }, ctx: { id: userId } }) => {
+      const video_reactions_temp = await db
+        .$with("video_reactions_temp")
+        .as(
+          db
+            .select()
+            .from(videoReactions)
+            .where(eq(videoReactions.userId, userId))
+        );
+
+      const videosList = await db
+        .with(video_reactions_temp)
+        .select({
+          ...getTableColumns(videos),
+          user: {
+            ...getTableColumns(users),
+          },
+          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          videoReactionUpdatedAt: video_reactions_temp.updatedAt,
+        })
+        .from(videos)
+        .innerJoin(users, eq(users.id, videos.userId))
+        .innerJoin(
+          video_reactions_temp,
+          eq(video_reactions_temp.videoId, videos.id)
+        )
+        .where(
+          and(
+            eq(videos.visibility, "Public"),
+            cursor
+              ? lt(video_reactions_temp.updatedAt, cursor.updatedAt)
+              : undefined
+          )
+        )
+        .orderBy(desc(video_reactions_temp.updatedAt), desc(videos.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = videosList.length > limit;
+      const items = hasMore ? videosList.slice(0, -1) : videosList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.videoReactionUpdatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        cursor: nextCursor,
+      };
+    }),
+
   getManyHistory: protectedProcedure
     .input(
       z.object({

@@ -8,31 +8,30 @@ import VideoCard from "@/modules/video/components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
 import { useIsMobileSmall } from "@/hooks/use-mobile-small";
 
-const HistorySection = () => {
+const LikedSection = () => {
   return (
     <Suspense fallback={<VerticalFeedViewSkeleton />}>
-      <ErrorBoundary fallback={<p>Failed to load your history...</p>}>
-        <HistorySectionSuspense />
+      <ErrorBoundary fallback={<p>Failed to load your liked videos...</p>}>
+        <LikedSectionSuspense />
       </ErrorBoundary>
     </Suspense>
   );
 };
 
-const HistorySectionSuspense = () => {
+const LikedSectionSuspense = () => {
   const isMobile = useIsMobileSmall();
-  const [historyData, query] =
-    trpc.videos.getManyHistory.useSuspenseInfiniteQuery(
-      { limit: 10 },
-      { getNextPageParam: (lastPage) => lastPage.cursor }
-    );
+  const [likedData, query] = trpc.videos.getManyLiked.useSuspenseInfiniteQuery(
+    { limit: 10 },
+    { getNextPageParam: (lastPage) => lastPage.cursor }
+  );
 
   const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
-  const pages = historyData.pages;
-  const historyVideos = pages.flatMap((page) => page.items) || [];
+  const pages = likedData.pages;
+  const likedVideos = pages.flatMap((page) => page.items) || [];
   return (
     <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2">
-      {historyVideos.map((video, index) => (
+      {likedVideos.map((video, index) => (
         <VideoCard
           key={index}
           item={video}
@@ -49,4 +48,4 @@ const HistorySectionSuspense = () => {
   );
 };
 
-export default HistorySection;
+export default LikedSection;
