@@ -250,6 +250,7 @@ export const VideosProcedure = createTRPCRouter({
             ...getTableColumns(users),
           },
           viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          viewUpdatedAt: video_views_temp.updatedAt,
         })
         .from(videos)
         .innerJoin(users, eq(users.id, videos.userId))
@@ -258,13 +259,7 @@ export const VideosProcedure = createTRPCRouter({
           and(
             eq(videos.visibility, "Public"),
             cursor
-              ? or(
-                  lt(videos.updatedAt, cursor.updatedAt),
-                  and(
-                    eq(videos.updatedAt, cursor.updatedAt),
-                    lt(videos.id, cursor.id)
-                  )
-                )
+              ? lt(video_views_temp.updatedAt, cursor.updatedAt)
               : undefined
           )
         )
@@ -277,7 +272,7 @@ export const VideosProcedure = createTRPCRouter({
       const nextCursor = hasMore
         ? {
             id: items[items.length - 1]?.id,
-            updatedAt: items[items.length - 1]?.updatedAt,
+            updatedAt: items[items.length - 1]?.viewUpdatedAt,
           }
         : null;
 
