@@ -15,7 +15,16 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, getTableColumns, ilike, lt, or } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  ilike,
+  lt,
+  or,
+} from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
@@ -144,6 +153,135 @@ export const VideosProcedure = createTRPCRouter({
           )
         )
         .orderBy(desc(videos.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = videosList.length > limit;
+      const items = hasMore ? videosList.slice(0, -1) : videosList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.updatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        cursor: nextCursor,
+      };
+    }),
+
+  getManyTrending: baseProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { limit, cursor } }) => {
+      const temp_table = await db.$with("temp_table").as(
+        db
+          .select({
+            videoId: videoViews.id,
+            viewCount: count(videoViews.id),
+          })
+          .from(videoViews)
+          .groupBy(videoViews.id)
+      );
+
+      const videosList = await db
+        .with(temp_table)
+        .select({
+          ...getTableColumns(videos),
+          user: {
+            ...getTableColumns(users),
+          },
+          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+        })
+        .from(videos)
+        .innerJoin(users, eq(users.id, videos.userId))
+        .where(
+          and(
+            eq(videos.visibility, "Public"),
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(temp_table.viewCount), desc(videos.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = videosList.length > limit;
+      const items = hasMore ? videosList.slice(0, -1) : videosList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.updatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        cursor: nextCursor,
+      };
+    }),
+
+  getManyHistory: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { limit, cursor }, ctx: { id: userId } }) => {
+      const video_views_temp = await db
+        .$with("video_views_temp")
+        .as(db.select().from(videoViews).where(eq(videoViews.userId, userId)));
+
+      const videosList = await db
+        .with(video_views_temp)
+        .select({
+          ...getTableColumns(videos),
+          user: {
+            ...getTableColumns(users),
+          },
+          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+        })
+        .from(videos)
+        .innerJoin(users, eq(users.id, videos.userId))
+        .innerJoin(video_views_temp, eq(video_views_temp.videoId, videos.id))
+        .where(
+          and(
+            eq(videos.visibility, "Public"),
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(video_views_temp.updatedAt), desc(videos.updatedAt))
         .limit(limit + 1);
 
       const hasMore = videosList.length > limit;

@@ -81,7 +81,7 @@ const VideosSectionSuspense = () => {
                   </div>
                 </TableDescription>
                 <TableDescription>
-                  <div className="mb-2 text-lg">{video.title}</div>
+                  <div className="line-clamp-1 mb-2 text-lg">{video.title}</div>
                   <div className="line-clamp-2 text-sm text-gray-800">
                     {video.description}
                   </div>
