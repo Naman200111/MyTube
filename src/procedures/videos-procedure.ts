@@ -290,6 +290,77 @@ export const VideosProcedure = createTRPCRouter({
       };
     }),
 
+  getManySubscribed: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100),
+        cursor: z
+          .object({
+            id: z.string().uuid(),
+            updatedAt: z.date(),
+          })
+          .nullish(),
+      })
+    )
+    .query(async ({ input: { limit, cursor }, ctx: { id: userId } }) => {
+      const video_subscription_temp = await db
+        .$with("video_subscription_temp")
+        .as(
+          db
+            .select()
+            .from(subscriptions)
+            .where(eq(subscriptions.viewerId, userId))
+        );
+
+      const videosList = await db
+        .with(video_subscription_temp)
+        .select({
+          ...getTableColumns(videos),
+          user: {
+            ...getTableColumns(users),
+          },
+          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          videoReactionUpdatedAt: video_subscription_temp.updatedAt,
+        })
+        .from(videos)
+        .innerJoin(users, eq(users.id, videos.userId))
+        .innerJoin(
+          video_subscription_temp,
+          eq(video_subscription_temp.creatorId, videos.userId)
+        )
+        .where(
+          and(
+            eq(videos.visibility, "Public"),
+            cursor
+              ? or(
+                  lt(videos.updatedAt, cursor.updatedAt),
+                  and(
+                    eq(videos.updatedAt, cursor.updatedAt),
+                    lt(videos.id, cursor.id)
+                  )
+                )
+              : undefined
+          )
+        )
+        .orderBy(desc(videos.updatedAt))
+        .limit(limit + 1);
+
+      const hasMore = videosList.length > limit;
+      const items = hasMore ? videosList.slice(0, -1) : videosList;
+
+      const nextCursor = hasMore
+        ? {
+            id: items[items.length - 1]?.id,
+            updatedAt: items[items.length - 1]?.updatedAt,
+          }
+        : null;
+
+      return {
+        items,
+        cursor: nextCursor,
+      };
+    }),
+
   getManyHistory: protectedProcedure
     .input(
       z.object({

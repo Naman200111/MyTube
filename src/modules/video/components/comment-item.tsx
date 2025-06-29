@@ -138,7 +138,7 @@ const CommentItem = ({
               <p className="font-semibold">
                 {commentItem.user?.name || "User"}
               </p>
-              <p className="text-gray-500 text-xs">
+              <p className="text-muted-foreground text-xs">
                 {getShortFormDateFromDate(commentItem.createdAt)}
               </p>
             </div>

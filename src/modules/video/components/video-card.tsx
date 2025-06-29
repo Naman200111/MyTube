@@ -41,7 +41,7 @@ const VideoCardGrid = ({
       className="cursor-pointer h-[280px] w-full flex flex-col gap-2"
       onClick={onClick}
     >
-      <div className="rounded-md overflow-hidden relative h-[70%] w-[100%]">
+      <div className="rounded-md overflow-hidden relative h-[60%] w-[100%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -52,7 +52,7 @@ const VideoCardGrid = ({
           className="object-cover"
         />
       </div>
-      <div className="flex justify-between ">
+      <div className="flex justify-between">
         <div>
           <div className="flex gap-2">
             <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
@@ -60,7 +60,7 @@ const VideoCardGrid = ({
               {video.title}
             </div>
           </div>
-          <div className="text-[0.6em] text-gray-500 ml-10">
+          <div className="text-[0.6em] text-muted-foreground ml-10 mt-[4px]">
             <div>{video.user.name}</div>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
@@ -113,7 +113,7 @@ const VideoCardMobile = ({
               {video.title}
             </div>
           </div>
-          <div className="text-[0.6em] text-gray-500 ml-10 mt-1">
+          <div className="text-[0.6em] text-muted-foreground ml-10 mt-1">
             <div>{video.user.name}</div>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
@@ -162,7 +162,7 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
       </div>
       <div className="overflow-hidden flex-1">
         <div className="text-sm font-semibold line-clamp-1">{video.title}</div>
-        <div className="text-[0.5em] text-gray-500">
+        <div className="text-[0.5em] text-muted-foreground">
           <div className="flex gap-1 items-center">
             <div>{getCountShortForm(video.viewCount)} views </div>
             <p className="font-bold mb-[0.5em]">.</p>
@@ -173,7 +173,7 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
             <div>{video.user.name}</div>
           </div>
         </div>
-        <div className="text-xs text-gray-500 mt-3 line-clamp-2">
+        <div className="text-xs text-muted-foreground mt-3 line-clamp-2">
           {video.description}
         </div>
       </div>
@@ -200,7 +200,7 @@ const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
       </div>
       <div className="text-nowrap">
         <div className="text-sm font-semibold line-clamp-1">{video.title}</div>
-        <div className="text-[0.6em] text-gray-500">
+        <div className="text-[0.6em] text-muted-foreground">
           <div>{video.user.name}</div>
           <div className="flex gap-1 items-center">
             <div>{getCountShortForm(video.viewCount)} views </div>

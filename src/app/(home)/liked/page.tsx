@@ -1,7 +1,7 @@
 import { LikedView } from "@/modules/home/ui/views/liked-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 
-const TrendingPage = () => {
+const LikedPage = () => {
   void trpc.videos.getManyLiked.prefetchInfinite({
     limit: 10,
   });
@@ -12,4 +12,4 @@ const TrendingPage = () => {
   );
 };
 
-export default TrendingPage;
+export default LikedPage;

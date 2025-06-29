@@ -38,7 +38,10 @@ const InfiniteScroll = ({
   ]);
 
   return (
-    <div ref={observerRef} className="flex justify-center my-4 text-gray-500">
+    <div
+      ref={observerRef}
+      className="flex justify-center my-4 text-muted-foreground"
+    >
       {hasNextPage ? (
         manual ? (
           <p

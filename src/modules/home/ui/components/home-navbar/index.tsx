@@ -51,7 +51,7 @@ const HomeNavbar = () => {
         />
         <button className="mr-2 px-2 py-1 border border-gray-300 rounded-r-full border-l-0 bg-accent">
           <SearchIcon
-            className="mx-1 text-gray-500 ml-2 cursor-pointer"
+            className="mx-1 text-muted-foreground ml-2 cursor-pointer"
             onClick={handleSearch}
           />
         </button>
