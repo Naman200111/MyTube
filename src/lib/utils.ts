@@ -86,6 +86,7 @@ export const getCountLongForm = (num: number) => {
 };
 
 export const getCountShortForm = (num: number) => {
+  if (typeof num != "number") return "-";
   if (num >= 1e7) return (num / 1e7).toFixed(2).replace(/\.0$/, "") + " Cr";
   if (num >= 1e5) return (num / 1e5).toFixed(2).replace(/\.0$/, "") + " Lakh";
   if (num >= 1e3) return (num / 1e3).toFixed(2).replace(/\.0$/, "") + " K";

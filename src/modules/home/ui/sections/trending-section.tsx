@@ -6,6 +6,7 @@ import VerticalFeedViewSkeleton from "../skeletons/vertical-feed";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
+import { useIsMobileSmall } from "@/hooks/use-mobile-small";
 
 const TrendingSection = () => {
   return (
@@ -18,6 +19,7 @@ const TrendingSection = () => {
 };
 
 const TrendingSectionSuspense = () => {
+  const isMobile = useIsMobileSmall();
   const [trendingData, query] =
     trpc.videos.getManyTrending.useSuspenseInfiniteQuery(
       { limit: 10 },
@@ -29,9 +31,14 @@ const TrendingSectionSuspense = () => {
   const pages = trendingData.pages;
   const searchedVideos = pages.flatMap((page) => page.items) || [];
   return (
-    <div className="flex flex-col items-center mx-2 w-[60%] ml-10 max-w-[1080px]">
+    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2">
       {searchedVideos.map((video, index) => (
-        <VideoCard key={index} item={video} variant="feed" />
+        <VideoCard
+          key={index}
+          item={video}
+          variant="feed"
+          size={isMobile ? "mobile" : "default"}
+        />
       ))}
       <InfiniteScroll
         hasNextPage={hasNextPage}

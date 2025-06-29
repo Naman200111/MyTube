@@ -15,16 +15,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  getTableColumns,
-  ilike,
-  lt,
-  or,
-} from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike, lt, or } from "drizzle-orm";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
@@ -178,50 +169,43 @@ export const VideosProcedure = createTRPCRouter({
         cursor: z
           .object({
             id: z.string().uuid(),
+            viewCount: z.number(),
             updatedAt: z.date(),
           })
           .nullish(),
       })
     )
     .query(async ({ input: { limit, cursor } }) => {
-      const temp_table = await db.$with("temp_table").as(
-        db
-          .select({
-            videoId: videoViews.id,
-            viewCount: count(videoViews.id).as("viewCount"),
-          })
-          .from(videoViews)
-          .groupBy(videoViews.id)
+      const viewCount = db.$count(
+        videoViews,
+        eq(videos.id, videoViews.videoId)
       );
 
-      //todo: logic of trending not working
       const videosList = await db
-        .with(temp_table)
         .select({
           ...getTableColumns(videos),
           user: {
             ...getTableColumns(users),
           },
-          viewCount: db.$count(videoViews, eq(videos.id, videoViews.videoId)),
+          viewCount: viewCount,
         })
         .from(videos)
         .innerJoin(users, eq(users.id, videos.userId))
-        .leftJoin(temp_table, eq(temp_table.videoId, videos.id))
         .where(
           and(
             eq(videos.visibility, "Public"),
             cursor
               ? or(
-                  lt(videos.updatedAt, cursor.updatedAt),
+                  lt(viewCount, cursor.viewCount),
                   and(
-                    eq(videos.updatedAt, cursor.updatedAt),
-                    lt(videos.id, cursor.id)
+                    eq(viewCount, cursor.viewCount),
+                    lt(videos.updatedAt, cursor.updatedAt)
                   )
                 )
               : undefined
           )
         )
-        .orderBy(desc(temp_table.viewCount), desc(videos.updatedAt))
+        .orderBy(desc(viewCount), desc(videos.updatedAt))
         .limit(limit + 1);
 
       const hasMore = videosList.length > limit;
@@ -230,6 +214,7 @@ export const VideosProcedure = createTRPCRouter({
       const nextCursor = hasMore
         ? {
             id: items[items.length - 1]?.id,
+            viewCount: items[items.length - 1]?.viewCount,
             updatedAt: items[items.length - 1]?.updatedAt,
           }
         : null;

@@ -109,11 +109,11 @@ const VideoCardMobile = ({
         <div>
           <div className="flex gap-2">
             <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
-            <div className="text-sm font-semibold line-clamp-1">
+            <div className="text-xs font-semibold line-clamp-2">
               {video.title}
             </div>
           </div>
-          <div className="text-[0.6em] text-gray-500 ml-10">
+          <div className="text-[0.6em] text-gray-500 ml-10 mt-1">
             <div>{video.user.name}</div>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
@@ -147,7 +147,7 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
       <div
         className={mergeClasses(
           "rounded-md overflow-hidden relative h-full",
-          variant === "feed" ? "w-[30%]" : "w-[60%]"
+          variant === "feed" ? "w-[40%]" : "w-[60%]"
         )}
       >
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">

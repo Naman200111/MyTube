@@ -14,7 +14,7 @@ const SingleVideoCard = () => {
 
 const VerticalFeedViewSkeleton = () => {
   return (
-    <div className="flex flex-col items-center mx-2 w-[60%] ml-10 max-w-[1080px] gap-2">
+    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2">
       <SingleVideoCard />
       <SingleVideoCard />
       <SingleVideoCard />
