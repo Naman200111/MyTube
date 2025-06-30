@@ -1,53 +1,64 @@
-import { useState } from "react";
-import Input from "./input";
-import { Button } from "./ui/button";
+import { useEffect, useRef } from "react";
+import { mergeClasses } from "@/lib/utils";
+import { X } from "lucide-react";
 
 interface ModalProps {
-  title: string;
-  id?: string;
-  description?: string;
-  saveText: string;
-  onSave: () => void;
+  open: boolean;
+  onClose: () => void;
+  className?: string;
+  onSubmit: (formValues: Record<string, FormDataEntryValue>) => void;
+  children: React.ReactNode;
 }
 
 export const Modal = ({
-  title,
-  description,
-  saveText,
-  onSave,
-  id,
+  className,
+  children,
+  onClose,
+  open,
+  onSubmit,
 }: ModalProps) => {
-  const [form, setForm] = useState({});
+  const modalRef = useRef<HTMLDialogElement>(null);
 
-  const handleNameChange = (fieldName: string, e) => {
-    setForm({
-      ...form,
-      [fieldName]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    if (!modalRef || !modalRef.current) return;
+    const dialogInstance = modalRef.current;
+
+    if (open) {
+      dialogInstance.showModal();
+    } else {
+      dialogInstance.close();
+    }
+  }, [open]);
 
   return (
-    <div className="rounded-full h-[200px] w-[500px]" id={id} popover="auto">
-      <div className="text-bold text-xl flex flex-col gap-6 w-full">
-        <div>{title}</div>
-        {description && <div>{description}</div>}
-      </div>
-      <div className="flex flex-col gap-4 w-full">
-        <div className="text-lg font-semibold">Name</div>
-        <Input
-          className="p-2 w-full m-2"
-          placeholder="Enter name of the playlist"
-          onChange={(e) => handleNameChange("name", e)}
-        />
-        <div className="self-end">
-          <Button size="sm" onClick={() => setForm({})}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={onSave}>
-            {saveText}
-          </Button>
+    <dialog
+      ref={modalRef}
+      className={mergeClasses(
+        className,
+        "bg-white rounded-lg backdrop:backdrop-contrast-50"
+      )}
+      onClose={onClose}
+      onClick={(e) => {
+        const target = e.target as HTMLDialogElement;
+        if (target.nodeName === "DIALOG") {
+          modalRef.current?.close();
+        }
+      }}
+    >
+      <form
+        method="dialog"
+        onSubmit={(e) => {
+          const form = e.currentTarget;
+          const formData = new FormData(form);
+          const values = Object.fromEntries(formData.entries());
+          onSubmit(values);
+        }}
+      >
+        <div className="absolute right-2 top-2 cursor-pointer">
+          <X onClick={() => modalRef.current?.close()} />
         </div>
-      </div>
-    </div>
+        {children}
+      </form>
+    </dialog>
   );
 };
