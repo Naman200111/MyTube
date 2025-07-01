@@ -6,7 +6,7 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   className?: string;
-  onSubmit: (formValues: Record<string, FormDataEntryValue>) => void;
+  onSubmit: (values: Record<string, FormDataEntryValue>) => void;
   children: React.ReactNode;
 }
 
@@ -35,7 +35,7 @@ export const Modal = ({
       ref={modalRef}
       className={mergeClasses(
         className,
-        "bg-white rounded-lg backdrop:backdrop-contrast-50"
+        "bg-white rounded-lg backdrop:backdrop-contrast-50 select-none"
       )}
       onClose={onClose}
       onClick={(e) => {
@@ -48,6 +48,7 @@ export const Modal = ({
       <form
         method="dialog"
         onSubmit={(e) => {
+          e.preventDefault();
           const form = e.currentTarget;
           const formData = new FormData(form);
           const values = Object.fromEntries(formData.entries());

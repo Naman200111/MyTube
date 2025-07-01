@@ -1,10 +1,8 @@
 import { PlaylistsView } from "@/modules/home/ui/views/playlists-view";
-import { HydrateClient } from "@/trpc/server";
+import { HydrateClient, trpc } from "@/trpc/server";
 
 const LikedPage = () => {
-  // void trpc.videos.getManyLiked.prefetchInfinite({
-  //   limit: 10,
-  // });
+  void trpc.playlists.getMany.prefetch();
   return (
     <HydrateClient>
       <PlaylistsView />

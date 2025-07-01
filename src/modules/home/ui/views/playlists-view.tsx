@@ -3,18 +3,30 @@
 import { Button } from "@/components/ui/button";
 import PlaylistsSection from "../sections/playlists-section";
 import { PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Modal } from "@/components/modal";
 import Input from "@/components/input";
+import { trpc } from "@/trpc/client";
+import { toast } from "sonner";
 
 export const PlaylistsView = () => {
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
-  const [form, setForm] = useState({});
+  const utils = trpc.useUtils();
 
-  useEffect(() => {
-    // if (form && form.name) {
-    // }
-  }, [form]);
+  const create = trpc.playlists.create.useMutation({
+    onSuccess: () => {
+      utils.playlists.getMany.invalidate();
+      toast.success("Playlist created");
+      setShowCreatePlaylistModal(false);
+    },
+    onError: (error) => {
+      if (error.data?.code === "BAD_REQUEST") {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong");
+      }
+    },
+  });
 
   return (
     <>
@@ -44,7 +56,11 @@ export const PlaylistsView = () => {
           onClose={() => setShowCreatePlaylistModal(false)}
           open={showCreatePlaylistModal}
           className="w-[400px]"
-          onSubmit={setForm}
+          onSubmit={(values) => {
+            if (values.name) {
+              create.mutate({ name: values.name as string });
+            }
+          }}
         >
           <div className="p-4 flex flex-col gap-4">
             <div className="flex justify-between">
@@ -52,9 +68,15 @@ export const PlaylistsView = () => {
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-sm">Name</p>
-              <Input className="p-1" name="name" />
+              <Input className="pl-2" name="name" />
             </div>
-            <Button className="self-end" size="sm" type="submit">
+            <Button
+              className="self-end"
+              size="sm"
+              type="submit"
+              disabled={create.isPending}
+              // onClick={() => create.mutate({ name: form.name })}
+            >
               Save
             </Button>
           </div>

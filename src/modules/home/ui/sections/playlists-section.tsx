@@ -4,6 +4,8 @@ import { ErrorBoundary } from "react-error-boundary";
 // import VideoCard from "@/modules/video/components/video-card";
 // import InfiniteScroll from "@/components/infinite-scroll";
 import GridFeedViewSkeleton from "../skeletons/grid-feed";
+import { trpc } from "@/trpc/client";
+import PlaylistCard from "../components/playlist-card";
 
 const PlaylistsSection = () => {
   return (
@@ -16,11 +18,8 @@ const PlaylistsSection = () => {
 };
 
 const PlaylistsSectionSuspense = () => {
-  // const [playlistData, query] = trpc.videos.getManyPlaylists.useSuspenseInfiniteQuery(
-  //   { limit: 10 },
-  //   { getNextPageParam: (lastPage) => lastPage.cursor }
-  // );
-
+  const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
+  const { userPlaylists } = playlistData;
   // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
   // const pages = playlistData.pages;
@@ -28,10 +27,9 @@ const PlaylistsSectionSuspense = () => {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
-        {/* {playlists.map((video, index) => (
-          <VideoCard key={index} item={video} variant="feed" />
-        ))} */}
-        Playlists
+        {userPlaylists.map((playlist, index) => (
+          <PlaylistCard key={index} playlist={playlist} />
+        ))}
       </div>
       {/* <InfiniteScroll
         hasNextPage={hasNextPage}

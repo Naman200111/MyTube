@@ -8,6 +8,7 @@ import { subscriptionProcedure } from "@/procedures/subscription-procedure";
 import { CommentsProcedure } from "@/procedures/comments-procedure";
 import { CommentReactionProcedure } from "@/procedures/comments-reaction-procedure";
 import { SuggestionProcedure } from "@/procedures/suggestions-procedure";
+import { PlaylistProcedure } from "@/procedures/playlist-procedure";
 
 export const appRouter = createTRPCRouter({
   categories: categoryProcedure,
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   comments: CommentsProcedure,
   commentReactions: CommentReactionProcedure,
   suggestions: SuggestionProcedure,
+  playlists: PlaylistProcedure,
 });
 
 export type AppRouter = typeof appRouter;
