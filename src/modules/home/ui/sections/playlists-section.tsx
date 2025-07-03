@@ -26,7 +26,7 @@ const PlaylistsSectionSuspense = () => {
   // const playlists = pages.flatMap((page) => page.items) || [];
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2">
         {userPlaylists.map((playlist, index) => (
           <PlaylistCard key={index} playlist={playlist} />
         ))}
