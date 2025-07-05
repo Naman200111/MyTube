@@ -1,7 +1,7 @@
 "use client";
 
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
-import Input from "@/components/input";
+// import Input from "@/components/input";
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
@@ -15,10 +15,18 @@ import {
 import { trpc } from "@/trpc/client";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
+import {
+  CheckIcon,
+  Circle,
+  CircleCheck,
+  CircleCheckIcon,
+  SquareCheckIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import AddToPlaylistModal from "./add-to-playlist-modal";
 
 type VideoType = inferProcedureOutput<AppRouter["suggestions"]["getMany"]>;
 
@@ -241,21 +249,23 @@ const VideoCard = ({
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
   const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
   const { userPlaylists } = playlistData;
-  // const utils = trpc.useUtils()
+  const utils = trpc.useUtils();
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
-    onSuccess: () => {
-      toast.success("Video added to playlist");
-      //  utils.playlists.mutateVideo
+    onSuccess: (data) => {
+      utils.playlists.getMany.invalidate();
+      if (data.videoAdded) {
+        toast.success(`Added to ${data.name}`);
+      } else {
+        toast.success(`Removed from ${data.name}`);
+      }
     },
     onError: () => {
       toast.error("Something went wrong");
     },
   });
-  // const playlistNames = userPlaylists.map(pl => pl.name);
 
   useClickOutside(() => setShowDropDown(false));
-
   return (
     <>
       {size === "mobile" && (
@@ -318,30 +328,19 @@ const VideoCard = ({
           </DropDownTrigger>
         </div>
       )}
-      {addToPlaylistModalOpen && (
-        <Modal
-          onClose={() => setAddToPlaylistModalOpen(false)}
-          open={addToPlaylistModalOpen}
-        >
-          <div className="p-4 flex flex-col gap-4 max-h-[600px] w-[200px]">
-            <div className="flex justify-between">
-              <p className="font-semibold text-lg">Add to playlist</p>
-            </div>
-            {userPlaylists.map((pl, index) => (
-              <Button
-                className="w-full"
-                key={index}
-                onClick={() =>
-                  mutateVideo.mutate({ videoId: video.id, playlistId: pl.id })
-                }
-              >
-                {/* {mutateVideo} */}
-                {pl.name}
-              </Button>
-            ))}
-          </div>
-        </Modal>
-      )}
+      <AddToPlaylistModal
+        onClose={() => setAddToPlaylistModalOpen(false)}
+        open={addToPlaylistModalOpen}
+        userPlaylists={userPlaylists}
+        disabled={mutateVideo.isPending}
+        videoId={video.id}
+        onClick={(playlistId: string, videoId: string) => {
+          mutateVideo.mutate({
+            videoId,
+            playlistId,
+          });
+        }}
+      />
     </>
   );
 };

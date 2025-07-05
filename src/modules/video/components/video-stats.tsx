@@ -8,6 +8,7 @@ import { useClerk } from "@clerk/nextjs";
 import { ListPlusIcon, ThumbsDown, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import AddToPlaylistModal from "./add-to-playlist-modal";
 
 type VideoReactionType = "like" | "dislike" | null;
 type SubscribeOptions = "subscribe" | "unsubscribe";
@@ -43,6 +44,24 @@ const VideoStats = ({
   const [showMoreOptions, setShowMoreOptions] = useState<boolean>(false);
   const [reactionUpdateInProgress, setReactionUpdateInProgress] =
     useState(false);
+
+  const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
+  const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
+  const { userPlaylists } = playlistData;
+
+  const mutateVideo = trpc.playlists.mutateVideo.useMutation({
+    onSuccess: (data) => {
+      utils.playlists.getMany.invalidate();
+      if (data.videoAdded) {
+        toast.success(`Added to ${data.name}`);
+      } else {
+        toast.success(`Removed from ${data.name}`);
+      }
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
   const likeReaction = trpc.videoReactions.like.useMutation({
     onSuccess: () => {
@@ -189,7 +208,11 @@ const VideoStats = ({
           >
             {showMoreOptions ? (
               <>
-                <DropDownItem className="w-[150px]" icon={<ListPlusIcon />}>
+                <DropDownItem
+                  className="w-[150px]"
+                  icon={<ListPlusIcon />}
+                  onClick={() => setAddToPlaylistModalOpen(true)}
+                >
                   Add to playlist
                 </DropDownItem>
               </>
@@ -197,6 +220,19 @@ const VideoStats = ({
           </DropDownTrigger>
         </div>
       </div>
+      <AddToPlaylistModal
+        onClose={() => setAddToPlaylistModalOpen(false)}
+        open={addToPlaylistModalOpen}
+        userPlaylists={userPlaylists}
+        disabled={mutateVideo.isPending}
+        videoId={videoId}
+        onClick={(playlistId: string, videoId: string) => {
+          mutateVideo.mutate({
+            videoId,
+            playlistId,
+          });
+        }}
+      />
     </div>
   );
 };
