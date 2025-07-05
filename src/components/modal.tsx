@@ -6,7 +6,7 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   className?: string;
-  onSubmit: (values: Record<string, FormDataEntryValue>) => void;
+  onSubmit?: (values: Record<string, FormDataEntryValue>) => void;
   children: React.ReactNode;
 }
 
@@ -52,11 +52,13 @@ export const Modal = ({
           const form = e.currentTarget;
           const formData = new FormData(form);
           const values = Object.fromEntries(formData.entries());
-          onSubmit(values);
+          if (onSubmit) {
+            onSubmit(values);
+          }
         }}
       >
         <div className="absolute right-2 top-2 cursor-pointer">
-          <X onClick={() => modalRef.current?.close()} />
+          <X onClick={() => modalRef.current?.close()} size={16} />
         </div>
         {children}
       </form>

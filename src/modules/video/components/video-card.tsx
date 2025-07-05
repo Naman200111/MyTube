@@ -1,4 +1,9 @@
+"use client";
+
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
+import Input from "@/components/input";
+import { Modal } from "@/components/modal";
+import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
 import useClickOutside from "@/hooks/use-click-outside";
 import {
@@ -7,11 +12,13 @@ import {
   getVideoTimeFromDuration,
   mergeClasses,
 } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type VideoType = inferProcedureOutput<AppRouter["suggestions"]["getMany"]>;
 
@@ -28,6 +35,7 @@ interface VideoCardProps_v2 {
   size?: "compact" | "default" | "grid" | "mobile";
   setShowDropDown: (prev: boolean) => void;
   showDropDown: boolean;
+  setAddToPlaylistModalOpen: (val: boolean) => void;
 }
 
 const VideoCardGrid = ({
@@ -35,6 +43,7 @@ const VideoCardGrid = ({
   item: video,
   setShowDropDown,
   showDropDown,
+  setAddToPlaylistModalOpen,
 }: VideoCardProps_v2) => {
   return (
     <div
@@ -76,7 +85,11 @@ const VideoCardGrid = ({
           }}
           className="mt-1"
         >
-          {showDropDown ? <DropDownItem>Add to playlist</DropDownItem> : null}
+          {showDropDown ? (
+            <DropDownItem onClick={() => setAddToPlaylistModalOpen(true)}>
+              Add to playlist
+            </DropDownItem>
+          ) : null}
         </DropDownTrigger>
       </div>
     </div>
@@ -88,6 +101,7 @@ const VideoCardMobile = ({
   setShowDropDown,
   showDropDown,
   onClick,
+  setAddToPlaylistModalOpen,
 }: VideoCardProps_v2) => {
   return (
     <div
@@ -129,7 +143,11 @@ const VideoCardMobile = ({
           }}
           className="mt-1"
         >
-          {showDropDown ? <DropDownItem>Add to playlist</DropDownItem> : null}
+          {showDropDown ? (
+            <DropDownItem onClick={() => setAddToPlaylistModalOpen(true)}>
+              Add to playlist
+            </DropDownItem>
+          ) : null}
         </DropDownTrigger>
       </div>
     </div>
@@ -220,6 +238,22 @@ const VideoCard = ({
 }: VideoCardProps) => {
   const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
+  const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
+  const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
+  const { userPlaylists } = playlistData;
+  // const utils = trpc.useUtils()
+
+  const mutateVideo = trpc.playlists.mutateVideo.useMutation({
+    onSuccess: () => {
+      toast.success("Video added to playlist");
+      //  utils.playlists.mutateVideo
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+  // const playlistNames = userPlaylists.map(pl => pl.name);
+
   useClickOutside(() => setShowDropDown(false));
 
   return (
@@ -231,6 +265,7 @@ const VideoCard = ({
           setShowDropDown={setShowDropDown}
           showDropDown={showDropDown}
           onClick={() => router.push(`/video/${video.id}`)}
+          setAddToPlaylistModalOpen={setAddToPlaylistModalOpen}
         />
       )}
       {size === "grid" && (
@@ -240,6 +275,7 @@ const VideoCard = ({
           setShowDropDown={setShowDropDown}
           showDropDown={showDropDown}
           onClick={() => router.push(`/video/${video.id}`)}
+          setAddToPlaylistModalOpen={setAddToPlaylistModalOpen}
         />
       )}
       {size === "compact" && (
@@ -253,7 +289,11 @@ const VideoCard = ({
             onClick={() => setShowDropDown((prev) => !prev)}
             className="mt-1"
           >
-            {showDropDown ? <DropDownItem>Add to playlist</DropDownItem> : null}
+            {showDropDown ? (
+              <DropDownItem onClick={() => setAddToPlaylistModalOpen(true)}>
+                Add to playlist
+              </DropDownItem>
+            ) : null}
           </DropDownTrigger>
         </div>
       )}
@@ -270,9 +310,37 @@ const VideoCard = ({
             }}
             className="mt-1"
           >
-            {showDropDown ? <DropDownItem>Add to playlist</DropDownItem> : null}
+            {showDropDown ? (
+              <DropDownItem onClick={() => setAddToPlaylistModalOpen(true)}>
+                Add to playlist
+              </DropDownItem>
+            ) : null}
           </DropDownTrigger>
         </div>
+      )}
+      {addToPlaylistModalOpen && (
+        <Modal
+          onClose={() => setAddToPlaylistModalOpen(false)}
+          open={addToPlaylistModalOpen}
+        >
+          <div className="p-4 flex flex-col gap-4 max-h-[600px] w-[200px]">
+            <div className="flex justify-between">
+              <p className="font-semibold text-lg">Add to playlist</p>
+            </div>
+            {userPlaylists.map((pl, index) => (
+              <Button
+                className="w-full"
+                key={index}
+                onClick={() =>
+                  mutateVideo.mutate({ videoId: video.id, playlistId: pl.id })
+                }
+              >
+                {/* {mutateVideo} */}
+                {pl.name}
+              </Button>
+            ))}
+          </div>
+        </Modal>
       )}
     </>
   );
