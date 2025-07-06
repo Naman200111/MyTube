@@ -31,7 +31,7 @@ const HistorySectionSuspense = () => {
   const pages = historyData.pages;
   const historyVideos = pages.flatMap((page) => page.items) || [];
   return (
-    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2">
+    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2 justify-center">
       {historyVideos.map((video, index) => (
         <VideoCard
           key={index}

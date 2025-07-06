@@ -1,5 +1,11 @@
 import { db } from "@/db";
-import { playlists, playlistVideos } from "@/db/schema";
+import {
+  playlists,
+  playlistVideos,
+  users,
+  videos,
+  videoViews,
+} from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, sql } from "drizzle-orm";
@@ -38,7 +44,51 @@ export const PlaylistProcedure = createTRPCRouter({
       };
     }),
 
+  getOne: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.string().nonempty(),
+      })
+    )
+    .query(async ({ input: { playlistId } }) => {
+      const videosInPlaylist = await db
+        .select({
+          ...getTableColumns(videos),
+          viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
+          user: {
+            ...getTableColumns(users),
+          },
+        })
+        .from(playlistVideos)
+        .innerJoin(videos, eq(videos.id, playlistVideos.videoId))
+        .innerJoin(users, eq(users.id, videos.userId))
+        .where(eq(playlistVideos.playlistId, playlistId));
+
+      const [userPlaylist] = await db
+        .select({
+          playlistId: playlists.id,
+          playlistName: playlists.name,
+        })
+        .from(playlists)
+        .where(eq(playlists.id, playlistId));
+
+      return {
+        userPlaylist,
+        videos: videosInPlaylist,
+      };
+    }),
+
   getMany: protectedProcedure.query(async ({ ctx: { id: userId } }) => {
+    // const topVideo = await db
+    //   .select({
+    //     thumbnailURL: videos.thumbnailURL,
+    //     topVideoId: videos.id,
+    //   })
+    //   .from(playlists).
+    // .innerJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
+    // .innerJoin(videos, eq(playlistVideos.videoId, videos.id))
+    // .where(eq(playlistVideos.playlistId, playlists.id));
+
     const userPlaylists = await db
       // Todo: understand this sql
       .select({
@@ -53,6 +103,8 @@ export const PlaylistProcedure = createTRPCRouter({
       .groupBy(playlists.id);
     return {
       userPlaylists,
+      // topVideo,
+      // thumbnailURLPlaylist: topVideo?.thumbnailURL,
     };
   }),
 
@@ -124,12 +176,12 @@ export const PlaylistProcedure = createTRPCRouter({
     ),
 
   delete: protectedProcedure
-    .input(z.object({ name: z.string().nonempty() }))
-    .mutation(async ({ input: { name }, ctx: { id: userId } }) => {
+    .input(z.object({ playlistId: z.string().uuid().nonempty() }))
+    .mutation(async ({ input: { playlistId }, ctx: { id: userId } }) => {
       const [existingPlaylist] = await db
         .select()
         .from(playlists)
-        .where(and(eq(playlists.name, name), eq(playlists.userId, userId)));
+        .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)));
 
       if (!existingPlaylist) {
         throw new TRPCError({
@@ -139,7 +191,7 @@ export const PlaylistProcedure = createTRPCRouter({
 
       const deletePlaylist = await db
         .delete(playlists)
-        .where(and(eq(playlists.name, name), eq(playlists.userId, userId)))
+        .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)))
         .returning();
       return {
         deletePlaylist,

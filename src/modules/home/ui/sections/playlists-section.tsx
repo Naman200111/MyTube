@@ -22,14 +22,19 @@ const PlaylistsSectionSuspense = () => {
   const { userPlaylists } = playlistData;
   // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
-  // const pages = playlistData.pages;
-  // const playlists = pages.flatMap((page) => page.items) || [];
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2">
         {userPlaylists.map((playlist, index) => (
-          <PlaylistCard key={index} playlist={playlist} />
+          <PlaylistCard
+            key={index}
+            playlist={playlist}
+            // thumbnailURLPlaylist={thumbnailURLPlaylist}
+          />
         ))}
+      </div>
+      <div className="mt-8 text-muted-foreground flex justify-center">
+        End of the list
       </div>
       {/* <InfiniteScroll
         hasNextPage={hasNextPage}

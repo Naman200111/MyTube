@@ -8,6 +8,7 @@ interface ModalProps {
   className?: string;
   onSubmit?: (values: Record<string, FormDataEntryValue>) => void;
   children: React.ReactNode;
+  showClose?: boolean;
 }
 
 export const Modal = ({
@@ -16,6 +17,7 @@ export const Modal = ({
   onClose,
   open,
   onSubmit,
+  showClose = true,
 }: ModalProps) => {
   const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -58,7 +60,13 @@ export const Modal = ({
         }}
       >
         <div className="absolute right-2 top-2 cursor-pointer">
-          <X onClick={() => modalRef.current?.close()} size={16} />
+          {showClose && (
+            <X
+              onClick={() => modalRef.current?.close()}
+              size={22}
+              className="z-1 rounded-full border bg-muted p-1"
+            />
+          )}
         </div>
         {children}
       </form>

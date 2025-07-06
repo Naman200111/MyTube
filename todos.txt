@@ -8,13 +8,17 @@
 7. home feed ✅
 8. history, subscription, liked, trending page ✅
 8. playlists
-  a. creating custom playlist page
-  b. add modal support for adding playlists
-  c. add deletion
-  d. add playlist page when clicked to list playlist videos
-  e. add support to add videos to playlist -> will open modal and then select playlist to add video to
-  f. deletion of video from playlist page
-  g. deletion of video from modal opened when trying to add video to playlist
+  a. creating custom playlist page ✅
+  b. add modal support for adding videos to playlists ✅
+  c. add deletion ✅
+  d. add playlist page when clicked to list playlist videos ✅
+  e. add support to add videos to playlist -> will open modal and then select playlist to add video to ✅
+  f. deletion of video from playlist page 
+  g. deletion of video from modal opened when trying to add video to playlist ✅
+  h. infinite loading in custom playlist page
+  i. add playlist thumbnail
+  j. option to create playlist when adding to playlist dropdown clicked
+
 9. user page
 10. making mobile responsive designs going fwd and fixing prev ones
 1O. add background ai jobs

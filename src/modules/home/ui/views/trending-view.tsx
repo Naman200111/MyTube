@@ -2,7 +2,7 @@ import TrendingSection from "../sections/trending-section";
 
 export const TrendingView = () => {
   return (
-    <div className="max-w-[1440px] select-none overflow-hidden w-[100%] mx-auto">
+    <div className="max-w-[768px] select-none overflow-hidden w-[100%] mx-auto">
       <div className="mx-2">
         <p className="text-2xl font-bold">Trending</p>
         <p className="text-sm text-muted-foreground">

@@ -58,7 +58,7 @@ const VideoCardGrid = ({
       className="cursor-pointer h-[260px] w-full flex flex-col gap-2"
       onClick={onClick}
     >
-      <div className="rounded-md overflow-hidden relative h-[70%] w-[100%]">
+      <div className="sm:rounded-md overflow-hidden relative h-[70%] w-[100%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -116,7 +116,7 @@ const VideoCardMobile = ({
       onClick={onClick}
       className="cursor-pointer h-[320px] sm:h-[420px] w-full flex flex-col gap-2"
     >
-      <div className="rounded-md overflow-hidden relative h-full">
+      <div className="overflow-hidden relative h-full">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -254,6 +254,7 @@ const VideoCard = ({
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {
       utils.playlists.getMany.invalidate();
+      utils.playlists.getOne.invalidate({ playlistId: data.playlistId });
       if (data.videoAdded) {
         toast.success(`Added to ${data.name}`);
       } else {
