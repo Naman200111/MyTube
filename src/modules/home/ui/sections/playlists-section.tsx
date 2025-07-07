@@ -23,7 +23,6 @@ const PlaylistsSectionSuspense = () => {
   console.log("will call getmany 1");
   const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
   const { userPlaylists } = playlistData;
-  // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
   return (
     <>

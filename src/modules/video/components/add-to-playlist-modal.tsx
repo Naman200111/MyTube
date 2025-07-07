@@ -1,17 +1,11 @@
 import { Modal } from "@/components/modal";
 import { Button } from "@/components/ui/button";
-import { AppRouter } from "@/trpc/routers/_app";
-import { inferProcedureOutput } from "@trpc/server";
-import { Circle, CircleCheckIcon } from "lucide-react";
-
-type userPlaylistsType = inferProcedureOutput<
-  AppRouter["playlists"]["getMany"]
->;
+import { trpc } from "@/trpc/client";
+import { Circle, CircleCheckIcon, Loader2Icon } from "lucide-react";
 
 interface AddToPlaylistModalProps {
   onClose: () => void;
   open: boolean;
-  userPlaylists: userPlaylistsType["userPlaylists"];
   disabled: boolean;
   onClick: (playlistId: string, videoId: string) => void;
   videoId: string;
@@ -20,17 +14,26 @@ interface AddToPlaylistModalProps {
 const AddToPlaylistModal = ({
   onClose,
   open,
-  userPlaylists,
   disabled,
   onClick,
   videoId,
 }: AddToPlaylistModalProps) => {
+  // second option helps me in running this query only when modal opens and not when rendered
+  const { data: playlistData, isLoading } = trpc.playlists.getMany.useQuery(
+    undefined,
+    {
+      enabled: !!videoId && open,
+    }
+  );
+  const userPlaylists = playlistData?.userPlaylists ?? [];
+
   return (
     <Modal onClose={onClose} open={open}>
       <div className="p-4 flex flex-col gap-4 max-h-[600px] min-w-[220px]">
         <div className="flex justify-between">
           <p className="font-semibold text-lg">Add to playlist</p>
         </div>
+        {isLoading ? <Loader2Icon className="animate-spin mx-auto" /> : null}
         {userPlaylists.map((playlist, index) => {
           const videos = playlist.videoIds;
           const videoInPlaylist = videos.some(

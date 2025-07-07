@@ -48,12 +48,10 @@ const VideoStats = ({
     useState(false);
 
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
-  console.log("will call getmany 3");
-  const { data: playlistData } = trpc.playlists.getMany.useQuery();
-  const userPlaylists = playlistData?.userPlaylists ?? [];
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {
+      console.log("called 33");
       utils.playlists.getMany.invalidate();
       if (data.videoAdded) {
         toast.success(`Added to ${data.name}`);
@@ -226,7 +224,6 @@ const VideoStats = ({
       <AddToPlaylistModal
         onClose={() => setAddToPlaylistModalOpen(false)}
         open={addToPlaylistModalOpen}
-        userPlaylists={userPlaylists}
         disabled={mutateVideo.isPending}
         videoId={videoId}
         onClick={(playlistId: string, videoId: string) => {

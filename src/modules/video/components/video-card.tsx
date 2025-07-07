@@ -235,12 +235,10 @@ const VideoCard = ({
   variant = "default",
 }: VideoCardProps) => {
   const router = useRouter();
+  const utils = trpc.useUtils();
+
   const [showDropDown, setShowDropDown] = useState(false);
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
-  console.log("will call getmany 2");
-  const { data: playlistData } = trpc.playlists.getMany.useQuery();
-  const userPlaylists = playlistData?.userPlaylists ?? [];
-  const utils = trpc.useUtils();
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {
@@ -323,7 +321,6 @@ const VideoCard = ({
       <AddToPlaylistModal
         onClose={() => setAddToPlaylistModalOpen(false)}
         open={addToPlaylistModalOpen}
-        userPlaylists={userPlaylists}
         disabled={mutateVideo.isPending}
         videoId={video.id}
         onClick={(playlistId: string, videoId: string) => {
