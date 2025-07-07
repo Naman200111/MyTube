@@ -88,7 +88,6 @@ export const PlaylistProcedure = createTRPCRouter({
     // .innerJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
     // .innerJoin(videos, eq(playlistVideos.videoId, videos.id))
     // .where(eq(playlistVideos.playlistId, playlists.id));
-
     const userPlaylists = await db
       // Todo: understand this sql
       .select({

@@ -1,9 +1,6 @@
 "use client";
 
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
-// import Input from "@/components/input";
-import { Modal } from "@/components/modal";
-import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
 import useClickOutside from "@/hooks/use-click-outside";
 import {
@@ -15,13 +12,6 @@ import {
 import { trpc } from "@/trpc/client";
 import { AppRouter } from "@/trpc/routers/_app";
 import { inferProcedureOutput } from "@trpc/server";
-import {
-  CheckIcon,
-  Circle,
-  CircleCheck,
-  CircleCheckIcon,
-  SquareCheckIcon,
-} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -247,8 +237,9 @@ const VideoCard = ({
   const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
-  const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
-  const { userPlaylists } = playlistData;
+  console.log("will call getmany 2");
+  const { data: playlistData } = trpc.playlists.getMany.useQuery();
+  const userPlaylists = playlistData?.userPlaylists ?? [];
   const utils = trpc.useUtils();
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({

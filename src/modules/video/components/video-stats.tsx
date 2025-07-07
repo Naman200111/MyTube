@@ -1,3 +1,5 @@
+"use client";
+
 import { DropDownItem, DropDownTrigger } from "@/components/dropdown";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
@@ -46,8 +48,9 @@ const VideoStats = ({
     useState(false);
 
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
-  const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
-  const { userPlaylists } = playlistData;
+  console.log("will call getmany 3");
+  const { data: playlistData } = trpc.playlists.getMany.useQuery();
+  const userPlaylists = playlistData?.userPlaylists ?? [];
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {

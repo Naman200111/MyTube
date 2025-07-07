@@ -20,7 +20,6 @@ const PlaylistCard = ({
   playlist,
   thumbnailURLPlaylist,
 }: PlaylistCardProps) => {
-  // const router = useRouter();
   const [showDropDown, setShowDropDown] = useState(false);
   const videoCount = playlist.videoIds.filter((videoId) => videoId).length || 0;
   const router = useRouter();

@@ -1,3 +1,5 @@
+"use client";
+
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 // import { trpc } from "@/trpc/client";
@@ -18,6 +20,7 @@ const PlaylistsSection = () => {
 };
 
 const PlaylistsSectionSuspense = () => {
+  console.log("will call getmany 1");
   const [playlistData] = trpc.playlists.getMany.useSuspenseQuery();
   const { userPlaylists } = playlistData;
   // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
