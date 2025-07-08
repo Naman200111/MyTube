@@ -175,6 +175,7 @@ const VideoStats = ({
               className="rounded-full"
               onClick={() => handleSubscribeOperation("unsubscribe")}
               disabled={subscribe.isPending || unsubscribe.isPending}
+              size="sm"
             >
               Unsubscribe
             </Button>

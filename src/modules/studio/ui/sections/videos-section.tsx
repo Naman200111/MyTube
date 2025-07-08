@@ -12,7 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/table";
-import { getFormattedDate, getVideoTimeFromDuration } from "@/lib/utils";
+import {
+  getCountShortForm,
+  getFormattedDate,
+  getVideoTimeFromDuration,
+} from "@/lib/utils";
 import { Globe2, Loader2Icon, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,10 +53,13 @@ const VideosSectionSuspense = () => {
       <Table className="w-full">
         <TableHeader className="text-gray-600 text-sm w-full h-10">
           <TableRow>
-            <TableHead className="w-[10%]">Video</TableHead>
-            <TableHead className="w-[40%]">Title</TableHead>
-            <TableHead className="w-[10%]">Visibility</TableHead>
-            <TableHead className="w-[15%]">Date</TableHead>
+            <TableHead className="">Video</TableHead>
+            <TableHead className="">Title</TableHead>
+            <TableHead className="">Visibility</TableHead>
+            <TableHead className="">Date</TableHead>
+            <TableHead className="">Likes</TableHead>
+            <TableHead className="">Views</TableHead>
+            <TableHead className="">Comments</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -66,7 +73,7 @@ const VideosSectionSuspense = () => {
                 key={video.id}
                 className="hover:bg-primary-foreground cursor-pointer"
               >
-                <TableDescription>
+                <TableDescription className="p-2 min-w-[100px] w-[15%]">
                   <div className="flex flex-col relative">
                     <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground  text-background">
                       {getVideoTimeFromDuration(video.duration)}
@@ -80,13 +87,13 @@ const VideosSectionSuspense = () => {
                     />
                   </div>
                 </TableDescription>
-                <TableDescription>
+                <TableDescription className="px-4 py-4 min-w-[120px] w-[30%]">
                   <div className="line-clamp-1 mb-2 text-lg">{video.title}</div>
                   <div className="line-clamp-2 text-sm text-gray-800">
                     {video.description}
                   </div>
                 </TableDescription>
-                <TableDescription className="px-6 py-4">
+                <TableDescription className="px-4 py-4 w-[10%]">
                   <div className="flex items-center gap-1">
                     {video.visibility === "Private" ? (
                       <Lock className="h-4 w-4" />
@@ -96,8 +103,19 @@ const VideosSectionSuspense = () => {
                     <div>{video.visibility}</div>
                   </div>
                 </TableDescription>
-                <TableDescription>
-                  <div>{getFormattedDate(new Date(video.createdAt))}</div>
+                <TableDescription className="px-4 py-4 w-[20%]">
+                  <div className="line-clamp-1">
+                    {getFormattedDate(new Date(video.createdAt))}
+                  </div>
+                </TableDescription>
+                <TableDescription className="px-3 py-4">
+                  <div>{getCountShortForm(video.likeCount)}</div>
+                </TableDescription>
+                <TableDescription className="px-3 py-4">
+                  <div>{getCountShortForm(video.viewCount)}</div>
+                </TableDescription>
+                <TableDescription className="px-3 py-4">
+                  <div>{getCountShortForm(video.commentCount)}</div>
                 </TableDescription>
               </TableRow>
             </Link>

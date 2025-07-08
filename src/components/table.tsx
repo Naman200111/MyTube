@@ -24,7 +24,7 @@ export const TableDescription = ({
   className,
   ...props
 }: React.ComponentProps<"td">) => {
-  return <td className={mergeClasses(className, "px-6 py-4")} {...props} />;
+  return <td className={className} {...props} />;
 };
 
 export const TableHead = ({
@@ -33,7 +33,7 @@ export const TableHead = ({
 }: React.ComponentProps<"th">) => {
   return (
     <th
-      className={mergeClasses(className, "py-4 px-6  text-start")}
+      className={mergeClasses(className, "py-4 px-2  text-start")}
       {...props}
     />
   );

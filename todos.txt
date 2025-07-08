@@ -1,6 +1,6 @@
-1. upload thumbnail upload option
+1. upload thumbnail upload option (2)
 2. adding comments replies ✅
-3. adding likes, comments, dislikes, views in studio table
+3. adding likes, comments, dislikes, views in studio table ✅
 4. adding suggestions (only public videos) ✅
 5. adding loaders in video-view ✅
 5. improving code for video card variants ✅
@@ -15,13 +15,15 @@
   e. add support to add videos to playlist -> will open modal and then select playlist to add video to ✅
   f. deletion of video from playlist page 
   g. deletion of video from modal opened when trying to add video to playlist ✅
-  h. infinite loading in custom playlist page
-  i. add playlist thumbnail
-  j. option to create playlist when adding to playlist dropdown clicked
+  h. infinite loading in custom playlist page (not needed as of now)
+  i. add playlist thumbnail (1)
+  j. option to create playlist when adding to playlist dropdown clicked (enhancement)
 
-9. user page
+9. user page (3)
 10. making mobile responsive designs going fwd and fixing prev ones
 1O. add background ai jobs
+11. try minimising api calls / renders (4)
+11. need of content page in studio (5)
 
 
 ADDING SKELETONS (For better visual appearance)
