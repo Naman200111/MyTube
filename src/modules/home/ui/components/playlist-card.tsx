@@ -21,7 +21,7 @@ const PlaylistCard = ({
   thumbnailURLPlaylist,
 }: PlaylistCardProps) => {
   const [showDropDown, setShowDropDown] = useState(false);
-  const videoCount = playlist.videoIds.filter((videoId) => videoId).length || 0;
+  const videoCount = playlist?.videoCount || 0;
   const router = useRouter();
 
   const utils = trpc.useUtils();
@@ -52,7 +52,7 @@ const PlaylistCard = ({
         </div>
         <Image
           fill
-          src={thumbnailURLPlaylist || "/placeholder.svg"}
+          src={playlist.topVideoThumbnail || "/placeholder.svg"}
           alt="Playlist"
           className="object-cover"
         />

@@ -253,7 +253,7 @@ const VideoCard = ({
 
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {
-      utils.playlists.getMany.invalidate();
+      utils.playlists.getManyForVideo.invalidate();
       utils.playlists.getOne.invalidate({ playlistId: data.playlistId });
       if (data.videoAdded) {
         toast.success(`Added to ${data.name}`);

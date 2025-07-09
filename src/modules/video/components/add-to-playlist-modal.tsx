@@ -19,12 +19,13 @@ const AddToPlaylistModal = ({
   videoId,
 }: AddToPlaylistModalProps) => {
   // second option helps me in running this query only when modal opens and not when rendered
-  const { data: playlistData, isLoading } = trpc.playlists.getMany.useQuery(
-    undefined,
-    {
-      enabled: !!videoId && open,
-    }
-  );
+  const { data: playlistData, isLoading } =
+    trpc.playlists.getManyForVideo.useQuery(
+      { videoId },
+      {
+        enabled: !!videoId && open,
+      }
+    );
   const userPlaylists = playlistData?.userPlaylists ?? [];
 
   return (
@@ -35,10 +36,6 @@ const AddToPlaylistModal = ({
         </div>
         {isLoading ? <Loader2Icon className="animate-spin mx-auto" /> : null}
         {userPlaylists.map((playlist, index) => {
-          const videos = playlist.videoIds;
-          const videoInPlaylist = videos.some(
-            (videoInPlaylist) => videoInPlaylist === videoId
-          );
           return (
             <Button
               variant="ghost"
@@ -47,7 +44,7 @@ const AddToPlaylistModal = ({
               key={index}
               onClick={() => onClick(playlist.id, videoId)}
             >
-              {videoInPlaylist ? <CircleCheckIcon /> : <Circle />}
+              {playlist.videoInPlaylist ? <CircleCheckIcon /> : <Circle />}
               <div className="overflow-hidden line-clamp-1 justify-self-start">
                 {playlist.name}
               </div>

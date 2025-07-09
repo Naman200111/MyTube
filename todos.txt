@@ -24,6 +24,7 @@
 1O. add background ai jobs
 11. try minimising api calls / renders (4)
 11. need of content page in studio (5)
+12. remove redundant/unnecessary css code from tw (5)
 
 
 ADDING SKELETONS (For better visual appearance)

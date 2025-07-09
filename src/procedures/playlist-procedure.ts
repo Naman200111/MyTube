@@ -8,7 +8,16 @@ import {
 } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  gt,
+  isNull,
+} from "drizzle-orm";
 import { z } from "zod";
 
 export const PlaylistProcedure = createTRPCRouter({
@@ -62,7 +71,8 @@ export const PlaylistProcedure = createTRPCRouter({
         .from(playlistVideos)
         .innerJoin(videos, eq(videos.id, playlistVideos.videoId))
         .innerJoin(users, eq(users.id, videos.userId))
-        .where(eq(playlistVideos.playlistId, playlistId));
+        .where(eq(playlistVideos.playlistId, playlistId))
+        .orderBy(asc(playlistVideos.createdAt));
 
       const [userPlaylist] = await db
         .select({
@@ -78,34 +88,84 @@ export const PlaylistProcedure = createTRPCRouter({
       };
     }),
 
+  // complex logic todo: pls check again
   getMany: protectedProcedure.query(async ({ ctx: { id: userId } }) => {
-    // const topVideo = await db
-    //   .select({
-    //     thumbnailURL: videos.thumbnailURL,
-    //     topVideoId: videos.id,
-    //   })
-    //   .from(playlists).
-    // .innerJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
-    // .innerJoin(videos, eq(playlistVideos.videoId, videos.id))
-    // .where(eq(playlistVideos.playlistId, playlists.id));
-    const userPlaylists = await db
-      // Todo: understand this sql
+    const playlistsWithVideoCount = await db
       .select({
-        videoIds: sql<
-          string[]
-        >`COALESCE(array_agg(${playlistVideos.videoId}), '{}')`.as("video_ids"),
         ...getTableColumns(playlists),
+        videoCount: count(playlistVideos.videoId),
       })
       .from(playlists)
       .leftJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
       .where(eq(playlists.userId, userId))
       .groupBy(playlists.id);
+
+    const pv1 = db.$with("pv1").as(db.select().from(playlistVideos));
+    const pv2 = db.$with("pv2").as(db.select().from(playlistVideos));
+    const playlistWithTopVideoDetails = await db
+      .with(pv1, pv2)
+      .select({
+        playlistId: pv1.playlistId,
+        topVideoId: pv1.videoId,
+        topVideoThumbnail: videos.thumbnailURL,
+      })
+      .from(playlists)
+      .leftJoin(pv1, eq(pv1.playlistId, playlists.id))
+      .leftJoin(
+        pv2,
+        and(
+          eq(pv1.playlistId, pv2.playlistId),
+          gt(pv1.createdAt, pv2.createdAt)
+        )
+      )
+      .leftJoin(videos, eq(videos.id, pv1.videoId))
+      .where(and(eq(playlists.userId, userId), isNull(pv2.id)))
+      .groupBy(pv1.playlistId, pv1.videoId, videos.thumbnailURL);
+
+    const userPlaylists = playlistsWithVideoCount.map((playlist) => {
+      const firstVideo = playlistWithTopVideoDetails.find(
+        (v) => v.playlistId === playlist.id
+      );
+
+      return {
+        ...playlist,
+        topVideoId: firstVideo?.topVideoId ?? null,
+        topVideoThumbnail: firstVideo?.topVideoThumbnail ?? null,
+      };
+    });
+
     return {
       userPlaylists,
-      // topVideo,
-      // thumbnailURLPlaylist: topVideo?.thumbnailURL,
     };
   }),
+
+  getManyForVideo: protectedProcedure
+    .input(
+      z.object({
+        videoId: z.string().uuid().nonempty(),
+      })
+    )
+    .query(async ({ input: { videoId }, ctx: { id: userId } }) => {
+      const userPlaylists = await db
+        .select({
+          ...getTableColumns(playlists),
+          videoInPlaylist: playlistVideos.videoId,
+        })
+        .from(playlists)
+        .leftJoin(
+          playlistVideos,
+          and(
+            eq(playlistVideos.playlistId, playlists.id),
+            eq(playlistVideos.videoId, videoId)
+          )
+        )
+        .where(eq(playlists.userId, userId))
+        .orderBy(desc(playlistVideos.createdAt));
+
+      return {
+        userPlaylists,
+      };
+    }),
 
   mutateVideo: protectedProcedure
     .input(

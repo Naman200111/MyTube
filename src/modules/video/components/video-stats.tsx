@@ -52,7 +52,7 @@ const VideoStats = ({
   const mutateVideo = trpc.playlists.mutateVideo.useMutation({
     onSuccess: (data) => {
       console.log("called 33");
-      utils.playlists.getMany.invalidate();
+      utils.playlists.getManyForVideo.invalidate();
       if (data.videoAdded) {
         toast.success(`Added to ${data.name}`);
       } else {
