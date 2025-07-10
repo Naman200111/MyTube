@@ -46,10 +46,10 @@ const VideoCardGrid = ({
 }: VideoCardProps_v2) => {
   return (
     <div
-      className="cursor-pointer h-[260px] w-full flex flex-col gap-2"
+      className="cursor-pointer h-[280px] w-full flex flex-col gap-2"
       onClick={onClick}
     >
-      <div className="sm:rounded-md overflow-hidden relative h-[70%] w-[100%]">
+      <div className="rounded-md overflow-hidden relative h-[70%] w-[100%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -105,7 +105,7 @@ const VideoCardMobile = ({
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer h-[320px] sm:h-[420px] w-full flex flex-col gap-2"
+      className="cursor-pointer h-[320px] w-full flex flex-col gap-2"
     >
       <div className="overflow-hidden relative h-full">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
@@ -164,7 +164,7 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
       <div
         className={mergeClasses(
           "rounded-md overflow-hidden relative h-full",
-          variant === "feed" ? "w-[40%]" : "w-[60%]"
+          variant === "feed" ? "w-[30%] min-w-[200px]" : "w-[60%]"
         )}
       >
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">

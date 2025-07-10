@@ -30,7 +30,7 @@ const LikedSectionSuspense = () => {
   const pages = likedData.pages;
   const likedVideos = pages.flatMap((page) => page.items) || [];
   return (
-    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2">
+    <div className="flex flex-col items-center w-[100%] max-w-[720px] gap-2 xs:px-2">
       {likedVideos.map((video, index) => (
         <VideoCard
           key={index}

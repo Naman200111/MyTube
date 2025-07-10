@@ -6,6 +6,7 @@ import GridFeedViewSkeleton from "../skeletons/grid-feed";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
+import { useIsMobileSmall } from "@/hooks/use-mobile-small";
 
 interface VideoHomeFeedSectionProps {
   selectedCategory: string;
@@ -26,6 +27,7 @@ export const VideosHomeFeedSection = ({
 const VideosHomeFeedSuspense = ({
   selectedCategory,
 }: VideoHomeFeedSectionProps) => {
+  const isMobile = useIsMobileSmall();
   const [data, query] = trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
     {
       limit: 12,
@@ -42,9 +44,13 @@ const VideosHomeFeedSuspense = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-2 xs:px-2">
         {items.map((item, index) => (
-          <VideoCard key={index} item={item} size="grid" />
+          <VideoCard
+            key={index}
+            item={item}
+            size={isMobile ? "mobile" : "grid"}
+          />
         ))}
       </div>
       <div className="mt-10">

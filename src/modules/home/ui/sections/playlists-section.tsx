@@ -26,7 +26,7 @@ const PlaylistsSectionSuspense = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mt-2">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 xs:p-2">
         {userPlaylists.map((playlist, index) => (
           <PlaylistCard
             key={index}

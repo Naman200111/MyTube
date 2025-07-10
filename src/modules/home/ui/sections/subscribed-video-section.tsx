@@ -6,6 +6,7 @@ import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
 import InfiniteScroll from "@/components/infinite-scroll";
 import GridFeedViewSkeleton from "../skeletons/grid-feed";
+import { useIsMobileSmall } from "@/hooks/use-mobile-small";
 
 const SubscribedVideosSection = () => {
   return (
@@ -18,6 +19,7 @@ const SubscribedVideosSection = () => {
 };
 
 const SubscribedVideosSectionSuspense = () => {
+  const isMobile = useIsMobileSmall();
   const [subscribedVideoData, query] =
     trpc.videos.getManySubscribed.useSuspenseInfiniteQuery(
       { limit: 12 },
@@ -31,9 +33,14 @@ const SubscribedVideosSectionSuspense = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 mt-2">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-2 xs:px-2">
         {favouriteVideos.map((video, index) => (
-          <VideoCard key={index} item={video} variant="feed" size="grid" />
+          <VideoCard
+            key={index}
+            item={video}
+            variant="feed"
+            size={isMobile ? "mobile" : "grid"}
+          />
         ))}
       </div>
       <div className="mt-10">

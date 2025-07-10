@@ -30,7 +30,7 @@ export const PlaylistsView = () => {
 
   return (
     <>
-      <div className="max-w-[1440px] select-none overflow-hidden w-[95%] mx-auto">
+      <div className="max-w-[1440px] select-none overflow-hidden w-[100%] mx-auto">
         <div className="w-full flex justify-between items-center">
           <div className="mx-2">
             <p className="text-2xl font-bold">Playlists</p>
