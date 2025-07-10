@@ -19,7 +19,7 @@ export const DropDownTrigger = ({
     >
       <EllipsisVertical className=" text-black" size={15} />
       {children ? (
-        <div className="flex flex-col absolute right-0 z-[100] top-[2.25em] items-start border rounded-md overflow-hidden">
+        <div className="flex flex-col absolute right-0 z-[100] top-[2.25em] border rounded-md overflow-hidden">
           {children}
         </div>
       ) : null}
@@ -37,7 +37,7 @@ export const DropDownItem = ({
     <Button
       className={mergeClasses(
         className,
-        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none"
+        "rounded-none bg-background text-foreground hover:bg-accent px-6 select-none w-full"
       )}
       {...props}
     >

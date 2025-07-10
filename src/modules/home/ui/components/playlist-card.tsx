@@ -13,13 +13,9 @@ type playlistType = inferProcedureOutput<AppRouter["playlists"]["getMany"]>;
 
 interface PlaylistCardProps {
   playlist: playlistType["userPlaylists"][0];
-  thumbnailURLPlaylist?: string | null;
 }
 
-const PlaylistCard = ({
-  playlist,
-  thumbnailURLPlaylist,
-}: PlaylistCardProps) => {
+const PlaylistCard = ({ playlist }: PlaylistCardProps) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const videoCount = playlist?.videoCount || 0;
   const router = useRouter();

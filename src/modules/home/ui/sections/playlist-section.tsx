@@ -57,7 +57,6 @@ const PlaylistSectionSuspense = ({ playlistId }: PlaylistSectionProps) => {
   // const { playlistName } = userPlaylistVideos[
   const isMobile = useIsMobileSmall();
 
-  console.log(userPlaylistVideos, "userPlaylistVideos");
   // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
 
   // const pages = playlistData.pages;

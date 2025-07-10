@@ -18,6 +18,7 @@ import {
   gt,
   isNull,
 } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export const PlaylistProcedure = createTRPCRouter({
@@ -100,27 +101,24 @@ export const PlaylistProcedure = createTRPCRouter({
       .where(eq(playlists.userId, userId))
       .groupBy(playlists.id);
 
-    const pv1 = db.$with("pv1").as(db.select().from(playlistVideos));
-    const pv2 = db.$with("pv2").as(db.select().from(playlistVideos));
+    const pv = alias(playlistVideos, "pv");
     const playlistWithTopVideoDetails = await db
-      .with(pv1, pv2)
       .select({
-        playlistId: pv1.playlistId,
-        topVideoId: pv1.videoId,
+        playlistId: playlistVideos.playlistId,
+        topVideoId: playlistVideos.videoId,
         topVideoThumbnail: videos.thumbnailURL,
       })
       .from(playlists)
-      .leftJoin(pv1, eq(pv1.playlistId, playlists.id))
+      .leftJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
       .leftJoin(
-        pv2,
+        pv,
         and(
-          eq(pv1.playlistId, pv2.playlistId),
-          gt(pv1.createdAt, pv2.createdAt)
+          eq(playlistVideos.playlistId, pv.playlistId),
+          gt(playlistVideos.createdAt, pv.createdAt)
         )
       )
-      .leftJoin(videos, eq(videos.id, pv1.videoId))
-      .where(and(eq(playlists.userId, userId), isNull(pv2.id)))
-      .groupBy(pv1.playlistId, pv1.videoId, videos.thumbnailURL);
+      .leftJoin(videos, eq(videos.id, playlistVideos.videoId))
+      .where(and(eq(playlists.userId, userId), isNull(pv.id)));
 
     const userPlaylists = playlistsWithVideoCount.map((playlist) => {
       const firstVideo = playlistWithTopVideoDetails.find(
@@ -159,8 +157,7 @@ export const PlaylistProcedure = createTRPCRouter({
             eq(playlistVideos.videoId, videoId)
           )
         )
-        .where(eq(playlists.userId, userId))
-        .orderBy(desc(playlistVideos.createdAt));
+        .where(eq(playlists.userId, userId));
 
       return {
         userPlaylists,
