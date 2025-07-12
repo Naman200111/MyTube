@@ -67,8 +67,8 @@ const StudioSidebar = () => {
               <SidebarMenuItem
                 className={`${state === "collapsed" ? "mt-2" : "mt-4"}`}
               >
-                <SidebarMenuButton asChild tooltip="Content">
-                  <a href={"/content"}>
+                <SidebarMenuButton asChild tooltip="Content" isActive>
+                  <a href={"/studio"}>
                     <VideoIcon />
                     <span>Content</span>
                   </a>

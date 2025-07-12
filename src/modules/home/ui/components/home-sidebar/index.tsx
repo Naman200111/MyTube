@@ -2,6 +2,7 @@ import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar";
 import MainSection from "./main-section";
 import PersonalSection from "./personal-section";
 import { Separator } from "@/components/ui/separator";
+import UserSubscriptionSection from "./user-subscription";
 
 const HomeSidebar = () => {
   return (
@@ -13,6 +14,10 @@ const HomeSidebar = () => {
         <Separator className="mt-2 mb-4" />
         <SidebarGroup>
           <PersonalSection />
+        </SidebarGroup>
+        <Separator className="mt-2 mb-2" />
+        <SidebarGroup>
+          <UserSubscriptionSection />
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

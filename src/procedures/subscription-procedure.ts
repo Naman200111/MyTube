@@ -1,8 +1,8 @@
 import { db } from "@/db";
-import { subscriptions, videos } from "@/db/schema";
+import { subscriptions, users, videos } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 
 export const subscriptionProcedure = createTRPCRouter({
@@ -77,4 +77,26 @@ export const subscriptionProcedure = createTRPCRouter({
         unsubscribe,
       };
     }),
+
+  getMany: protectedProcedure.query(async (opts) => {
+    const {
+      ctx: { id },
+    } = opts;
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    if (!user) {
+      throw new TRPCError({ message: "Not found", code: "NOT_FOUND" });
+    }
+
+    const userSubscriptions = await db
+      .select({
+        ...getTableColumns(subscriptions),
+        creator: {
+          ...getTableColumns(users),
+        },
+      })
+      .from(subscriptions)
+      .innerJoin(users, eq(users.id, subscriptions.creatorId))
+      .where(eq(subscriptions.viewerId, id));
+    return userSubscriptions;
+  }),
 });

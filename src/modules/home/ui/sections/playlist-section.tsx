@@ -63,7 +63,7 @@ const PlaylistSectionSuspense = ({ playlistId }: PlaylistSectionProps) => {
   // const playlists = pages.flatMap((page) => page.items) || [];
   return (
     <div className="flex flex-col w-[100%] max-w-[720px] gap-2">
-      <div className="flex justify-between mx-2">
+      <div className="flex justify-between mx-2 items-center">
         <div>
           <p className="text-2xl font-bold">{playlistName}</p>
           <p className="text-muted-foreground text-sm">

@@ -16,10 +16,11 @@
   f. deletion of video from playlist page 
   g. deletion of video from modal opened when trying to add video to playlist ✅
   h. infinite loading in custom playlist page (not needed as of now)
-  i. add playlist thumbnail (1)
+  i. add playlist thumbnail (1) ✅
   j. option to create playlist when adding to playlist dropdown clicked (enhancement)
 
 9. user page (3)
+10. all user subscription list of left side bar (individual / all subscriptions)
 10. making mobile responsive designs going fwd and fixing prev ones
 1O. add background ai jobs
 11. try minimising api calls / renders (4)
