@@ -1,0 +1,15 @@
+import ChannelsSection from "../sections/channels-section";
+
+const ChannelsView = () => {
+  return (
+    <div className="max-w-[768px] overflow-hidden w-[100%] mx-auto">
+      <div className="mx-2">
+        <p className="text-2xl font-bold">All subscriptions</p>
+      </div>
+      <div className="h-[1px] bg-gray-200 my-4 mx-2"></div>
+      <ChannelsSection />
+    </div>
+  );
+};
+
+export default ChannelsView;

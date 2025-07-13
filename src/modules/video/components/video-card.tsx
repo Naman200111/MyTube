@@ -63,7 +63,7 @@ const VideoCardGrid = ({
       <div className="flex justify-between">
         <div>
           <div className="flex gap-2 items-center">
-            <UserAvatar size="xs" imageUrl={video.user.imageUrl} />
+            <UserAvatar imageUrl={video.user.imageUrl} />
             <div className="text-xs font-semibold line-clamp-2">
               {video.title}
             </div>
@@ -105,7 +105,7 @@ const VideoCardMobile = ({
   return (
     <div
       onClick={onClick}
-      className="cursor-pointer h-[320px] w-full flex flex-col gap-2"
+      className="cursor-pointer h-[320px] w-full flex flex-col gap-2 mt-2"
     >
       <div className="overflow-hidden relative h-full">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
@@ -118,10 +118,10 @@ const VideoCardMobile = ({
           className="object-cover"
         />
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between mx-2">
         <div>
           <div className="flex gap-2">
-            <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
+            <UserAvatar size="lg" imageUrl={video.user.imageUrl} />
             <div className="text-xs font-semibold line-clamp-2">
               {video.title}
             </div>
@@ -158,13 +158,13 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
     <div
       className={mergeClasses(
         "cursor-pointer w-full flex gap-2",
-        variant === "feed" ? "h-[120px]" : "h-[240px]"
+        variant === "feed" ? "h-[120px]" : "h-[200px]"
       )}
     >
       <div
         className={mergeClasses(
-          "rounded-md overflow-hidden relative h-full",
-          variant === "feed" ? "w-[30%] min-w-[200px]" : "w-[60%]"
+          "rounded-xl overflow-hidden relative h-full",
+          variant === "feed" ? "w-[30%] min-w-[200px]" : "w-[60%] max-w-[340px]"
         )}
       >
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
@@ -186,7 +186,7 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
             <div>{getShortFormDateFromDate(video.createdAt)}</div>
           </div>
           <div className="flex gap-2 items-center">
-            <UserAvatar size="xs" imageUrl={video.user.imageUrl} />
+            <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
             <div>{video.user.name}</div>
           </div>
         </div>

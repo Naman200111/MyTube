@@ -8,44 +8,58 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@clerk/nextjs";
-// import { useClerk } from "@clerk/nextjs";
-// import { usePathname, useRouter } from "next/navigation";
 import { trpc } from "@/trpc/client";
-import Image from "next/image";
+import UserAvatar from "@/components/user-avatar";
+import { usePathname, useRouter } from "next/navigation";
+import { List } from "lucide-react";
 
 const UserSubscriptionSection = () => {
   const { isSignedIn } = useAuth();
-  // const router = useRouter();
-  // const pathname = usePathname();
-  // const clerk = useClerk();
+  const { data: userSubscriptions } = trpc.subscriptions.getMany.useQuery(
+    undefined,
+    {
+      enabled: isSignedIn,
+    }
+  );
+  const router = useRouter();
+  const pathname = usePathname();
 
-  if (!isSignedIn) {
+  if (!isSignedIn || !userSubscriptions || userSubscriptions.length == 0) {
     return <></>;
   }
 
-  const [userSubscriptions] = trpc.subscriptions.getMany.useSuspenseQuery();
   return (
     <SidebarGroupContent>
       <SidebarGroupLabel>Subscriptions</SidebarGroupLabel>
       <SidebarMenu>
-        {userSubscriptions.map(({ creator }) => (
-          <SidebarMenuItem key={creator.name}>
+        {userSubscriptions.slice(0, 5).map(({ creator }) => (
+          <SidebarMenuItem key={creator.id}>
             <SidebarMenuButton
               asChild
               size="sm"
-              // isActive={}
+              className="cursor-pointer"
+              isActive={pathname.includes(creator.id)}
               tooltip={creator.name}
-              // onClick={() => router.push("")}
+              onClick={() => router.push(`/channel/${creator.id}`)}
             >
-              {/* <a href={item.url}> */}
-              <>
-                <Image src={creator.imageUrl} alt="logo" />
+              <div>
+                <UserAvatar
+                  imageUrl={creator.imageUrl || "/user-placeholder.svg"}
+                  size="sm"
+                />
                 <span>{creator.name}</span>
-              </>
-              {/* </a> */}
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <a className="flex items-center gap-2" href="/channels">
+              <List size={20} />
+              <span>All subscriptions</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroupContent>
   );

@@ -1,18 +1,26 @@
-import { mergeClasses } from "@/lib/utils";
+import { cva } from "class-variance-authority";
 import Image from "next/image";
 
 interface UserAvatarProps {
   imageUrl: string;
-  size?: "default" | "sm" | "xs";
+  size?: "default" | "sm" | "xs" | "lg" | "xl";
   className?: string;
 }
 
-const dimensionMap = {
-  default: { width: 40, height: 30 },
-  // todos fix size for replies
-  sm: { width: 30, height: 20 },
-  xs: { width: 20, height: 10 },
-};
+const avatarVariants = cva("relative", {
+  variants: {
+    size: {
+      xs: "h-4 min-w-4",
+      sm: "h-6 min-w-6",
+      default: "h-7 min-w-7",
+      lg: "h-8 min-w-8",
+      xl: "h-16 min-w-16",
+    },
+  },
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 const UserAvatar = ({
   size = "default",
@@ -20,13 +28,14 @@ const UserAvatar = ({
   className,
 }: UserAvatarProps) => {
   return (
-    <Image
-      src={imageUrl}
-      alt="User Avatar"
-      width={dimensionMap[size].width}
-      height={dimensionMap[size].height}
-      className={mergeClasses("rounded-full", className)}
-    />
+    <div className={avatarVariants({ className, size })}>
+      <Image
+        src={imageUrl}
+        alt="User Avatar"
+        fill
+        className="object-cover rounded-full"
+      />
+    </div>
   );
 };
 

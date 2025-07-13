@@ -5,8 +5,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import SearchPageViewSkeleton from "../skeletons/search-page";
 import { trpc } from "@/trpc/client";
 import VideoCard from "@/modules/video/components/video-card";
-import { useIsMobile } from "@/hooks/use-mobile";
 import InfiniteScroll from "@/components/infinite-scroll";
+import { useIsMobileSmall } from "@/hooks/use-mobile-small";
 
 interface SearchViewProps {
   searchQuery?: string;
@@ -23,7 +23,7 @@ const SearchView = ({ searchQuery }: SearchViewProps) => {
 };
 
 const SearchViewSuspense = ({ searchQuery }: SearchViewProps) => {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobileSmall();
   const [searchedData, query] =
     trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
       { query: searchQuery, limit: 10 },
@@ -36,7 +36,7 @@ const SearchViewSuspense = ({ searchQuery }: SearchViewProps) => {
   const searchedVideos = pages.flatMap((page) => page.items) || [];
 
   return (
-    <div className="flex flex-col items-center w-full mx-2 lg:w-[70%] xl:w-[50%] lg:mx-auto max-w-[1080px]">
+    <div className="flex flex-col items-center w-full lg:w-[70%] xl:w-[50%] lg:mx-auto max-w-[1080px] xs:px-2 gap-2">
       {searchedVideos.map((video, index) => (
         <VideoCard
           key={index}

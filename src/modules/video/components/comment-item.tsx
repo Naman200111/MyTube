@@ -130,7 +130,7 @@ const CommentItem = ({
       <div className="flex gap-2">
         <UserAvatar
           imageUrl={commentItem.user?.imageUrl || "/user-placeholder.svg"}
-          size={isReply ? "sm" : "default"}
+          size={isReply ? "default" : "lg"}
         />
         <div className="flex justify-between flex-1">
           <div className="flex flex-col text-xs gap-[2px]">

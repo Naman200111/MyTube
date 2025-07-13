@@ -97,6 +97,7 @@ const VideoStats = ({
   const subscribe = trpc.subscriptions.subscribe.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
+      utils.subscriptions.getMany.invalidate();
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {
@@ -109,6 +110,7 @@ const VideoStats = ({
   const unsubscribe = trpc.subscriptions.unsubscribe.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
+      utils.subscriptions.getMany.invalidate();
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {
@@ -154,7 +156,7 @@ const VideoStats = ({
       <p className="line-clamp-2 font-bold">{title}</p>
       <div className="flex justify-between flex-col md:flex-row gap-2">
         <div className="flex gap-2 items-center">
-          <UserAvatar imageUrl={imageUrl} />
+          <UserAvatar imageUrl={imageUrl} size="lg" />
           <div className="flex-1 md:flex-none">
             <p className="text-sm font-bold">{name}</p>
             <p className="text-xs">

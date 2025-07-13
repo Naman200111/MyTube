@@ -54,7 +54,7 @@ const CommentInput = ({
       <div className="flex gap-2 items-center">
         <UserAvatar
           imageUrl={user?.imageUrl || "/user-placeholder.svg"}
-          size={isReply ? "sm" : "default"}
+          size={isReply ? "default" : "lg"}
         />
         <Input
           placeholder={isReply ? "Reply to this comment..." : "Add a comment"}
