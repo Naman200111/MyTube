@@ -49,6 +49,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     viewerReaction,
     subscribersCount,
     isViewerSubscribed,
+    thumbnailURL,
   } = data[0];
 
   const isProcessing = muxStatus !== "ready";
@@ -82,6 +83,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
             playbackId={data?.[0]?.playbackId}
             onPlay={handlePlay}
             className={isProcessing ? "rounded-b-none" : ""}
+            thumbnailURL={thumbnailURL}
           />
           {isProcessing ? (
             <div className="p-2 bg-yellow-300 flex gap-2 rounded-md rounded-t-none pl-4">

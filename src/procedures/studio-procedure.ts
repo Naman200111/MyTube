@@ -10,7 +10,10 @@ export const StudioProcedure = createTRPCRouter({
     .query(async (opts) => {
       const { input } = opts;
       const { videoId } = input;
-      const data = await db.select().from(videos).where(eq(videos.id, videoId));
+      const [data] = await db
+        .select()
+        .from(videos)
+        .where(eq(videos.id, videoId));
       return data;
     }),
   getMany: protectedProcedure

@@ -6,7 +6,7 @@ import { Select, SelectItem } from "@/components/select";
 import Textarea from "@/components/textarea";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { Copy, Trash } from "lucide-react";
+import { Copy, ImagePlusIcon, RotateCcw, Trash } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import MuxPlayer from "@mux/mux-player-react";
 import { getSnakeCasing } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/use-click-outside";
+import ImageUploadModal from "../components/image-upload-modal";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -26,7 +27,13 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
   const [showMoreOptions, setShowMoreOptions] = useState(false);
-  useClickOutside(() => setShowMoreOptions(false));
+  const [showMoreUploadOptions, setShowMoreUploadOptions] = useState(false);
+  const [showImageUploadModal, setShowImageUploadModal] = useState(false);
+
+  useClickOutside(() => {
+    setShowMoreOptions(false);
+    setShowMoreUploadOptions(false);
+  });
 
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
@@ -53,23 +60,23 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     },
   });
 
-  const videoLink = `http://localhost:3000/video/${video?.[0]?.id}`;
+  const videoLink = `http://localhost:3000/video/${video?.id}`;
   const [formData, setFormData] = useState({
-    id: video?.[0]?.id || "",
-    title: video?.[0]?.title || "",
-    description: video?.[0]?.description || "",
-    categoryId: video?.[0]?.categoryId || "",
-    visibility: video?.[0]?.visibility || "Private",
-    playbackId: video?.[0]?.playbackId || "",
-    muxStatus: video?.[0]?.muxStatus || "preparing",
+    id: video?.id || "",
+    title: video?.title || "",
+    description: video?.description || "",
+    categoryId: video?.categoryId || "",
+    visibility: video?.visibility || "Private",
+    playbackId: video?.playbackId || "",
+    muxStatus: video?.muxStatus || "preparing",
   });
 
   useEffect(() => {
-    if (video?.[0]?.id) {
+    if (video?.id) {
       setFormData((prev) => ({
         ...prev,
-        playbackId: video?.[0]?.playbackId || "",
-        muxStatus: video?.[0]?.muxStatus || "",
+        playbackId: video?.playbackId || "",
+        muxStatus: video?.muxStatus || "",
       }));
     }
   }, [video]);
@@ -142,13 +149,29 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </div>
           <div className="flex flex-col gap-2">
             <span className="font-medium">Thumbnail</span>
-            <Image
-              src={video?.[0]?.thumbnailURL || "/placeholder.svg"}
-              width={150}
-              height={150}
-              alt="Thumbnail"
-              className="overflow-hidden rounded-md"
-            ></Image>
+            <div className="relative max-w-[160px] h-24">
+              <Image
+                src={video?.thumbnailURL || "/placeholder.svg"}
+                fill
+                alt="Thumbnail"
+                className="overflow-hidden rounded-md object-cover"
+              />
+              <DropDownTrigger
+                className="absolute rounded-full p-1 ml-auto bg-gray-100 w-[22.5px] m-1"
+                onClick={() => setShowMoreUploadOptions((prev) => !prev)}
+              >
+                {showMoreUploadOptions ? (
+                  <>
+                    <DropDownItem onClick={() => setShowImageUploadModal(true)}>
+                      <ImagePlusIcon /> Change
+                    </DropDownItem>
+                    <DropDownItem>
+                      <RotateCcw /> Restore
+                    </DropDownItem>
+                  </>
+                ) : null}
+              </DropDownTrigger>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <span className="font-medium">Category</span>
@@ -172,7 +195,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             <MuxPlayer
               className="w-full aspect-video overflow-hidden rounded-md rounded-b-none"
               playbackId={formData.playbackId}
-              placeholder="/placeholder.svg"
+              poster={video.thumbnailURL || "/placeholder.svg"}
               playerInitTime={0}
             />
             <div className="flex flex-col gap-1 px-4">
@@ -216,6 +239,11 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </div>
         </div>
       </div>
+      <ImageUploadModal
+        open={showImageUploadModal}
+        onClose={() => setShowImageUploadModal(false)}
+        videoId={video.id}
+      />
     </div>
   );
 };

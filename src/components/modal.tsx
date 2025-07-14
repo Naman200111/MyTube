@@ -59,7 +59,7 @@ export const Modal = ({
           }
         }}
       >
-        <div className="absolute right-2 top-2 cursor-pointer">
+        <div className="absolute right-2 top-2 cursor-pointer h-full">
           {showClose && (
             <X
               onClick={() => modalRef.current?.close()}
