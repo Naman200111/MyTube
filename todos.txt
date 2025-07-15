@@ -1,5 +1,5 @@
-1. upload thumbnail upload option (2) -> add restore logic
-1. upload thumbnail design fixes (3) 
+1. upload thumbnail upload option (2) -> add restore logic ✅
+1. upload thumbnail design fixes (3) ✅   -- add cleanup ✅ -- add thumnbail design fix ✅
 2. adding comments replies ✅
 3. adding likes, comments, dislikes, views in studio table ✅
 4. adding suggestions (only public videos) ✅

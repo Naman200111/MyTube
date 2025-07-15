@@ -60,6 +60,7 @@ export const videos = pgTable("videos", {
     onDelete: "set null",
   }),
   thumbnailURL: text("thumbnail_url"),
+  thumbnailKey: text("thumbnail_key"),
   muxUploadId: text("mux_upload_id"),
   muxStatus: text("mux_status"),
   muxAssetId: text("mux_asset_id"),

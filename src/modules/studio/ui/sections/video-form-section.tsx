@@ -15,6 +15,7 @@ import { getSnakeCasing } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/use-click-outside";
 import ImageUploadModal from "../components/image-upload-modal";
+import { APP_URL } from "@/lib/constants";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -60,14 +61,24 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     },
   });
 
-  const videoLink = `http://localhost:3000/video/${video?.id}`;
+  const restoreThumbnail = trpc.videos.restore.useMutation({
+    onSuccess: () => {
+      utils.studio.getOne.invalidate();
+      utils.studio.getMany.invalidate();
+      toast.message("Thumbnail restored");
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
+
+  const videoLink = `${APP_URL}/video/${video?.id}`;
   const [formData, setFormData] = useState({
     id: video?.id || "",
     title: video?.title || "",
     description: video?.description || "",
     categoryId: video?.categoryId || "",
     visibility: video?.visibility || "Private",
-    playbackId: video?.playbackId || "",
     muxStatus: video?.muxStatus || "preparing",
   });
 
@@ -75,7 +86,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     if (video?.id) {
       setFormData((prev) => ({
         ...prev,
-        playbackId: video?.playbackId || "",
         muxStatus: video?.muxStatus || "",
       }));
     }
@@ -157,15 +167,25 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
                 className="overflow-hidden rounded-md object-cover"
               />
               <DropDownTrigger
-                className="absolute rounded-full p-1 ml-auto bg-gray-100 w-[22.5px] m-1"
+                className="absolute rounded-full ml-auto bg-gray-100 w-[22.5px] p-[4px] m-1"
                 onClick={() => setShowMoreUploadOptions((prev) => !prev)}
               >
                 {showMoreUploadOptions ? (
                   <>
-                    <DropDownItem onClick={() => setShowImageUploadModal(true)}>
+                    <DropDownItem
+                      onClick={() => setShowImageUploadModal(true)}
+                      disabled={restoreThumbnail.isPending}
+                    >
                       <ImagePlusIcon /> Change
                     </DropDownItem>
-                    <DropDownItem>
+                    <DropDownItem
+                      onClick={() =>
+                        restoreThumbnail.mutate({
+                          videoId: video.id,
+                        })
+                      }
+                      disabled={restoreThumbnail.isPending}
+                    >
                       <RotateCcw /> Restore
                     </DropDownItem>
                   </>
@@ -191,10 +211,9 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
           </div>
         </div>
         <div className="flex flex-col gap-10 lg:col-span-1">
-          <div className="bg-accent flex flex-col gap-6 rounded-md pb-4 text-muted-foreground">
+          <div className="bg-accent flex flex-col gap-6 rounded-lg pb-4 text-muted-foreground">
             <MuxPlayer
-              className="w-full aspect-video overflow-hidden rounded-md rounded-b-none"
-              playbackId={formData.playbackId}
+              className="aspect-video overflow-hidden rounded-lg rounded-b-none"
               poster={video.thumbnailURL || "/placeholder.svg"}
               playerInitTime={0}
             />

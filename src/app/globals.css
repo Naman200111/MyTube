@@ -77,6 +77,12 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+/* this make muxplayer poster to take up complete video player container size */
+mux-player::part(poster) {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
 
 @layer base {
   /* * {

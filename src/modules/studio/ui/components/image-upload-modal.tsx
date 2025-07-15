@@ -30,10 +30,14 @@ const ImageUploadModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      className="min-h-[100px] p-10 overflow-hidden"
+    >
       <UploadDropzone
         endpoint="imageUploader"
-        className="m-0"
+        className="cursor-pointer"
         input={{ videoId }}
         onClientUploadComplete={handleThumbnailUploadComplete}
         onUploadError={handleThumbnailUploadFail}

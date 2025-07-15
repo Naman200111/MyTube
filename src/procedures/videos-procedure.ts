@@ -16,6 +16,7 @@ import {
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, getTableColumns, ilike, lt, or } from "drizzle-orm";
+import { UTApi } from "uploadthing/server";
 import { z } from "zod";
 
 export const VideosProcedure = createTRPCRouter({
@@ -511,4 +512,42 @@ export const VideosProcedure = createTRPCRouter({
       url: upload.url,
     };
   }),
+
+  restore: protectedProcedure
+    .input(
+      z.object({
+        videoId: z.string().uuid().nonempty(),
+      })
+    )
+    .mutation(async ({ input: { videoId }, ctx }) => {
+      const { id } = ctx;
+
+      const [existingVideo] = await db
+        .select()
+        .from(videos)
+        .where(and(eq(videos.userId, id), eq(videos.id, videoId)));
+      if (!existingVideo) {
+        return new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (existingVideo.thumbnailKey) {
+        const utApi = new UTApi();
+        await utApi.deleteFiles(existingVideo.thumbnailKey);
+      }
+
+      const [video] = await db
+        .update(videos)
+        .set({
+          thumbnailKey: null,
+          thumbnailURL: existingVideo.playbackId
+            ? `https://image.mux.com/${existingVideo.playbackId}/thumbnail.jpg`
+            : null,
+        })
+        .where(and(eq(videos.userId, id), eq(videos.id, videoId)))
+        .returning();
+
+      return {
+        video,
+      };
+    }),
 });
