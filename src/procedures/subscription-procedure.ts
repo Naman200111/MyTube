@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { subscriptions, users, videos } from "@/db/schema";
+import { subscriptions, users } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns } from "drizzle-orm";
@@ -7,27 +7,14 @@ import { z } from "zod";
 
 export const subscriptionProcedure = createTRPCRouter({
   subscribe: protectedProcedure
-    .input(z.object({ videoId: z.string().nonempty() }))
-    .mutation(async (opts) => {
-      const { input, ctx } = opts;
-      const { videoId } = input;
+    .input(z.object({ creatorId: z.string().nonempty() }))
+    .mutation(async ({ input: { creatorId }, ctx }) => {
       const { id: viewerId } = ctx;
 
-      const [user] = await db
-        .select({
-          creatorId: videos.userId,
-        })
-        .from(videos)
-        .where(eq(videos.id, videoId));
-
-      if (!user) {
-        throw new TRPCError({ message: "Not found", code: "NOT_FOUND" });
-      }
       if (!viewerId) {
         throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
       }
 
-      const creatorId = user.creatorId;
       const subscribe = await db
         .insert(subscriptions)
         .values({
@@ -42,27 +29,13 @@ export const subscriptionProcedure = createTRPCRouter({
     }),
 
   unsubscribe: protectedProcedure
-    .input(z.object({ videoId: z.string().nonempty() }))
-    .mutation(async (opts) => {
-      const { input, ctx } = opts;
-      const { videoId } = input;
+    .input(z.object({ creatorId: z.string().nonempty() }))
+    .mutation(async ({ input: { creatorId }, ctx }) => {
       const { id: viewerId } = ctx;
-
-      const [user] = await db
-        .select({
-          creatorId: videos.userId,
-        })
-        .from(videos)
-        .where(eq(videos.id, videoId));
-
-      if (!user) {
-        throw new TRPCError({ message: "Not found", code: "NOT_FOUND" });
-      }
       if (!viewerId) {
         throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
       }
 
-      const creatorId = user.creatorId;
       const unsubscribe = await db
         .delete(subscriptions)
         .where(

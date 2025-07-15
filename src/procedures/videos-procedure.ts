@@ -46,7 +46,7 @@ export const VideosProcedure = createTRPCRouter({
           .where(eq(videoReactions.userId, user?.id))
       );
 
-      const videoData = await db
+      const [videoData] = await db
         .with(viewerReactionWithTable)
         .select({
           ...getTableColumns(users),

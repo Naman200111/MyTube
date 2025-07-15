@@ -20,6 +20,7 @@ interface VideoStatsProps {
   name: string;
   imageUrl: string;
   videoId: string;
+  creatorId: string;
   likeCount: number;
   dislikeCount: number;
   viewerReaction: VideoReactionType;
@@ -37,6 +38,7 @@ const VideoStats = ({
   viewerReaction,
   subscribersCount,
   isViewerSubscribed,
+  creatorId,
 }: VideoStatsProps) => {
   useClickOutside(() => setShowMoreOptions(false));
 
@@ -138,9 +140,9 @@ const VideoStats = ({
 
   const handleSubscribeOperation = (type: SubscribeOptions) => {
     if (type == "subscribe") {
-      subscribe.mutate({ videoId });
+      subscribe.mutate({ creatorId });
     } else {
-      unsubscribe.mutate({ videoId });
+      unsubscribe.mutate({ creatorId });
     }
   };
 

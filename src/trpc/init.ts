@@ -25,6 +25,8 @@ export const createTRPCRouter = t.router;
 export const baseProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(async (opts) => {
   const { clerkUserId } = opts.ctx;
+  // for debugging
+  console.log(clerkUserId, "clerkUserId");
   if (!clerkUserId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

@@ -1,5 +1,5 @@
-1. upload thumbnail upload option (2) -> add restore logic ✅
-1. upload thumbnail design fixes (3) ✅   -- add cleanup ✅ -- add thumnbail design fix ✅
+1. upload thumbnail upload option -> add restore logic ✅
+1. upload thumbnail design fixes ✅   -- add cleanup ✅ -- add thumnbail design fix ✅
 2. adding comments replies ✅
 3. adding likes, comments, dislikes, views in studio table ✅
 4. adding suggestions (only public videos) ✅
@@ -17,13 +17,13 @@
   f. deletion of video from playlist page 
   g. deletion of video from modal opened when trying to add video to playlist ✅
   h. infinite loading in custom playlist page (not needed as of now)
-  i. add playlist thumbnail (1) ✅
+  i. add playlist thumbnail ✅
   j. option to create playlist when adding to playlist dropdown clicked (enhancement)
 
-9. user page (3)
+9. user page (2)
 10. all user subscription list of left side bar (individual / all subscriptions) ✅
-10. finalize all subscription page -> getting all subscription along with sub count and unsub functionlity
-10. fix all subscription prefetch error
+10. finalize all subscription page -> getting all subscription along with sub count and unsub functionlity ✅
+10. fix all subscription prefetch error (1)
 10. making mobile responsive designs going fwd and fixing prev ones
 1O. add background ai jobs
 11. try minimising api calls / renders (4)

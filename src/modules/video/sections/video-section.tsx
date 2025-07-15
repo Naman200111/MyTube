@@ -50,7 +50,8 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     subscribersCount,
     isViewerSubscribed,
     thumbnailURL,
-  } = data[0];
+    userId: creatorId,
+  } = data;
 
   const isProcessing = muxStatus !== "ready";
   const utils = trpc.useUtils();
@@ -80,7 +81,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
       >
         <>
           <VideoPlayer
-            playbackId={data?.[0]?.playbackId}
+            playbackId={data?.playbackId}
             onPlay={handlePlay}
             className={isProcessing ? "rounded-b-none" : ""}
             thumbnailURL={thumbnailURL}
@@ -103,6 +104,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         viewerReaction={viewerReaction}
         subscribersCount={subscribersCount}
         isViewerSubscribed={isViewerSubscribed}
+        creatorId={creatorId}
       />
       <VideoDescription
         createdAt={createdAt}
