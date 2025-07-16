@@ -15,6 +15,7 @@ import { LogOut, VideoIcon } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 const StudioSidebar = () => {
   const { user } = useUser();
@@ -68,10 +69,10 @@ const StudioSidebar = () => {
                 className={`${state === "collapsed" ? "mt-2" : "mt-4"}`}
               >
                 <SidebarMenuButton asChild tooltip="Content" isActive>
-                  <a href={"/studio"}>
+                  <Link href={"/studio"}>
                     <VideoIcon />
                     <span>Content</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -83,10 +84,10 @@ const StudioSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Exit Studio">
-                  <a href={"/"}>
+                  <Link href={"/"}>
                     <LogOut />
                     <span>Exit Studio</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

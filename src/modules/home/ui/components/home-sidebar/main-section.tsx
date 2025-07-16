@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
@@ -10,6 +11,7 @@ import { Home, Flame, SquarePlay } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const items = [
   {
@@ -36,31 +38,33 @@ const MainSection = () => {
   const clerk = useClerk();
 
   return (
-    <SidebarGroupContent>
-      <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname.endsWith(item.url)}
-              tooltip={item.title}
-              onClick={(e) => {
-                if (item.auth && !isSignedIn) {
-                  e.preventDefault();
-                  clerk.openSignIn();
-                  return;
-                }
-              }}
-            >
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
-      </SidebarMenu>
-    </SidebarGroupContent>
+    <SidebarGroup>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.endsWith(item.url)}
+                tooltip={item.title}
+                onClick={(e) => {
+                  if (item.auth && !isSignedIn) {
+                    e.preventDefault();
+                    clerk.openSignIn();
+                    return;
+                  }
+                }}
+              >
+                <Link href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 };
 

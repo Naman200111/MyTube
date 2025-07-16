@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
@@ -11,6 +12,7 @@ import { History, ThumbsUp, ListVideo } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const items = [
   {
@@ -39,7 +41,7 @@ const PersonalSection = () => {
   const clerk = useClerk();
 
   return (
-    <>
+    <SidebarGroup>
       <SidebarGroupLabel>You</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
@@ -57,16 +59,16 @@ const PersonalSection = () => {
                   }
                 }}
               >
-                <a href={item.url}>
+                <Link href={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarGroupContent>
-    </>
+    </SidebarGroup>
   );
 };
 
