@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
 import UserPageSkeleton from "../skeletons/user-page-skeleton";
 import { useIsMobileSmall } from "@/hooks/use-mobile-small";
+import VideoCard from "@/modules/video/components/video-card";
+import InfiniteScroll from "@/components/infinite-scroll";
 
 interface UserPageSectionProps {
   userId: string;
@@ -35,6 +37,15 @@ const UserPageSectionSuspense = ({ userId }: UserPageSectionProps) => {
   const isMobile = useIsMobileSmall();
 
   const [userPageData] = trpc.users.getOne.useSuspenseQuery({ userId });
+  const [userVideosData, query] =
+    trpc.videos.getManyFromQuery.useSuspenseInfiniteQuery(
+      { userId, limit: 5 },
+      { getNextPageParam: (lastPage) => lastPage.cursor }
+    );
+
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = query;
+
+  const videoPages = userVideosData.pages;
   const [bannerUploadModalOpen, setBannerUploadModalOpen] = useState(false);
 
   const removeBanner = trpc.users.removeBanner.useMutation({
@@ -124,18 +135,16 @@ const UserPageSectionSuspense = ({ userId }: UserPageSectionProps) => {
           userId={userPageData.id}
         />
       </div>
-      <div className="w-full flex-1 mx-2 xs:m-0">
-        <div className="flex gap-2 xs:gap-6 mt-4 items-center">
+      <div className="w-full mx-2 xs:m-0">
+        <div className="flex gap-3 xs:gap-6 mt-4 items-center">
           <UserAvatar
             size={isMobile ? "xxl" : "xxxl"}
             imageUrl={userPageData.imageUrl}
             className="min-w-[100px]"
           />
           <div className="flex flex-col gap-1 xs:gap-2">
-            <p className="font-bold text-2xl sm:text-4xl">
-              {userPageData.name}
-            </p>
-            <div className="flex gap-1 text-muted-foreground text-sm items-center">
+            <p className="font-bold text-xl xs:text-3xl">{userPageData.name}</p>
+            <div className="flex gap-1 text-muted-foreground text-xs items-center">
               <p>
                 {getCountShortForm(userPageData.subscribersCount)} subscribers
               </p>
@@ -144,18 +153,14 @@ const UserPageSectionSuspense = ({ userId }: UserPageSectionProps) => {
             </div>
             {userPageData.isViewerCreator ? (
               <Link href="/studio">
-                <Button
-                  variant="ghost"
-                  className="bg-muted hover:bg-muted-foreground hover:text-white rounded-lg"
-                >
-                  Go to Studio
-                </Button>
+                <Button className="rounded-lg">Go to Studio</Button>
               </Link>
             ) : (
               <Button
-                className="w-[100px] cursor-pointer"
+                className="p-1 w-[100px] cursor-pointer text-xs"
                 disabled={subscribe.isPending || unsubscribe.isPending}
                 onClick={() => handleSubUnSubClick()}
+                size="sm"
               >
                 {userPageData.isViewerSubscriber ? "Unsubscribe" : "Subscribe"}
               </Button>
@@ -163,6 +168,22 @@ const UserPageSectionSuspense = ({ userId }: UserPageSectionProps) => {
           </div>
         </div>
       </div>
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-2 mt-6 xs:px-2">
+        {videoPages
+          .flatMap((page) => page.items)
+          .map((video, index) => (
+            <VideoCard
+              key={index}
+              item={video}
+              size={isMobile ? "mobile" : "grid"}
+            />
+          ))}
+      </div>
+      <InfiniteScroll
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
+      />
     </div>
   );
 };

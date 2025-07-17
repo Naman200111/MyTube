@@ -100,6 +100,7 @@ export const VideosProcedure = createTRPCRouter({
     .input(
       z.object({
         query: z.string().nullish(),
+        userId: z.string().uuid().nullish(),
         category: z.string().default(""),
         limit: z.number().min(1).max(100),
         cursor: z
@@ -110,7 +111,7 @@ export const VideosProcedure = createTRPCRouter({
           .nullish(),
       })
     )
-    .query(async ({ input: { query, limit, cursor, category } }) => {
+    .query(async ({ input: { query, limit, cursor, category, userId } }) => {
       const [categoryData] = await db
         .select()
         .from(categories)
@@ -131,7 +132,8 @@ export const VideosProcedure = createTRPCRouter({
             and(
               query ? ilike(videos.title, `%${query}%`) : undefined,
               categoryData ? eq(videos.categoryId, categoryData.id) : undefined,
-              eq(videos.visibility, "Public")
+              eq(videos.visibility, "Public"),
+              userId ? eq(videos.userId, userId) : undefined
             ),
             cursor
               ? or(
