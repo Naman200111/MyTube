@@ -30,9 +30,9 @@ const AddToPlaylistModal = ({
 
   return (
     <Modal onClose={onClose} open={open}>
-      <div className="p-4 flex flex-col gap-4 max-h-[600px] min-w-[220px]">
+      <div className="p-4 flex flex-col gap-2 max-h-[600px] min-w-[220px]">
         <div className="flex justify-between">
-          <p className="font-semibold text-lg">Add to playlist</p>
+          <p className="font-semibold text-lg ml-2">Add to playlist</p>
         </div>
         {isLoading ? <Loader2Icon className="animate-spin mx-auto" /> : null}
         {userPlaylists.map((playlist, index) => {
@@ -40,7 +40,7 @@ const AddToPlaylistModal = ({
             <Button
               variant="ghost"
               disabled={disabled}
-              className="w-full gap-2 px-2 lg:px-4 flex justify-start"
+              className="w-full flex justify-start px-2"
               key={index}
               onClick={() => onClick(playlist.id, videoId)}
             >

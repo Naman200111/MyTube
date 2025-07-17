@@ -37,7 +37,7 @@ export const Modal = ({
       ref={modalRef}
       className={mergeClasses(
         className,
-        "bg-white rounded-lg backdrop:backdrop-contrast-50 select-none"
+        "bg-white rounded-lg backdrop:backdrop-contrast-50 select-none overflow-hidden"
       )}
       onClose={onClose}
       onClick={(e) => {

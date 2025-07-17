@@ -153,7 +153,9 @@ const UserPageSectionSuspense = ({ userId }: UserPageSectionProps) => {
             </div>
             {userPageData.isViewerCreator ? (
               <Link href="/studio">
-                <Button className="rounded-lg">Go to Studio</Button>
+                <Button className="rounded-lg text-xs" size="sm">
+                  Go to Studio
+                </Button>
               </Link>
             ) : (
               <Button
