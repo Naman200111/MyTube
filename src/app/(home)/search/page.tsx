@@ -2,7 +2,7 @@ import SearchView from "@/modules/home/ui/views/search-view";
 import { HydrateClient, trpc } from "@/trpc/server";
 
 interface SearchPageProps {
-  searchParams: { query?: string };
+  searchParams: Promise<{ query?: string }>;
 }
 
 const SearchPage = async ({ searchParams }: SearchPageProps) => {

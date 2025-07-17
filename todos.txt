@@ -31,6 +31,7 @@
 11. need of content page in studio (5) ✅
 11. fix user avatar small designs ✅
 11. remove useRouter if not needed
+11. try building and testing
 11. fix user own page refresh error
 12. remove redundant/unnecessary css code from tw (5)
 
