@@ -18,6 +18,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import AddToPlaylistModal from "./add-to-playlist-modal";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
 
 type VideoType = inferProcedureOutput<AppRouter["suggestions"]["getMany"]>;
 
@@ -68,8 +69,13 @@ const VideoCardGrid = ({
               {video.title}
             </div>
           </div>
-          <div className="text-[0.6em] text-muted-foreground ml-7 mt-[4px]">
-            <div>{video.user.name}</div>
+          <div className="text-[0.6em] text-muted-foreground ml-9 mt-[4px]">
+            <Link
+              href={`/user/${video.user.id}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="hover:font-semibold">{video.user.name}</div>
+            </Link>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
               <p className="font-bold mb-[0.5em]">.</p>
@@ -127,7 +133,12 @@ const VideoCardMobile = ({
             </div>
           </div>
           <div className="text-[0.6em] text-muted-foreground ml-10 mt-1">
-            <div>{video.user.name}</div>
+            <Link
+              href={`/user/${video.user.id}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="hover:font-semibold">{video.user.name}</div>
+            </Link>
             <div className="flex gap-1 items-center">
               <div>{getCountShortForm(video.viewCount)} views </div>
               <p className="font-bold mb-[0.5em]">.</p>
@@ -187,7 +198,12 @@ const VideoCardPrimary = ({ item: video, variant }: VideoCardProps) => {
           </div>
           <div className="flex gap-2 items-center">
             <UserAvatar size="sm" imageUrl={video.user.imageUrl} />
-            <div>{video.user.name}</div>
+            <Link
+              href={`/user/${video.user.id}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="hover:font-semibold">{video.user.name}</div>
+            </Link>
           </div>
         </div>
         <div className="text-xs text-muted-foreground mt-3 line-clamp-2">
@@ -218,7 +234,12 @@ const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
       <div className="text-nowrap">
         <div className="text-sm font-semibold line-clamp-1">{video.title}</div>
         <div className="text-[0.6em] text-muted-foreground">
-          <div>{video.user.name}</div>
+          <Link
+            href={`/user/${video.user.id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="hover:font-semibold">{video.user.name}</div>
+          </Link>
           <div className="flex gap-1 items-center">
             <div>{getCountShortForm(video.viewCount)} views </div>
             <p className="font-bold mb-[0.5em]">.</p>

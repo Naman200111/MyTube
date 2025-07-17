@@ -18,6 +18,8 @@ export const users = pgTable(
     name: text("name").notNull(),
     clerkId: text("clerk_id").notNull(),
     imageUrl: text("image_url").notNull(),
+    bannerKey: text("banner_key"),
+    bannerUrl: text("banner_url"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

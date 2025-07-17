@@ -3,7 +3,7 @@ import Image from "next/image";
 
 interface UserAvatarProps {
   imageUrl: string;
-  size?: "default" | "sm" | "xs" | "lg" | "xl";
+  size?: "default" | "sm" | "xs" | "lg" | "xl" | "xxl" | "xxxl";
   className?: string;
 }
 
@@ -15,6 +15,8 @@ const avatarVariants = cva("relative", {
       default: "h-7 min-w-7",
       lg: "h-8 min-w-8",
       xl: "h-16 min-w-16",
+      xxl: "h-[100px] w-[100px]",
+      xxxl: "h-[150px] w-[150px]",
     },
   },
   defaultVariants: {

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { trpc } from "@/trpc/client";
 import UserAvatar from "@/components/user-avatar";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { List } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,7 +27,6 @@ const UserSubscriptionSkeleton = () => {
 const UserSubscriptionSection = () => {
   const { data: userSubscriptions, isPending } =
     trpc.subscriptions.getMany.useQuery();
-  const router = useRouter();
   const pathname = usePathname();
   const hasUserSubscriptions = (userSubscriptions || []).length > 0;
 
@@ -46,15 +45,14 @@ const UserSubscriptionSection = () => {
                   className="cursor-pointer"
                   isActive={pathname.includes(creator.id)}
                   tooltip={creator.name}
-                  onClick={() => router.push(`/channel/${creator.id}`)}
                 >
-                  <div>
+                  <Link href={`/user/${creator.id}`}>
                     <UserAvatar
                       imageUrl={creator.imageUrl || "/user-placeholder.svg"}
                       size="sm"
                     />
                     <span>{creator.name}</span>
-                  </div>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

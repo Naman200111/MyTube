@@ -9,9 +9,11 @@ import { CommentsProcedure } from "@/procedures/comments-procedure";
 import { CommentReactionProcedure } from "@/procedures/comments-reaction-procedure";
 import { SuggestionProcedure } from "@/procedures/suggestions-procedure";
 import { PlaylistProcedure } from "@/procedures/playlist-procedure";
+import { UserProcedure } from "@/procedures/users-procedure";
 
 export const appRouter = createTRPCRouter({
   categories: categoryProcedure,
+  users: UserProcedure,
   studio: StudioProcedure,
   subscriptions: subscriptionProcedure,
   videos: VideosProcedure,

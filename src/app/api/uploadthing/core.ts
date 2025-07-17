@@ -63,6 +63,45 @@ export const ourFileRouter = {
 
       return { uploadedBy: metadata.userId };
     }),
+
+  bannerUploader: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
+  })
+    .input(
+      z.object({
+        userId: z.string().uuid().nonempty(),
+      })
+    )
+    .middleware(async ({ input: { userId } }) => {
+      const [user] = await db.select().from(users).where(eq(users.id, userId));
+      if (!user) throw new UploadThingError("Not found");
+
+      return { userId };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, metadata.userId));
+
+      if (user.bannerKey) {
+        const utApi = new UTApi();
+        await utApi.deleteFiles(user.bannerKey);
+      }
+
+      await db
+        .update(users)
+        .set({
+          bannerUrl: file.ufsUrl,
+          bannerKey: file.key,
+        })
+        .where(eq(users.id, metadata.userId));
+
+      return { uploadedBy: metadata.userId };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
