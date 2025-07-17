@@ -2,9 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-// import { trpc } from "@/trpc/client";
-// import VideoCard from "@/modules/video/components/video-card";
-// import InfiniteScroll from "@/components/infinite-scroll";
 import { trpc } from "@/trpc/client";
 import VerticalFeedViewSkeleton from "../skeletons/vertical-feed";
 import VideoCard from "@/modules/video/components/video-card";
@@ -14,7 +11,6 @@ import { Trash2Icon } from "lucide-react";
 import DeleteModal from "@/modules/video/components/delete-modal";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-// import PlaylistCard from "../components/playlist-card";
 
 interface PlaylistSectionProps {
   playlistId: string;
@@ -54,13 +50,8 @@ const PlaylistSectionSuspense = ({ playlistId }: PlaylistSectionProps) => {
     userPlaylist: { playlistName },
     videos: userPlaylistVideos,
   } = playlistData;
-  // const { playlistName } = userPlaylistVideos[
   const isMobile = useIsMobileSmall();
 
-  // const { fetchNextPage, isFetchingNextPage, hasNextPage } = query;
-
-  // const pages = playlistData.pages;
-  // const playlists = pages.flatMap((page) => page.items) || [];
   return (
     <div className="flex flex-col w-[100%] max-w-[720px] gap-2">
       <div className="flex justify-between mx-2 items-center">

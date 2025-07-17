@@ -72,7 +72,7 @@ export const VideosProcedure = createTRPCRouter({
             subscriptions,
             eq(subscriptions.creatorId, users.id)
           ),
-          // Todos: make this boolean instead of count
+          // Todo: make this boolean instead of count
           isViewerSubscribed: db.$count(
             subscriptions,
             and(

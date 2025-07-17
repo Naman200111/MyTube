@@ -75,7 +75,6 @@ export const PlaylistsView = () => {
               size="sm"
               type="submit"
               disabled={create.isPending}
-              // onClick={() => create.mutate({ name: form.name })}
             >
               Save
             </Button>

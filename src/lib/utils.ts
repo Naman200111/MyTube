@@ -64,8 +64,8 @@ export const getShortFormDateFromDate = (date: Date) => {
   const hour = 60 * minute;
   const day = 24 * hour;
   const week = 7 * day;
-  const month = 30 * day; // Approximation
-  const year = 365 * day; // Approximation
+  const month = 30 * day;
+  const year = 365 * day;
 
   if (diffInSeconds < minute) return `${diffInSeconds} seconds ago`;
   if (diffInSeconds < hour)

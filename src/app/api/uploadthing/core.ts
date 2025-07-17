@@ -20,7 +20,6 @@ export const ourFileRouter = {
         videoId: z.string().uuid().nonempty(),
       })
     )
-    // Set permissions and file types for this FileRoute
     .middleware(async ({ input: { videoId } }) => {
       const { userId: clerkUserId } = await auth();
       if (!clerkUserId) throw new UploadThingError("Unauthorized");

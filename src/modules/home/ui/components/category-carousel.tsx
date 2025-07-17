@@ -2,13 +2,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import { useRef } from "react";
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from "@/components/ui/carousel";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type categoryContent = {
@@ -45,26 +38,6 @@ const CategoryCarousel = ({
   };
 
   return (
-    // <Carousel
-    // >
-    //   <CarouselContent className="-ml-4">
-    //     <CarouselItem className="pl-4 basis-auto">
-    //       <Badge variant="secondary" className="p-[6px]">
-    //         All
-    //       </Badge>
-    //     </CarouselItem>
-    //     {categories.map((category: categoryContent, idx) => (
-    //       <CarouselItem key={idx} className="pl-4 basis-auto">
-    //         <Badge variant="secondary" className="p-[6px]">
-    //           {category.name}
-    //         </Badge>
-    //       </CarouselItem>
-    //     ))}
-    //   </CarouselContent>
-    //   <CarouselPrevious />
-    //   <CarouselNext />
-    // </Carousel>
-
     <div className="flex gap-3 items-center cursor-pointer">
       {true ? (
         <div

@@ -161,5 +161,3 @@ export const playlistVideos = pgTable("playlist_videos", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
-
-// export type VideoSchema = typeof videos.$inferSelect;

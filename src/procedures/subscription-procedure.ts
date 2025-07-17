@@ -66,7 +66,6 @@ export const subscriptionProcedure = createTRPCRouter({
         creator: {
           ...getTableColumns(users),
         },
-        // subscriberCount: db.$count(subscriptions, eq(subscriptions.creatorId, ))
       })
       .from(subscriptions)
       .innerJoin(users, eq(users.id, subscriptions.creatorId))

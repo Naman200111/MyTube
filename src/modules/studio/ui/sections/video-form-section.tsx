@@ -39,8 +39,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
       utils.studio.getMany.invalidate();
-      // invalidate basically update a video values, so specifically updaing one video and keeping cache of others
-      // utils.studio.getOne.invalidate();
       utils.studio.getOne.invalidate({ videoId });
       toast.success("Video Changes Saved");
       router.push("/studio");

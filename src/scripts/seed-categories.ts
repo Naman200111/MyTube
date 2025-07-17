@@ -3,8 +3,6 @@
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 
-// this is not working and I have manually added in db
-
 const categoryNames = [
   "Vehicles",
   "Comedy",
