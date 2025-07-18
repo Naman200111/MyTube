@@ -25,15 +25,15 @@ const HomeNavbar = () => {
 
   return (
     <div className="px-2.5 py-4 flex justify-between items-center">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <SidebarTrigger />
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Logo" width={40} height={40} />
-            <p className="hidden text-xl font-semibold md:block">
-              <Link href="/">MyTube</Link>
-            </p>
+          <div className="h-[30px] w-[30px] relative">
+            <Image src="/logo.svg" alt="Logo" fill />
           </div>
+          <p className="hidden text-xl font-semibold md:block">
+            <Link href="/">MyTube</Link>
+          </p>
         </div>
       </div>
       <div className="flex items-center w-full max-w-[500px]">

@@ -23,6 +23,7 @@ const AuthButton = () => {
           <Button
             className="flex items-center gap-1 rounded-full text-blue-600 hover:text-blue-500 text-sm shadow-none"
             variant={"outline"}
+            size="sm"
           >
             <UserCircleIcon />
             <p>Sign In</p>

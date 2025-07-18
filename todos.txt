@@ -34,6 +34,7 @@
 11. try building and testing ✅
 11. fix user own page refresh error ✅
 12. remove redundant/unnecessary css code from tw (3)
+12. make studio list page mobile responsive (2)
 12. fixed video upload lag and sometimes getting undefined video status issue
 
 
