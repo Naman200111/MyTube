@@ -148,7 +148,8 @@ export const PlaylistProcedure = createTRPCRouter({
             eq(playlistVideos.videoId, videoId)
           )
         )
-        .where(eq(playlists.userId, userId));
+        .where(eq(playlists.userId, userId))
+        .orderBy(asc(playlists.createdAt));
 
       return {
         userPlaylists,
@@ -191,6 +192,13 @@ export const PlaylistProcedure = createTRPCRouter({
             .values({ videoId, playlistId })
             .returning();
 
+          await db
+            .update(playlists)
+            .set({
+              updatedAt: new Date(),
+            })
+            .where(eq(playlists.id, playlistId));
+
           return {
             videos: [...videosInPlaylist, addVideo],
             videoAdded: true,
@@ -207,6 +215,13 @@ export const PlaylistProcedure = createTRPCRouter({
               )
             )
             .returning();
+
+          await db
+            .update(playlists)
+            .set({
+              updatedAt: new Date(),
+            })
+            .where(eq(playlists.id, playlistId));
 
           const restVideos = videosInPlaylist.filter(
             (video) => video.id !== videoId

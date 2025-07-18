@@ -20,20 +20,21 @@
   i. add playlist thumbnail ✅
   j. option to create playlist when adding to playlist dropdown clicked (enhancement)
 
-9. user page (2) ✅
+9. user page ✅
 10. all user subscription list of left side bar (individual / all subscriptions) ✅
 10. finalize all subscription page -> getting all subscription along with sub count and unsub functionlity ✅
-10. fix all subscription prefetch error (1) ✅
-10. fix mobile related drawer errors (2) 
+10. fix all subscription prefetch error ✅
+10. fix mobile related drawer errors (1) 
 10. making mobile responsive designs going fwd and fixing prev ones
 1O. add background ai jobs
-11. try minimising api calls / renders (4)
-11. need of content page in studio (5) ✅
+11. try minimising api calls / renders (2)
+11. need of content page in studio ✅
 11. fix user avatar small designs ✅
-11. remove useRouter if not needed
+11. remove useRouter if not needed ✅
 11. try building and testing ✅
 11. fix user own page refresh error ✅
-12. remove redundant/unnecessary css code from tw (5)
+12. remove redundant/unnecessary css code from tw (3)
+12. fixed video upload lag and sometimes getting undefined video status issue
 
 
 ADDING SKELETONS (For better visual appearance)
