@@ -18,8 +18,9 @@ const VideoUploadModal = ({
 }: VideoUploadModalProps) => {
   return (
     <Modal open={open} onClose={onClose}>
-      <div></div>
-      <MuxUploader endpoint={endpoint} onSuccess={onSuccess} />
+      <div className="p-8">
+        <MuxUploader endpoint={endpoint} onSuccess={onSuccess} />
+      </div>
     </Modal>
   );
 };

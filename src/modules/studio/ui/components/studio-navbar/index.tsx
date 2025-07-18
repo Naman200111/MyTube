@@ -33,7 +33,7 @@ const StudioNavbar = () => {
   });
 
   return (
-    <div className="px-2.5 py-4 flex justify-between items-center shadow-md border-b">
+    <div className="px-2.5 py-4 flex justify-between items-center shadow-md border-b w-full">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <div className="flex items-center gap-2">

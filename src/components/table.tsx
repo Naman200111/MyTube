@@ -33,7 +33,7 @@ export const TableHead = ({
 }: React.ComponentProps<"th">) => {
   return (
     <th
-      className={mergeClasses(className, "py-4 px-2  text-start")}
+      className={mergeClasses(className, "py-4 px-4  text-start")}
       {...props}
     />
   );

@@ -49,17 +49,17 @@ const VideosSectionSuspense = () => {
   const videos = pages.flatMap((page) => page.data) || [];
 
   return (
-    <div>
+    <div className="overflow-auto">
       <Table className="w-full">
-        <TableHeader className="text-gray-600 text-sm w-full h-10">
+        <TableHeader className="text-gray-600 text-sm h-10">
           <TableRow>
-            <TableHead className="">Video</TableHead>
-            <TableHead className="">Title</TableHead>
-            <TableHead className="">Visibility</TableHead>
-            <TableHead className="">Date</TableHead>
-            <TableHead className="">Likes</TableHead>
-            <TableHead className="">Views</TableHead>
-            <TableHead className="">Comments</TableHead>
+            <TableHead>Video</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Visibility</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Likes</TableHead>
+            <TableHead>Views</TableHead>
+            <TableHead>Comments</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,7 +73,7 @@ const VideosSectionSuspense = () => {
                 key={video.id}
                 className="hover:bg-primary-foreground cursor-pointer max-h-[100px]"
               >
-                <TableDescription className="p-2 min-w-[100px] w-[15%]">
+                <TableDescription className="p-2 min-w-[220px]">
                   <div className="flex flex-col relative h-28">
                     <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background z-[1]">
                       {getVideoTimeFromDuration(video.duration)}
@@ -88,7 +88,7 @@ const VideosSectionSuspense = () => {
                     </div>
                   </div>
                 </TableDescription>
-                <TableDescription className="px-4 py-4 min-w-[120px] w-[30%]">
+                <TableDescription className="px-4 py-4 min-w-[400px]">
                   <div className="line-clamp-1 mb-2 text-lg">{video.title}</div>
                   <div className="line-clamp-2 text-sm text-gray-800">
                     {video.description}
@@ -104,18 +104,18 @@ const VideosSectionSuspense = () => {
                     <div>{video.visibility}</div>
                   </div>
                 </TableDescription>
-                <TableDescription className="px-4 py-4 w-[20%]">
+                <TableDescription className="px-4 py-4 min-w-[200px]">
                   <div className="line-clamp-1">
                     {getFormattedDate(new Date(video.createdAt))}
                   </div>
                 </TableDescription>
-                <TableDescription className="px-3 py-4">
+                <TableDescription className="px-3 py-4 min-w-[100px]">
                   <div>{getCountShortForm(video.likeCount)}</div>
                 </TableDescription>
-                <TableDescription className="px-3 py-4">
+                <TableDescription className="px-3 py-4 min-w-[100px]">
                   <div>{getCountShortForm(video.viewCount)}</div>
                 </TableDescription>
-                <TableDescription className="px-3 py-4">
+                <TableDescription className="px-3 py-4 min-w-[100px]">
                   <div>{getCountShortForm(video.commentCount)}</div>
                 </TableDescription>
               </TableRow>
