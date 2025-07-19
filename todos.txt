@@ -35,6 +35,7 @@
 11. fix user own page refresh error ✅
 12. remove redundant/unnecessary css code from tw (3)
 12. make studio list page mobile responsive (2) ✅
+12. in deployed version -> seeing localhost:3000 in some places -> /search , /videoLink 
 12. fixed video upload lag and sometimes getting undefined video status issue ✅
 
 
