@@ -73,9 +73,9 @@ const VideosSectionSuspense = () => {
                 key={video.id}
                 className="hover:bg-primary-foreground cursor-pointer max-h-[100px]"
               >
-                <TableDescription className="p-2 min-w-[220px]">
+                <TableDescription className="p-2 min-w-[200px]">
                   <div className="flex flex-col relative h-28">
-                    <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background z-[1]">
+                    <div className="absolute rounded-lg px-1 bottom-2 right-2 bg-foreground text-background z-[1]">
                       {getVideoTimeFromDuration(video.duration)}
                     </div>
                     <div className="h-full">
@@ -83,7 +83,7 @@ const VideosSectionSuspense = () => {
                         src={video.thumbnailURL || "/placeholder.svg"}
                         alt="Thumbnail"
                         fill
-                        className="rounded-md w-full h-full object-cover"
+                        className="rounded-lg w-full h-full object-cover"
                       />
                     </div>
                   </div>

@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import useClickOutside from "@/hooks/use-click-outside";
 import ImageUploadModal from "../components/image-upload-modal";
 import { APP_URL } from "@/lib/constants";
+import Link from "next/link";
 
 interface VideoFormSectionProps {
   videoId: string;
@@ -70,21 +71,21 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
     },
   });
 
-  const videoLink = `${APP_URL}/video/${video?.id}`;
+  const videoLink = `${APP_URL}/video/${video.id}`;
   const [formData, setFormData] = useState({
-    id: video?.id || "",
-    title: video?.title || "",
-    description: video?.description || "",
-    categoryId: video?.categoryId || "",
-    visibility: video?.visibility || "Private",
-    muxStatus: video?.muxStatus || "preparing",
+    id: video.id || "",
+    title: video.title || "",
+    description: video.description || "",
+    categoryId: video.categoryId || "",
+    visibility: video.visibility || "Private",
+    muxStatus: video.muxStatus || "preparing",
   });
 
   useEffect(() => {
-    if (video?.id) {
+    if (video.id) {
       setFormData((prev) => ({
         ...prev,
-        muxStatus: video?.muxStatus || "",
+        muxStatus: video.muxStatus || "preparing",
       }));
     }
   }, [video]);
@@ -159,7 +160,7 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             <span className="font-medium">Thumbnail</span>
             <div className="relative max-w-[160px] h-24">
               <Image
-                src={video?.thumbnailURL || "/placeholder.svg"}
+                src={video.thumbnailURL || "/placeholder.svg"}
                 fill
                 alt="Thumbnail"
                 className="overflow-hidden rounded-md object-cover"
@@ -218,12 +219,12 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
             <div className="flex flex-col gap-1 px-4">
               <div>Video Link</div>
               <div className="flex gap-2 items-center">
-                <div
+                <Link
+                  href={videoLink}
                   className="truncate text-blue-600 cursor-pointer"
-                  onClick={() => router.push(videoLink)}
                 >
                   {videoLink}
-                </div>
+                </Link>
                 <div>
                   <Copy
                     onClick={handleCopyClick}

@@ -20,7 +20,6 @@ export const PlaylistProcedure = createTRPCRouter({
       })
     )
     .mutation(async ({ input: { name }, ctx: { id: userId } }) => {
-      console.log(name, "inputName");
       const [existingPlaylist] = await db
         .select()
         .from(playlists)

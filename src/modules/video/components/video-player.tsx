@@ -15,7 +15,6 @@ const VideoPlayer = ({
   className,
   thumbnailURL,
 }: VideoPlayerProps) => {
-  console.log(thumbnailURL, "thumbnailURL");
   return (
     <MuxPlayer
       className={mergeClasses(

@@ -220,7 +220,7 @@ const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
       className="cursor-pointer h-[90px] w-full flex gap-2"
       onClick={onClick}
     >
-      <div className="rounded-md overflow-hidden relative h-full w-[30%] lg:w-[50%]">
+      <div className="rounded-md overflow-hidden relative h-full min-w-[30%] lg:min-w-[45%]">
         <div className="absolute rounded-md px-1 bottom-2 right-2 bg-foreground text-background text-xs z-10">
           {getVideoTimeFromDuration(video.duration)}
         </div>
@@ -231,7 +231,7 @@ const VideoCardCompact = ({ item: video, onClick }: VideoCardProps) => {
           className="object-cover"
         />
       </div>
-      <div className="text-nowrap">
+      <div className="">
         <div className="text-sm font-semibold line-clamp-1">{video.title}</div>
         <div className="text-[0.6em] text-muted-foreground">
           <Link
