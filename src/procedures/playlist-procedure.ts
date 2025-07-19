@@ -79,7 +79,7 @@ export const PlaylistProcedure = createTRPCRouter({
       };
     }),
 
-  // Todo: complex logic todo: check again
+  // Todo: complex logic: check again
   getMany: protectedProcedure.query(async ({ ctx: { id: userId } }) => {
     const playlistsWithVideoCount = await db
       .select({
