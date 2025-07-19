@@ -14,6 +14,8 @@ const HomeNavbar = () => {
   const router = useRouter();
 
   const handleSearch = () => {
+    console.log("Direct ENV:", process.env.NEXT_PUBLIC_APP_URL);
+    console.log("Imported APP_URL:", APP_URL);
     const url = new URL("/search", APP_URL);
     if (searchQuery) {
       url.searchParams.set("query", encodeURIComponent(searchQuery.trim()));
