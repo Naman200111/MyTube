@@ -27,14 +27,14 @@ const HomeNavbar = () => {
     <div className="px-2.5 py-4 flex justify-between items-center">
       <div className="flex items-center gap-1">
         <SidebarTrigger />
-        <div className="flex items-center gap-2">
-          <div className="h-[30px] w-[30px] relative">
-            <Image src="/logo.svg" alt="Logo" fill />
+        <Link href="/">
+          <div className="flex items-center gap-2">
+            <div className="h-[30px] w-[30px] relative">
+              <Image src="/logo.svg" alt="Logo" fill />
+            </div>
+            <p className="hidden text-xl font-semibold md:block">MyTube</p>
           </div>
-          <p className="hidden text-xl font-semibold md:block">
-            <Link href="/">MyTube</Link>
-          </p>
-        </div>
+        </Link>
       </div>
       <div className="flex items-center w-full max-w-[500px]">
         <input

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -18,6 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Image from "next/image";
+import Link from "next/link";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -198,7 +200,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] transition-[width] duration-200 ease-linear bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -206,7 +208,22 @@ const Sidebar = React.forwardRef<
             }
             side={side}
           >
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <SheetTitle className="transition-[width] duration-200 ease-linear">
+              <div className="mx-2.5 my-4 flex gap-2 transition-[width] duration-200 ease-linear">
+                <SidebarTrigger />
+                <div className="flex items-center gap-2">
+                  <div className="h-[30px] w-[30px] relative">
+                    <Image src="/logo.svg" alt="Logo" fill />
+                  </div>
+                  <p className="text-xl font-semibold md:block">
+                    <Link href="/">MyTube</Link>
+                  </p>
+                </div>
+              </div>
+            </SheetTitle>
+            <div className="flex h-full w-full flex-col transition-[width] duration-200 ease-linear">
+              {children}
+            </div>
           </SheetContent>
         </Sheet>
       );

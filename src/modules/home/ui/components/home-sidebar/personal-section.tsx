@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { History, ThumbsUp, ListVideo } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -36,7 +37,9 @@ const items = [
 ];
 
 const PersonalSection = () => {
+  const { setOpenMobile } = useSidebar();
   const { isSignedIn } = useAuth();
+
   const pathname = usePathname();
   const clerk = useClerk();
 
@@ -46,7 +49,10 @@ const PersonalSection = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem
+              key={item.title}
+              onClick={() => setOpenMobile(false)}
+            >
               <SidebarMenuButton
                 asChild
                 isActive={pathname.endsWith(item.url)}

@@ -6,6 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Home, Flame, SquarePlay } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -34,6 +35,7 @@ const items = [
 
 const MainSection = () => {
   const { isSignedIn } = useAuth();
+  const { setOpenMobile } = useSidebar();
   const pathname = usePathname();
   const clerk = useClerk();
 
@@ -42,7 +44,10 @@ const MainSection = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem
+              key={item.title}
+              onClick={() => setOpenMobile(false)}
+            >
               <SidebarMenuButton
                 asChild
                 isActive={pathname.endsWith(item.url)}

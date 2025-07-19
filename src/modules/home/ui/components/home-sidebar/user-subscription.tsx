@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { trpc } from "@/trpc/client";
 import UserAvatar from "@/components/user-avatar";
@@ -25,8 +26,10 @@ const UserSubscriptionSkeleton = () => {
 };
 
 const UserSubscriptionSection = () => {
+  const { setOpenMobile } = useSidebar();
   const { data: userSubscriptions, isPending } =
     trpc.subscriptions.getMany.useQuery();
+
   const pathname = usePathname();
   const hasUserSubscriptions = (userSubscriptions || []).length > 0;
 
@@ -38,7 +41,10 @@ const UserSubscriptionSection = () => {
           {isPending && <UserSubscriptionSkeleton />}
           {hasUserSubscriptions &&
             (userSubscriptions || []).slice(0, 5).map(({ creator }) => (
-              <SidebarMenuItem key={creator.id}>
+              <SidebarMenuItem
+                key={creator.id}
+                onClick={() => setOpenMobile(false)}
+              >
                 <SidebarMenuButton
                   asChild
                   size="sm"
@@ -57,7 +63,7 @@ const UserSubscriptionSection = () => {
               </SidebarMenuItem>
             ))}
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={() => setOpenMobile(false)}>
               <Link className="flex items-center gap-2" href="/channels">
                 <List size={18} />
                 <span>All subscriptions</span>
