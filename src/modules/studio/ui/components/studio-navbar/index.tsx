@@ -4,7 +4,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import AuthButton from "@/modules/auth/ui/components/AuthButton";
 import Image from "next/image";
 import Link from "next/link";
-import VideoUploadModal from "../video-upload-btn";
+import VideoUploadModal from "../video-upload-modal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
