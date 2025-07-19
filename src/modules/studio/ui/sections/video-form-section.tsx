@@ -72,8 +72,6 @@ const VideoFormSection = ({ videoId }: VideoFormSectionProps) => {
   });
 
   const videoLink = `${APP_URL}/video/${video.id}`;
-  console.log("Direct ENV:", process.env.NEXT_PUBLIC_APP_URL);
-  console.log("Imported APP_URL:", APP_URL);
   const [formData, setFormData] = useState({
     id: video.id || "",
     title: video.title || "",
