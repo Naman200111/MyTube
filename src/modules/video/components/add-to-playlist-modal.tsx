@@ -30,7 +30,7 @@ const AddToPlaylistModal = ({
 
   return (
     <Modal onClose={onClose} open={open}>
-      <div className="p-4 flex flex-col gap-2 max-h-[600px] min-w-[220px]">
+      <div className="p-4 flex flex-col gap-2 max-h-[600px] min-w-[220px] max-w-[450px] overflow-auto">
         <div className="flex justify-between">
           <p className="font-semibold text-lg ml-2">Add to playlist</p>
         </div>

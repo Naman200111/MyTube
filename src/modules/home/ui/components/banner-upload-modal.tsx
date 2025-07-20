@@ -32,7 +32,7 @@ const BannerUploadModal = ({
     <Modal
       open={open}
       onClose={onClose}
-      className="min-h-[100px] p-10 overflow-hidden"
+      className="min-h-[100px] p-5 overflow-hidden"
     >
       <UploadDropzone
         endpoint="bannerUploader"

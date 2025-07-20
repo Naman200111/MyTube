@@ -78,7 +78,7 @@ const VideosSectionSuspense = () => {
                     <div className="absolute rounded-lg px-1 bottom-2 right-2 bg-foreground text-background z-[1]">
                       {getVideoTimeFromDuration(video.duration)}
                     </div>
-                    <div className="h-full">
+                    <div className="h-full relative">
                       <Image
                         src={video.thumbnailURL || "/placeholder.svg"}
                         alt="Thumbnail"

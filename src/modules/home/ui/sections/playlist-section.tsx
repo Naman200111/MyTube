@@ -54,8 +54,8 @@ const PlaylistSectionSuspense = ({ playlistId }: PlaylistSectionProps) => {
 
   return (
     <div className="flex flex-col w-[100%] max-w-[720px] gap-2">
-      <div className="flex justify-between mx-2 items-center">
-        <div>
+      <div className="flex justify-between mx-2 items-center gap-2">
+        <div className="flex flex-col gap-2">
           <p className="text-2xl font-bold">{playlistName}</p>
           <p className="text-muted-foreground text-sm">
             Your custom playlist videos at the moment
@@ -64,7 +64,7 @@ const PlaylistSectionSuspense = ({ playlistId }: PlaylistSectionProps) => {
         <Button
           size="icon"
           variant="ghost"
-          className="rounded-full border"
+          className="rounded-full border flex-shrink-0"
           onClick={() => setDeleteModalOpen(true)}
         >
           <Trash2Icon color="red" />

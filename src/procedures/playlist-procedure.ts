@@ -8,7 +8,16 @@ import {
 } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, asc, count, eq, getTableColumns, gt, isNull } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  gt,
+  isNull,
+} from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -89,7 +98,8 @@ export const PlaylistProcedure = createTRPCRouter({
       .from(playlists)
       .leftJoin(playlistVideos, eq(playlistVideos.playlistId, playlists.id))
       .where(eq(playlists.userId, userId))
-      .groupBy(playlists.id);
+      .groupBy(playlists.id)
+      .orderBy(desc(playlists.updatedAt));
 
     const pv = alias(playlistVideos, "pv");
     const playlistWithTopVideoDetails = await db

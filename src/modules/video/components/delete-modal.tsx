@@ -21,7 +21,7 @@ const DeleteModal = ({
     <Modal onClose={onClose} open={open} showClose={false}>
       <div className="p-4 flex flex-col gap-4 max-h-[600px]">
         <div className="flex gap-2 items-center">
-          <Trash2Icon color="red" size={16} />
+          <Trash2Icon color="red" size={16} className="flex-shrink-0" />
           <p className="font-semibold text-md ">
             Are you sure you want to delete this {entity} ?
           </p>

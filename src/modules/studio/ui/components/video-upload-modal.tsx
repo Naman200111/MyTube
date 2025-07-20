@@ -18,11 +18,7 @@ const VideoUploadModal = ({
   onSuccess,
 }: VideoUploadModalProps) => {
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      className="min-h-[200px] min-w-[400px]"
-    >
+    <Modal open={open} onClose={onClose}>
       <div className="mx-6 my-4">
         <p className="font-semibold text-xl mb-4">Upload a video</p>
         {endpoint ? (

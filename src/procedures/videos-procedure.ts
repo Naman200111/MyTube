@@ -241,14 +241,17 @@ export const VideosProcedure = createTRPCRouter({
       })
     )
     .query(async ({ input: { limit, cursor }, ctx: { id: userId } }) => {
-      const video_reactions_temp = await db
-        .$with("video_reactions_temp")
-        .as(
-          db
-            .select()
-            .from(videoReactions)
-            .where(eq(videoReactions.userId, userId))
-        );
+      const video_reactions_temp = await db.$with("video_reactions_temp").as(
+        db
+          .select()
+          .from(videoReactions)
+          .where(
+            and(
+              eq(videoReactions.userId, userId),
+              eq(videoReactions.type, "like")
+            )
+          )
+      );
 
       const videosList = await db
         .with(video_reactions_temp)

@@ -69,6 +69,7 @@ const VideoStats = ({
   const likeReaction = trpc.videoReactions.like.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
+      utils.videos.getManyLiked.invalidate();
       setReactionUpdateInProgress(false);
     },
     onError: (error) => {
@@ -84,6 +85,7 @@ const VideoStats = ({
   const dislikeReaction = trpc.videoReactions.dislike.useMutation({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
+      utils.videos.getManyLiked.invalidate();
       setReactionUpdateInProgress(false);
     },
     onError: (error) => {
@@ -100,6 +102,7 @@ const VideoStats = ({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
       utils.subscriptions.getMany.invalidate();
+      utils.videos.getManySubscribed.invalidate();
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {
@@ -113,6 +116,7 @@ const VideoStats = ({
     onSuccess: () => {
       utils.videos.getOne.invalidate({ videoId });
       utils.subscriptions.getMany.invalidate();
+      utils.videos.getManySubscribed.invalidate();
     },
     onError: (error) => {
       if (error.data?.code === "UNAUTHORIZED") {

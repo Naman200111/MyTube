@@ -33,7 +33,7 @@ const ImageUploadModal = ({
     <Modal
       open={open}
       onClose={onClose}
-      className="min-h-[100px] p-10 overflow-hidden"
+      className="min-h-[100px] overflow-hidden p-5"
     >
       <UploadDropzone
         endpoint="imageUploader"
