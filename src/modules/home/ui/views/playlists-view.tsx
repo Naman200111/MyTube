@@ -16,6 +16,7 @@ export const PlaylistsView = () => {
   const create = trpc.playlists.create.useMutation({
     onSuccess: () => {
       utils.playlists.getMany.invalidate();
+      utils.playlists.getManyForVideo.invalidate();
       toast.success("Playlist created");
       setShowCreatePlaylistModal(false);
     },

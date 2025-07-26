@@ -35,22 +35,25 @@ const AddToPlaylistModal = ({
           <p className="font-semibold text-lg ml-2">Add to playlist</p>
         </div>
         {isLoading ? <Loader2Icon className="animate-spin mx-auto" /> : null}
-        {userPlaylists.map((playlist, index) => {
-          return (
-            <Button
-              variant="ghost"
-              disabled={disabled}
-              className="w-full flex justify-start px-2"
-              key={index}
-              onClick={() => onClick(playlist.id, videoId)}
-            >
-              {playlist.videoInPlaylist ? <CircleCheckIcon /> : <Circle />}
-              <div className="overflow-hidden line-clamp-1 justify-self-start">
-                {playlist.name}
-              </div>
-            </Button>
-          );
-        })}
+        <div className="flex flex-col gap-2 items-center">
+          {userPlaylists.map((playlist, index) => {
+            return (
+              <Button
+                variant="ghost"
+                disabled={disabled}
+                className="w-full flex justify-start px-2"
+                key={index}
+                onClick={() => onClick(playlist.id, videoId)}
+              >
+                {playlist.videoInPlaylist ? <CircleCheckIcon /> : <Circle />}
+                <div className="overflow-hidden line-clamp-1 justify-self-start">
+                  {playlist.name}
+                </div>
+              </Button>
+            );
+          })}
+          <p className="text-muted-foreground text-sm">End of the list</p>
+        </div>
       </div>
     </Modal>
   );
