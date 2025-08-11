@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import "./globals.css";
 import { TRPCProvider } from "@/trpc/client";
-import { Toaster } from "sonner";
+
+import "./globals.css";
+import type { Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,6 +31,7 @@ export default function RootLayout({
           <TRPCProvider>
             <Toaster />
             {children}
+            <Analytics />
           </TRPCProvider>
         </body>
       </html>
